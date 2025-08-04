@@ -2,7 +2,7 @@ import { Link, useLocation } from "wouter";
 import { Search, User, ShoppingBag, Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useCartStore } from "./cart-store";
-import zenthraLogo from "@assets/zenthra_1754316486050.png";
+import ZenthraLogo from "./logo";
 
 export default function Header() {
   const [location] = useLocation();
@@ -12,6 +12,7 @@ export default function Header() {
     { name: "Home", href: "/" },
     { name: "Collections", href: "/products" },
     { name: "New Arrivals", href: "/products?featured=true" },
+    { name: "Our Story", href: "/our-story" },
     { name: "About", href: "/about" },
     { name: "Contact", href: "/contact" },
   ];
@@ -23,7 +24,7 @@ export default function Header() {
           {/* Logo */}
           <div className="flex-shrink-0">
             <Link href="/">
-              <img src={zenthraLogo} alt="ZENTHRA Logo" className="h-8 w-auto" />
+              <ZenthraLogo className="h-10 w-auto hover:scale-105 transition-transform duration-300" />
             </Link>
           </div>
           
@@ -34,8 +35,8 @@ export default function Header() {
                 <Link key={item.name} href={item.href}>
                   <span className={`px-3 py-2 text-sm font-medium transition-colors duration-300 cursor-pointer ${
                     location === item.href 
-                      ? "text-zenthra-black" 
-                      : "text-zenthra-gray hover:text-zenthra-gold"
+                      ? "text-zenthra-secondary gradient-text" 
+                      : "text-zenthra-gray hover:text-zenthra-secondary"
                   }`}>
                     {item.name}
                   </span>
@@ -46,17 +47,17 @@ export default function Header() {
           
           {/* Right Side Icons */}
           <div className="flex items-center space-x-4">
-            <Button variant="ghost" size="icon" className="text-zenthra-gray hover:text-zenthra-gold">
+            <Button variant="ghost" size="icon" className="text-zenthra-gray hover:text-zenthra-secondary transition-all duration-300 hover:scale-110">
               <Search className="h-5 w-5" />
             </Button>
-            <Button variant="ghost" size="icon" className="text-zenthra-gray hover:text-zenthra-gold">
+            <Button variant="ghost" size="icon" className="text-zenthra-gray hover:text-zenthra-secondary transition-all duration-300 hover:scale-110">
               <User className="h-5 w-5" />
             </Button>
             <Link href="/cart">
-              <Button variant="ghost" size="icon" className="text-zenthra-gray hover:text-zenthra-gold relative">
+              <Button variant="ghost" size="icon" className="text-zenthra-gray hover:text-zenthra-secondary transition-all duration-300 hover:scale-110 relative">
                 <ShoppingBag className="h-5 w-5" />
                 {cartCount > 0 && (
-                  <span className="absolute -top-2 -right-2 bg-zenthra-gold text-black text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                  <span className="absolute -top-2 -right-2 bg-zenthra-secondary text-white text-xs rounded-full h-5 w-5 flex items-center justify-center pulse-glow">
                     {cartCount}
                   </span>
                 )}
@@ -64,7 +65,7 @@ export default function Header() {
             </Link>
             
             {/* Mobile menu button */}
-            <Button variant="ghost" size="icon" className="md:hidden text-zenthra-gray hover:text-zenthra-gold">
+            <Button variant="ghost" size="icon" className="md:hidden text-zenthra-gray hover:text-zenthra-secondary transition-all duration-300 hover:scale-110">
               <Menu className="h-5 w-5" />
             </Button>
           </div>

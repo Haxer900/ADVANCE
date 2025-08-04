@@ -1,19 +1,29 @@
+import { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { ChevronDown, ArrowRight, Star } from "lucide-react";
-import { useQuery, useMutation } from "@tanstack/react-query";
-import { apiRequest } from "@/lib/queryClient";
+import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { useState } from "react";
-import ProductCard from "@/components/product-card";
-import { testimonials } from "@/lib/data";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { apiRequest } from "@/lib/queryClient";
+import { useScrollAnimation, useParallax } from "@/hooks/use-scroll-animation";
 import type { Product, Category } from "@shared/schema";
+import ProductCard from "@/components/product-card";
+import { ArrowRight, Star, Sparkles, ShoppingBag, Heart, TrendingUp } from "lucide-react";
 
 export default function Home() {
   const [email, setEmail] = useState("");
   const { toast } = useToast();
+  const queryClient = useQueryClient();
+  
+  const heroRef = useScrollAnimation();
+  const featuredRef = useScrollAnimation();
+  const categoriesRef = useScrollAnimation();
+  const aboutRef = useScrollAnimation();
+  const newsletterRef = useScrollAnimation();
+  const parallaxRef = useParallax();
 
   const { data: featuredProducts, isLoading: productsLoading } = useQuery({
     queryKey: ["/api/products/featured"],
@@ -24,20 +34,19 @@ export default function Home() {
   });
 
   const newsletterMutation = useMutation({
-    mutationFn: async (email: string) => {
-      return apiRequest("POST", "/api/newsletter", { email });
-    },
+    mutationFn: (data: { email: string }) => 
+      apiRequest("/api/newsletter", "POST", data),
     onSuccess: () => {
       toast({
-        title: "Subscribed!",
-        description: "Thank you for subscribing to our newsletter.",
+        title: "Successfully subscribed!",
+        description: "Thank you for joining our newsletter.",
       });
       setEmail("");
     },
     onError: () => {
       toast({
-        title: "Error",
-        description: "Failed to subscribe. Please try again.",
+        title: "Subscription failed",
+        description: "Please try again later.",
         variant: "destructive",
       });
     },
@@ -46,87 +55,104 @@ export default function Home() {
   const handleNewsletterSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (email) {
-      newsletterMutation.mutate(email);
+      newsletterMutation.mutate({ email });
     }
   };
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-zenthra-white">
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-        <div className="absolute inset-0 z-0">
-          <img 
-            src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2070&h=1380" 
-            alt="Luxury fashion store interior" 
-            className="w-full h-full object-cover"
-          />
-          <div className="absolute inset-0 gradient-overlay"></div>
-        </div>
+        <div className="absolute inset-0 morphing-bg"></div>
+        <div 
+          ref={parallaxRef}
+          className="absolute inset-0 bg-gradient-to-br from-zenthra-primary/50 to-zenthra-secondary/30 parallax-element"
+        ></div>
         
-        <div className="relative z-10 text-center text-white px-4 animate-fade-in">
-          <h1 className="font-playfair text-5xl md:text-7xl font-bold mb-6 animate-slide-up">
-            Elevate Your Style
-          </h1>
-          <p className="text-xl md:text-2xl font-light mb-8 max-w-2xl mx-auto opacity-90 animate-slide-up">
-            Discover premium collections that define sophisticated living and timeless elegance
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center animate-slide-up">
-            <Link href="/products">
-              <Button className="btn-primary px-8 py-4 text-lg font-semibold">
-                Shop Collection
-              </Button>
-            </Link>
-            <Link href="/about">
-              <Button variant="outline" className="border-2 border-white text-white hover:bg-white hover:text-black px-8 py-4 text-lg font-semibold btn-rounded transition-all duration-300">
-                Explore Story
-              </Button>
-            </Link>
-          </div>
-        </div>
-        
-        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-white animate-float">
-          <ChevronDown className="h-8 w-8 opacity-70" />
-        </div>
-      </section>
-
-      {/* Featured Categories */}
-      <section className="py-20 bg-zenthra-light">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="font-playfair text-4xl md:text-5xl font-bold text-zenthra-black mb-4">
-              Curated Collections
-            </h2>
-            <p className="text-xl text-zenthra-gray max-w-2xl mx-auto">
-              Handpicked selections for the discerning lifestyle
+        <div 
+          ref={heroRef}
+          className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center scroll-reveal"
+        >
+          <div className="floating-animation">
+            <Sparkles className="w-16 h-16 text-white mx-auto mb-8 pulse-glow" />
+            <h1 className="font-poppins text-6xl md:text-8xl lg:text-9xl font-bold text-white mb-8 tracking-tight">
+              ZENTHRA
+            </h1>
+            <p className="text-xl md:text-3xl text-white/90 mb-12 max-w-4xl mx-auto leading-relaxed">
+              Where premium meets perfection. Discover collections that define your lifestyle and elevate every moment.
             </p>
           </div>
           
+          <div className="flex flex-col sm:flex-row gap-6 justify-center items-center fade-in-up">
+            <Link href="/products">
+              <Button className="btn-primary text-lg px-12 py-6">
+                <ShoppingBag className="w-5 h-5 mr-2" />
+                Explore Collection
+              </Button>
+            </Link>
+            <Link href="/our-story">
+              <Button className="btn-white text-lg px-12 py-6">
+                <Heart className="w-5 h-5 mr-2" />
+                Our Story
+              </Button>
+            </Link>
+          </div>
+        </div>
+
+        {/* Floating Elements */}
+        <div className="absolute top-20 left-10 w-20 h-20 bg-white/10 rounded-full floating-animation blur-sm"></div>
+        <div className="absolute bottom-20 right-10 w-32 h-32 bg-white/5 rounded-full floating-animation blur-sm" style={{animationDelay: '2s'}}></div>
+        <div className="absolute top-1/2 left-20 w-16 h-16 bg-white/15 rounded-full floating-animation blur-sm" style={{animationDelay: '4s'}}></div>
+      </section>
+
+      {/* Categories Section */}
+      <section className="py-32 bg-zenthra-light">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div 
+            ref={categoriesRef}
+            className="text-center mb-20 scroll-reveal"
+          >
+            <h2 className="font-poppins text-5xl md:text-6xl font-bold text-zenthra-primary mb-6 gradient-text">
+              Shop by Category
+            </h2>
+            <p className="text-xl text-zenthra-gray max-w-3xl mx-auto">
+              Curated collections for every aspect of your lifestyle
+            </p>
+          </div>
+
           {categoriesLoading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {[1, 2, 3].map((i) => (
-                <div key={i} className="h-80 bg-gray-200 rounded-lg animate-pulse" />
+              {[...Array(6)].map((_, i) => (
+                <div key={i} className="h-80 bg-gray-200 rounded-3xl animate-pulse" />
               ))}
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {(categories as Category[])?.map((category: Category) => (
-                <div key={category.id} className="group relative overflow-hidden bg-white rounded-lg shadow-lg hover-scale">
-                  <img 
-                    src={category.imageUrl || ""} 
-                    alt={category.name}
-                    className="w-full h-80 object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                  <div className="absolute inset-0 bg-black bg-opacity-30 group-hover:bg-opacity-20 transition-all duration-300"></div>
-                  <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
-                    <h3 className="font-playfair text-2xl font-semibold mb-2">{category.name}</h3>
-                    <p className="text-sm opacity-90 mb-4">{category.description}</p>
-                    <Link href={`/products?category=${encodeURIComponent(category.name)}`}>
-                      <button className="text-zenthra-gold font-semibold hover:underline">
-                        Explore Collection <ArrowRight className="inline h-4 w-4 ml-1" />
-                      </button>
-                    </Link>
-                  </div>
-                </div>
+              {(categories as Category[] || []).map((category, index) => (
+                <Link key={category.id} href={`/products?category=${category.name}`}>
+                  <Card className="group hover-lift card-3d border-0 shadow-lg overflow-hidden">
+                    <div className="relative h-80">
+                      <img
+                        src={category.imageUrl}
+                        alt={category.name}
+                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-zenthra-primary/80 via-transparent to-transparent"></div>
+                      <div className="absolute bottom-6 left-6 right-6">
+                        <h3 className="font-poppins text-2xl font-bold text-white mb-2">
+                          {category.name}
+                        </h3>
+                        <p className="text-white/90 text-sm mb-4">
+                          {category.description}
+                        </p>
+                        <Button className="btn-white text-sm">
+                          Explore
+                          <ArrowRight className="w-4 h-4 ml-2" />
+                        </Button>
+                      </div>
+                    </div>
+                  </Card>
+                </Link>
               ))}
             </div>
           )}
@@ -134,155 +160,131 @@ export default function Home() {
       </section>
 
       {/* Featured Products */}
-      <section className="py-20 bg-white">
+      <section className="py-32 bg-zenthra-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="font-playfair text-4xl md:text-5xl font-bold text-zenthra-black mb-4">
-              Featured Products
-            </h2>
-            <p className="text-xl text-zenthra-gray max-w-2xl mx-auto">
-              Handcrafted excellence meets contemporary design
+          <div 
+            ref={featuredRef}
+            className="text-center mb-20 scroll-reveal"
+          >
+            <div className="flex items-center justify-center mb-6">
+              <Star className="w-8 h-8 text-zenthra-secondary mr-3" />
+              <h2 className="font-poppins text-5xl md:text-6xl font-bold text-zenthra-primary gradient-text">
+                Featured Products
+              </h2>
+              <Star className="w-8 h-8 text-zenthra-secondary ml-3" />
+            </div>
+            <p className="text-xl text-zenthra-gray max-w-3xl mx-auto">
+              Hand-picked selections from our premium collection
             </p>
           </div>
-          
+
           {productsLoading ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-              {[1, 2, 3, 4].map((i) => (
-                <div key={i} className="h-96 bg-gray-200 rounded-lg animate-pulse" />
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+              {[...Array(8)].map((_, i) => (
+                <div key={i} className="h-96 bg-gray-200 rounded-3xl animate-pulse" />
               ))}
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-              {(featuredProducts as Product[])?.map((product: Product) => (
-                <ProductCard key={product.id} product={product} />
-              ))}
-            </div>
+            <>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 mb-16">
+                {(featuredProducts as Product[] || []).slice(0, 8).map((product) => (
+                  <div key={product.id} className="tilt-effect">
+                    <ProductCard product={product} />
+                  </div>
+                ))}
+              </div>
+              
+              <div className="text-center">
+                <Link href="/products">
+                  <Button className="btn-secondary text-lg px-12 py-6">
+                    <TrendingUp className="w-5 h-5 mr-2" />
+                    View All Products
+                  </Button>
+                </Link>
+              </div>
+            </>
           )}
-          
-          <div className="text-center mt-12">
-            <Link href="/products">
-              <Button className="btn-secondary px-8 py-4 text-lg font-semibold">
-                View All Products
-              </Button>
-            </Link>
-          </div>
         </div>
       </section>
 
-      {/* Brand Story Section */}
-      <section className="py-20 bg-zenthra-light">
+      {/* About Section */}
+      <section className="py-32 bg-gradient-to-br from-zenthra-primary to-zenthra-secondary">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-            <div className="animate-slide-up">
-              <h2 className="font-playfair text-4xl md:text-5xl font-bold text-zenthra-black mb-6">
-                The ZENTHRA Story
+          <div 
+            ref={aboutRef}
+            className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center scroll-reveal"
+          >
+            <div className="slide-in-left">
+              <h2 className="font-poppins text-5xl md:text-6xl font-bold text-white mb-8">
+                Crafted for Excellence
               </h2>
-              <p className="text-lg text-zenthra-gray mb-6 leading-relaxed">
-                Born from a passion for timeless elegance and contemporary sophistication, ZENTHRA represents the pinnacle of premium lifestyle products. Our carefully curated collections blend traditional craftsmanship with modern design sensibilities.
-              </p>
-              <p className="text-lg text-zenthra-gray mb-8 leading-relaxed">
+              <p className="text-xl text-white/90 mb-8 leading-relaxed">
                 Every piece in our collection tells a story of excellence, from the finest materials to the most skilled artisans. We believe in creating not just products, but experiences that enrich your daily life.
               </p>
-              <Link href="/about">
-                <Button className="btn-primary px-8 py-4 text-lg font-semibold">
-                  Learn More About Us
+              <p className="text-lg text-white/80 mb-12 leading-relaxed">
+                Our commitment to quality and sustainability ensures that each purchase contributes to a better world while elevating your lifestyle.
+              </p>
+              <Link href="/our-story">
+                <Button className="btn-white text-lg px-12 py-6">
+                  <Heart className="w-5 h-5 mr-2" />
+                  Discover Our Story
                 </Button>
               </Link>
             </div>
             
-            <div className="relative">
-              <img 
-                src="https://images.unsplash.com/photo-1560472354-b33ff0c44a43?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&h=600" 
-                alt="Elegant product display" 
-                className="rounded-lg shadow-xl w-full"
-              />
-              <div className="absolute -bottom-6 -right-6 bg-white p-6 rounded-lg shadow-lg">
-                <div className="text-center">
-                  <div className="text-3xl font-playfair font-bold text-zenthra-black">25+</div>
-                  <div className="text-sm text-zenthra-gray">Years of Excellence</div>
-                </div>
+            <div className="slide-in-right">
+              <div className="relative">
+                <div className="absolute -inset-4 bg-gradient-to-r from-zenthra-secondary to-zenthra-accent rounded-3xl blur-lg opacity-30"></div>
+                <img 
+                  src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600" 
+                  alt="Premium craftsmanship" 
+                  className="relative rounded-3xl shadow-2xl w-full card-3d"
+                />
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Customer Testimonials */}
-      <section className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="font-playfair text-4xl md:text-5xl font-bold text-zenthra-black mb-4">
-              What Our Customers Say
-            </h2>
-            <p className="text-xl text-zenthra-gray max-w-2xl mx-auto">
-              Trusted by families who value quality and elegance
-            </p>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {testimonials.map((testimonial) => (
-              <Card key={testimonial.id} className="bg-zenthra-light p-8 hover-scale">
-                <CardContent className="p-0">
-                  <div className="mb-6">
-                    <div className="flex text-zenthra-gold mb-4">
-                      {[...Array(testimonial.rating)].map((_, i) => (
-                        <Star key={i} className="h-4 w-4 fill-current" />
-                      ))}
-                    </div>
-                    <p className="text-zenthra-gray italic mb-6">
-                      "{testimonial.content}"
-                    </p>
-                  </div>
-                  <div className="flex items-center">
-                    <img 
-                      src={testimonial.avatar} 
-                      alt={testimonial.name}
-                      className="w-12 h-12 rounded-full object-cover mr-4"
-                    />
-                    <div>
-                      <div className="font-semibold text-zenthra-black">{testimonial.name}</div>
-                      <div className="text-sm text-zenthra-gray">{testimonial.title}</div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* Newsletter Section */}
-      <section className="py-20 bg-zenthra-black text-white">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="font-playfair text-4xl md:text-5xl font-bold mb-6">
-            Stay Connected
-          </h2>
-          <p className="text-xl opacity-90 mb-8 max-w-2xl mx-auto">
-            Be the first to know about new collections, exclusive offers, and family-friendly events
-          </p>
-          
-          <form onSubmit={handleNewsletterSubmit} className="max-w-md mx-auto">
-            <div className="flex">
-              <Input 
-                type="email" 
-                placeholder="Enter your email address" 
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="flex-1 px-6 py-4 text-black rounded-l-lg border-0 rounded-r-none focus:outline-none focus:ring-2 focus:ring-zenthra-gold"
-                required
-              />
-              <Button 
-                type="submit"
-                disabled={newsletterMutation.isPending}
-                className="btn-primary px-8 py-4 font-semibold rounded-r-2xl rounded-l-none"
-              >
-                {newsletterMutation.isPending ? "Subscribing..." : "Subscribe"}
-              </Button>
+      <section className="py-32 bg-zenthra-light">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div 
+            ref={newsletterRef}
+            className="text-center scroll-reveal"
+          >
+            <div className="glass-effect rounded-3xl p-12 md:p-16">
+              <Sparkles className="w-12 h-12 text-zenthra-secondary mx-auto mb-8 pulse-glow" />
+              <h2 className="font-poppins text-4xl md:text-5xl font-bold text-zenthra-primary mb-6 gradient-text">
+                Stay in the Loop
+              </h2>
+              <p className="text-xl text-zenthra-gray mb-12 max-w-2xl mx-auto">
+                Be the first to discover new collections, exclusive offers, and insider stories from the world of ZENTHRA
+              </p>
+              
+              <form onSubmit={handleNewsletterSubmit} className="flex flex-col sm:flex-row gap-4 max-w-lg mx-auto">
+                <Input
+                  type="email"
+                  placeholder="Enter your email address"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="flex-1 px-6 py-4 text-lg rounded-3xl border-2 border-zenthra-secondary/20 focus:border-zenthra-secondary focus:ring-zenthra-secondary"
+                  required
+                />
+                <Button 
+                  type="submit"
+                  disabled={newsletterMutation.isPending}
+                  className="btn-primary px-8 py-4 text-lg"
+                >
+                  {newsletterMutation.isPending ? "Subscribing..." : "Subscribe"}
+                </Button>
+              </form>
+              
+              <p className="text-sm text-zenthra-gray mt-6">
+                Join 10,000+ subscribers. Unsubscribe anytime.
+              </p>
             </div>
-            <p className="text-sm opacity-70 mt-4">
-              We respect your privacy. Unsubscribe at any time.
-            </p>
-          </form>
+          </div>
         </div>
       </section>
     </div>

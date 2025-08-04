@@ -11,6 +11,7 @@ import ProductDetail from "@/pages/product-detail";
 import Cart from "@/pages/cart";
 import About from "@/pages/about";
 import Contact from "@/pages/contact";
+import OurStory from "@/pages/our-story";
 import NotFound from "@/pages/not-found";
 import { useCartStore } from "@/components/cart-store";
 import { useQuery } from "@tanstack/react-query";
@@ -45,6 +46,7 @@ function Router() {
           <Route path="/product/:id" component={ProductDetail} />
           <Route path="/cart" component={Cart} />
           <Route path="/about" component={About} />
+          <Route path="/our-story" component={OurStory} />
           <Route path="/contact" component={Contact} />
           <Route component={NotFound} />
         </Switch>

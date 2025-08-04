@@ -42,19 +42,37 @@ export default function ProductCard({ product }: ProductCardProps) {
   });
 
   return (
-    <Card className="group bg-white border border-gray-100 overflow-hidden hover-scale shadow-sm hover:shadow-xl transition-all duration-300">
-      <Link href={`/product/${product.id}`}>
-        <div className="aspect-square overflow-hidden">
-          <img 
-            src={product.imageUrl} 
-            alt={product.name}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-          />
-        </div>
-      </Link>
+    <Card className="group overflow-hidden hover-lift card-3d border-0 shadow-lg bg-zenthra-white">
+      <div className="relative">
+        <Link href={`/product/${product.id}`}>
+          <div className="aspect-square overflow-hidden">
+            <img 
+              src={product.imageUrl} 
+              alt={product.name}
+              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+            />
+          </div>
+        </Link>
+        <div className="absolute inset-0 bg-gradient-to-t from-zenthra-primary/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+        {product.featured && (
+          <div className="absolute top-4 left-4">
+            <span className="bg-gradient-to-r from-zenthra-secondary to-zenthra-accent text-white px-4 py-2 rounded-full text-sm font-semibold pulse-glow">
+              Featured
+            </span>
+          </div>
+        )}
+        {!product.inStock && (
+          <div className="absolute top-4 right-4">
+            <span className="bg-red-500 text-white px-4 py-2 rounded-full text-sm font-semibold">
+              Out of Stock
+            </span>
+          </div>
+        )}
+      </div>
+      
       <CardContent className="p-6">
         <Link href={`/product/${product.id}`}>
-          <h3 className="font-semibold text-lg text-zenthra-black mb-2 hover:text-zenthra-gold transition-colors">
+          <h3 className="font-poppins text-xl font-semibold text-zenthra-primary mb-2 group-hover:gradient-text transition-all duration-300 cursor-pointer">
             {product.name}
           </h3>
         </Link>
@@ -62,13 +80,13 @@ export default function ProductCard({ product }: ProductCardProps) {
           {product.description}
         </p>
         <div className="flex items-center justify-between">
-          <span className="font-playfair text-xl font-bold text-zenthra-black">
+          <span className="font-poppins text-2xl font-bold text-zenthra-primary gradient-text">
             ${product.price}
           </span>
           <Button 
             onClick={() => addToCartMutation.mutate()}
             disabled={!product.inStock || addToCartMutation.isPending}
-            className="btn-secondary"
+            className="btn-primary text-sm px-6 py-3"
           >
             {addToCartMutation.isPending ? "Adding..." : "Add to Cart"}
           </Button>
