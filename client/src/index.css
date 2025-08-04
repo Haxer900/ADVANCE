@@ -1,8 +1,8 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
 
 :root {
   --background: hsl(0, 0%, 100%);
@@ -26,11 +26,15 @@
   --ring: hsl(0, 0%, 0%);
   --radius: 0.5rem;
   
-  /* ZENTHRA Brand Colors */
-  --zenthra-gold: hsl(47, 100%, 48%);
+  /* ZENTHRA Brand Colors - Updated Premium Palette */
+  --zenthra-gold: hsl(43, 89%, 38%);
+  --zenthra-gold-light: hsl(43, 89%, 48%);
+  --zenthra-charcoal: hsl(220, 13%, 18%);
   --zenthra-black: hsl(0, 0%, 0%);
   --zenthra-gray: hsl(215, 13.8%, 34.1%);
-  --zenthra-light: hsl(210, 40%, 98%);
+  --zenthra-gray-light: hsl(215, 20%, 65%);
+  --zenthra-cream: hsl(45, 25%, 97%);
+  --zenthra-light: hsl(45, 40%, 98%);
 }
 
 .dark {
@@ -83,6 +87,14 @@
     color: var(--zenthra-gold);
   }
 
+  .text-zenthra-gold-light {
+    color: var(--zenthra-gold-light);
+  }
+
+  .text-zenthra-charcoal {
+    color: var(--zenthra-charcoal);
+  }
+
   .text-zenthra-black {
     color: var(--zenthra-black);
   }
@@ -91,12 +103,28 @@
     color: var(--zenthra-gray);
   }
 
+  .text-zenthra-gray-light {
+    color: var(--zenthra-gray-light);
+  }
+
   .bg-zenthra-gold {
     background-color: var(--zenthra-gold);
   }
 
+  .bg-zenthra-gold-light {
+    background-color: var(--zenthra-gold-light);
+  }
+
+  .bg-zenthra-charcoal {
+    background-color: var(--zenthra-charcoal);
+  }
+
   .bg-zenthra-black {
     background-color: var(--zenthra-black);
+  }
+
+  .bg-zenthra-cream {
+    background-color: var(--zenthra-cream);
   }
 
   .bg-zenthra-light {
@@ -105,6 +133,10 @@
 
   .border-zenthra-gold {
     border-color: var(--zenthra-gold);
+  }
+
+  .border-zenthra-charcoal {
+    border-color: var(--zenthra-charcoal);
   }
 
   .hover-scale {
@@ -125,6 +157,55 @@
 
   .animate-float {
     animation: float 3s ease-in-out infinite;
+  }
+
+  /* Rounded Button Styles */
+  .btn-rounded {
+    border-radius: 2rem;
+  }
+
+  .btn-rounded-md {
+    border-radius: 1.5rem;
+  }
+
+  .btn-rounded-sm {
+    border-radius: 1rem;
+  }
+
+  /* Enhanced Button Styles */
+  .btn-primary {
+    background: linear-gradient(135deg, var(--zenthra-gold) 0%, var(--zenthra-gold-light) 100%);
+    color: white;
+    border: none;
+    border-radius: 2rem;
+    padding: 0.75rem 2rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(198, 160, 46, 0.3);
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(198, 160, 46, 0.4);
+    background: linear-gradient(135deg, var(--zenthra-gold-light) 0%, var(--zenthra-gold) 100%);
+  }
+
+  .btn-secondary {
+    background: linear-gradient(135deg, var(--zenthra-charcoal) 0%, var(--zenthra-black) 100%);
+    color: white;
+    border: none;
+    border-radius: 2rem;
+    padding: 0.75rem 2rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  }
+
+  .btn-secondary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+    background: linear-gradient(135deg, var(--zenthra-gold) 0%, var(--zenthra-gold-light) 100%);
+    color: white;
   }
 }
 

@@ -44,7 +44,7 @@ export default function Cart() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/cart", sessionId] });
-      setCartCount(Math.max(0, (cartItems?.length || 1) - 1));
+      setCartCount(Math.max(0, ((cartItems as CartItem[])?.length || 1) - 1));
       toast({
         title: "Item Removed",
         description: "Item has been removed from your cart.",
@@ -62,14 +62,15 @@ export default function Cart() {
   const cartItemsWithProducts = useMemo(() => {
     if (!cartItems || !products) return [];
     
-    return cartItems.map((cartItem: CartItem) => {
-      const product = products.find((p: Product) => p.id === cartItem.productId);
+    return (cartItems as CartItem[]).map((cartItem: CartItem) => {
+      const product = (products as Product[]).find((p: Product) => p.id === cartItem.productId);
       return { ...cartItem, product };
     }).filter(item => item.product);
   }, [cartItems, products]);
 
   const totalPrice = useMemo(() => {
     return cartItemsWithProducts.reduce((total, item) => {
+      if (!item.product) return total;
       return total + (parseFloat(item.product.price) * item.quantity);
     }, 0);
   }, [cartItemsWithProducts]);
@@ -89,7 +90,7 @@ export default function Cart() {
     );
   }
 
-  if (!cartItems || cartItems.length === 0) {
+  if (!cartItems || (cartItems as CartItem[]).length === 0) {
     return (
       <div className="min-h-screen bg-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
@@ -102,7 +103,7 @@ export default function Cart() {
               Discover our premium collections and find something you love.
             </p>
             <Link href="/products">
-              <Button className="bg-zenthra-gold text-black hover:bg-yellow-500 px-8 py-4 text-lg font-semibold">
+              <Button className="btn-primary px-8 py-4 text-lg font-semibold">
                 Continue Shopping
               </Button>
             </Link>
@@ -120,7 +121,7 @@ export default function Cart() {
         </h1>
 
         <div className="space-y-6">
-          {cartItemsWithProducts.map((item) => (
+          {cartItemsWithProducts.map((item: any) => (
             <Card key={item.id} className="overflow-hidden">
               <CardContent className="p-6">
                 <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-4 sm:space-y-0 sm:space-x-6">
@@ -207,11 +208,11 @@ export default function Cart() {
             </div>
             
             <div className="space-y-4">
-              <Button className="w-full bg-zenthra-black text-white hover:bg-zenthra-gold hover:text-black transition-colors duration-300 h-14 text-lg font-semibold">
+              <Button className="w-full btn-secondary h-14 text-lg font-semibold">
                 Proceed to Checkout
               </Button>
               <Link href="/products">
-                <Button variant="outline" className="w-full h-12">
+                <Button variant="outline" className="w-full h-12 btn-rounded">
                   Continue Shopping
                 </Button>
               </Link>

@@ -68,7 +68,7 @@ export default function ProductCard({ product }: ProductCardProps) {
           <Button 
             onClick={() => addToCartMutation.mutate()}
             disabled={!product.inStock || addToCartMutation.isPending}
-            className="bg-zenthra-black text-white hover:bg-zenthra-gold hover:text-black transition-colors duration-300"
+            className="btn-secondary"
           >
             {addToCartMutation.isPending ? "Adding..." : "Add to Cart"}
           </Button>

@@ -33,10 +33,10 @@ export default function Footer() {
           <div>
             <h3 className="font-semibold text-zenthra-black mb-6">Quick Links</h3>
             <ul className="space-y-4">
-              <li><Link href="/about"><a className="text-zenthra-gray hover:text-zenthra-gold transition-colors duration-300">About Us</a></Link></li>
-              <li><Link href="/products"><a className="text-zenthra-gray hover:text-zenthra-gold transition-colors duration-300">Collections</a></Link></li>
-              <li><Link href="/products?featured=true"><a className="text-zenthra-gray hover:text-zenthra-gold transition-colors duration-300">New Arrivals</a></Link></li>
-              <li><Link href="/contact"><a className="text-zenthra-gray hover:text-zenthra-gold transition-colors duration-300">Contact</a></Link></li>
+              <li><Link href="/about"><span className="text-zenthra-gray hover:text-zenthra-gold transition-colors duration-300 cursor-pointer">About Us</span></Link></li>
+              <li><Link href="/products"><span className="text-zenthra-gray hover:text-zenthra-gold transition-colors duration-300 cursor-pointer">Collections</span></Link></li>
+              <li><Link href="/products?featured=true"><span className="text-zenthra-gray hover:text-zenthra-gold transition-colors duration-300 cursor-pointer">New Arrivals</span></Link></li>
+              <li><Link href="/contact"><span className="text-zenthra-gray hover:text-zenthra-gold transition-colors duration-300 cursor-pointer">Contact</span></Link></li>
             </ul>
           </div>
           

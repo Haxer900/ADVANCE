@@ -25,7 +25,7 @@ function CartUpdater() {
   });
 
   useEffect(() => {
-    if (cartItems) {
+    if (cartItems && Array.isArray(cartItems)) {
       const totalItems = cartItems.reduce((total: number, item: any) => total + item.quantity, 0);
       setCartCount(totalItems);
     }

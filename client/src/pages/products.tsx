@@ -27,7 +27,7 @@ export default function Products() {
   const filteredAndSortedProducts = useMemo(() => {
     if (!products) return [];
 
-    let filtered = [...products];
+    let filtered = [...(products as Product[] || [])];
 
     // Filter by featured if specified in URL
     if (featuredFromUrl === 'true') {
@@ -88,7 +88,7 @@ export default function Products() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Categories</SelectItem>
-                {categories?.map((category: any) => (
+                {(categories as any[])?.map((category: any) => (
                   <SelectItem key={category.id} value={category.name}>
                     {category.name}
                   </SelectItem>
@@ -133,7 +133,7 @@ export default function Products() {
                 <Button onClick={() => {
                   setSelectedCategory("all");
                   setSortBy("name");
-                }} variant="outline">
+                }} variant="outline" className="btn-rounded">
                   Clear Filters
                 </Button>
               </div>
@@ -145,7 +145,7 @@ export default function Products() {
         {!isLoading && (
           <div className="text-center mt-12">
             <p className="text-zenthra-gray">
-              Showing {filteredAndSortedProducts.length} of {products?.length || 0} products
+              Showing {filteredAndSortedProducts.length} of {(products as Product[])?.length || 0} products
             </p>
           </div>
         )}

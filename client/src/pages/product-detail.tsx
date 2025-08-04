@@ -20,7 +20,7 @@ export default function ProductDetail() {
   const { data: product, isLoading } = useQuery({
     queryKey: ["/api/products", params?.id],
     enabled: !!params?.id,
-  });
+  }) as { data: Product | undefined; isLoading: boolean };
 
   const addToCartMutation = useMutation({
     mutationFn: async () => {
@@ -143,18 +143,18 @@ export default function ProductDetail() {
               <Button 
                 onClick={() => addToCartMutation.mutate()}
                 disabled={!product.inStock || addToCartMutation.isPending}
-                className="w-full bg-zenthra-black text-white hover:bg-zenthra-gold hover:text-black transition-colors duration-300 h-14 text-lg font-semibold"
+                className="w-full btn-secondary h-14 text-lg font-semibold"
               >
                 <ShoppingBag className="h-5 w-5 mr-2" />
                 {addToCartMutation.isPending ? "Adding to Cart..." : "Add to Cart"}
               </Button>
               
               <div className="flex space-x-4">
-                <Button variant="outline" className="flex-1 h-12">
+                <Button variant="outline" className="flex-1 h-12 btn-rounded">
                   <Heart className="h-5 w-5 mr-2" />
                   Add to Wishlist
                 </Button>
-                <Button variant="outline" className="flex-1 h-12">
+                <Button variant="outline" className="flex-1 h-12 btn-rounded">
                   <Share2 className="h-5 w-5 mr-2" />
                   Share
                 </Button>

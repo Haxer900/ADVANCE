@@ -32,13 +32,13 @@ export default function Header() {
             <div className="ml-10 flex items-baseline space-x-8">
               {navigation.map((item) => (
                 <Link key={item.name} href={item.href}>
-                  <a className={`px-3 py-2 text-sm font-medium transition-colors duration-300 ${
+                  <span className={`px-3 py-2 text-sm font-medium transition-colors duration-300 cursor-pointer ${
                     location === item.href 
                       ? "text-zenthra-black" 
                       : "text-zenthra-gray hover:text-zenthra-gold"
                   }`}>
                     {item.name}
-                  </a>
+                  </span>
                 </Link>
               ))}
             </div>

@@ -72,12 +72,12 @@ export default function Home() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center animate-slide-up">
             <Link href="/products">
-              <Button className="bg-zenthra-gold hover:bg-yellow-500 text-black px-8 py-4 text-lg font-semibold transition-all duration-300 hover:shadow-xl transform hover:-translate-y-1">
+              <Button className="btn-primary px-8 py-4 text-lg font-semibold">
                 Shop Collection
               </Button>
             </Link>
             <Link href="/about">
-              <Button variant="outline" className="border-2 border-white text-white hover:bg-white hover:text-black px-8 py-4 text-lg font-semibold transition-all duration-300">
+              <Button variant="outline" className="border-2 border-white text-white hover:bg-white hover:text-black px-8 py-4 text-lg font-semibold btn-rounded transition-all duration-300">
                 Explore Story
               </Button>
             </Link>
@@ -109,10 +109,10 @@ export default function Home() {
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {categories?.map((category: Category) => (
+              {(categories as Category[])?.map((category: Category) => (
                 <div key={category.id} className="group relative overflow-hidden bg-white rounded-lg shadow-lg hover-scale">
                   <img 
-                    src={category.imageUrl} 
+                    src={category.imageUrl || ""} 
                     alt={category.name}
                     className="w-full h-80 object-cover group-hover:scale-105 transition-transform duration-500"
                   />
@@ -153,7 +153,7 @@ export default function Home() {
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-              {featuredProducts?.map((product: Product) => (
+              {(featuredProducts as Product[])?.map((product: Product) => (
                 <ProductCard key={product.id} product={product} />
               ))}
             </div>
@@ -161,7 +161,7 @@ export default function Home() {
           
           <div className="text-center mt-12">
             <Link href="/products">
-              <Button className="bg-zenthra-black text-white px-8 py-4 text-lg font-semibold hover:bg-zenthra-gold hover:text-black transition-all duration-300">
+              <Button className="btn-secondary px-8 py-4 text-lg font-semibold">
                 View All Products
               </Button>
             </Link>
@@ -184,7 +184,7 @@ export default function Home() {
                 Every piece in our collection tells a story of excellence, from the finest materials to the most skilled artisans. We believe in creating not just products, but experiences that enrich your daily life.
               </p>
               <Link href="/about">
-                <Button className="bg-zenthra-gold text-black px-8 py-4 text-lg font-semibold hover:bg-yellow-500 transition-colors duration-300">
+                <Button className="btn-primary px-8 py-4 text-lg font-semibold">
                   Learn More About Us
                 </Button>
               </Link>
@@ -274,7 +274,7 @@ export default function Home() {
               <Button 
                 type="submit"
                 disabled={newsletterMutation.isPending}
-                className="bg-zenthra-gold text-black px-8 py-4 font-semibold rounded-r-lg rounded-l-none hover:bg-yellow-500 transition-colors duration-300"
+                className="btn-primary px-8 py-4 font-semibold rounded-r-2xl rounded-l-none"
               >
                 {newsletterMutation.isPending ? "Subscribing..." : "Subscribe"}
               </Button>
