@@ -1,4 +1,7 @@
-import { type Product, type InsertProduct, type Category, type InsertCategory, type CartItem, type InsertCartItem, type Newsletter, type InsertNewsletter } from "@shared/schema";
+import { type Product, type InsertProduct, type Category, type InsertCategory, type CartItem, type InsertCartItem, type Newsletter, type InsertNewsletter, type User, type InsertUser, type Order, type InsertOrder, type AdminNotification, type InsertAdminNotification, type InventoryAlert, type InsertInventoryAlert, type Refund, type InsertRefund, type AnalyticsData, type InsertAnalyticsData, type Integration, type InsertIntegration, type Tag, type InsertTag, type Currency, type InsertCurrency, type Affiliate, type InsertAffiliate, type EmailCampaign, type InsertEmailCampaign } from "@shared/schema";
+import { db } from "./db";
+import { eq } from "drizzle-orm";
+import { products, categories, cartItems, newsletters, users, orders, adminNotifications, inventoryAlerts, refunds, analyticsData, integrations, tags, currencies, affiliates, emailCampaigns } from "@shared/schema";
 import { randomUUID } from "crypto";
 
 export interface IStorage {
@@ -8,11 +11,15 @@ export interface IStorage {
   getFeaturedProducts(): Promise<Product[]>;
   getProductsByCategory(category: string): Promise<Product[]>;
   createProduct(product: InsertProduct): Promise<Product>;
+  updateProduct(id: string, product: Partial<InsertProduct>): Promise<Product | undefined>;
+  deleteProduct(id: string): Promise<boolean>;
 
   // Categories
   getCategories(): Promise<Category[]>;
   getCategory(id: string): Promise<Category | undefined>;
   createCategory(category: InsertCategory): Promise<Category>;
+  updateCategory(id: string, category: Partial<InsertCategory>): Promise<Category | undefined>;
+  deleteCategory(id: string): Promise<boolean>;
 
   // Cart
   getCartItems(sessionId: string): Promise<CartItem[]>;
@@ -23,6 +30,69 @@ export interface IStorage {
 
   // Newsletter
   subscribeNewsletter(newsletter: InsertNewsletter): Promise<Newsletter>;
+  getNewsletters(): Promise<Newsletter[]>;
+
+  // Users (Admin Management)
+  getUsers(): Promise<User[]>;
+  getUser(id: string): Promise<User | undefined>;
+  getUserByEmail(email: string): Promise<User | undefined>;
+  createUser(user: InsertUser): Promise<User>;
+  updateUser(id: string, user: Partial<InsertUser>): Promise<User | undefined>;
+  deleteUser(id: string): Promise<boolean>;
+
+  // Orders (Admin Management)
+  getOrders(): Promise<Order[]>;
+  getOrder(id: string): Promise<Order | undefined>;
+  getOrdersByUser(userId: string): Promise<Order[]>;
+  createOrder(order: InsertOrder): Promise<Order>;
+  updateOrder(id: string, order: Partial<InsertOrder>): Promise<Order | undefined>;
+  deleteOrder(id: string): Promise<boolean>;
+
+  // Admin Notifications
+  getAdminNotifications(): Promise<AdminNotification[]>;
+  createAdminNotification(notification: InsertAdminNotification): Promise<AdminNotification>;
+  markNotificationRead(id: string): Promise<boolean>;
+
+  // Inventory & Alerts
+  getInventoryAlerts(): Promise<InventoryAlert[]>;
+  createInventoryAlert(alert: InsertInventoryAlert): Promise<InventoryAlert>;
+  acknowledgeAlert(id: string): Promise<boolean>;
+
+  // Refunds & Returns
+  getRefunds(): Promise<Refund[]>;
+  getRefund(id: string): Promise<Refund | undefined>;
+  createRefund(refund: InsertRefund): Promise<Refund>;
+  updateRefund(id: string, refund: Partial<InsertRefund>): Promise<Refund | undefined>;
+
+  // Analytics
+  getAnalyticsData(): Promise<AnalyticsData[]>;
+  createAnalyticsData(data: InsertAnalyticsData): Promise<AnalyticsData>;
+
+  // Integrations
+  getIntegrations(): Promise<Integration[]>;
+  getIntegration(name: string): Promise<Integration | undefined>;
+  createIntegration(integration: InsertIntegration): Promise<Integration>;
+  updateIntegration(name: string, integration: Partial<InsertIntegration>): Promise<Integration | undefined>;
+
+  // Tags
+  getTags(): Promise<Tag[]>;
+  createTag(tag: InsertTag): Promise<Tag>;
+  deleteTag(id: string): Promise<boolean>;
+
+  // Currencies
+  getCurrencies(): Promise<Currency[]>;
+  createCurrency(currency: InsertCurrency): Promise<Currency>;
+  updateCurrency(id: string, currency: Partial<InsertCurrency>): Promise<Currency | undefined>;
+
+  // Affiliates
+  getAffiliates(): Promise<Affiliate[]>;
+  createAffiliate(affiliate: InsertAffiliate): Promise<Affiliate>;
+  updateAffiliate(id: string, affiliate: Partial<InsertAffiliate>): Promise<Affiliate | undefined>;
+
+  // Email Campaigns
+  getEmailCampaigns(): Promise<EmailCampaign[]>;
+  createEmailCampaign(campaign: InsertEmailCampaign): Promise<EmailCampaign>;
+  updateEmailCampaign(id: string, campaign: Partial<InsertEmailCampaign>): Promise<EmailCampaign | undefined>;
 }
 
 export class MemStorage implements IStorage {
@@ -268,6 +338,357 @@ export class MemStorage implements IStorage {
     this.newsletters.set(id, newsletter);
     return newsletter;
   }
+
+  async getNewsletters(): Promise<Newsletter[]> {
+    return Array.from(this.newsletters.values());
+  }
+
+  // Stub implementations for admin methods (return empty arrays/false for memory storage)
+  async getUsers(): Promise<User[]> { return []; }
+  async getUser(id: string): Promise<User | undefined> { return undefined; }
+  async getUserByEmail(email: string): Promise<User | undefined> { return undefined; }
+  async createUser(user: InsertUser): Promise<User> { throw new Error("Database required for user management"); }
+  async updateUser(id: string, user: Partial<InsertUser>): Promise<User | undefined> { return undefined; }
+  async deleteUser(id: string): Promise<boolean> { return false; }
+  
+  async getOrders(): Promise<Order[]> { return []; }
+  async getOrder(id: string): Promise<Order | undefined> { return undefined; }
+  async getOrdersByUser(userId: string): Promise<Order[]> { return []; }
+  async createOrder(order: InsertOrder): Promise<Order> { throw new Error("Database required for order management"); }
+  async updateOrder(id: string, order: Partial<InsertOrder>): Promise<Order | undefined> { return undefined; }
+  async deleteOrder(id: string): Promise<boolean> { return false; }
+  
+  async getAdminNotifications(): Promise<AdminNotification[]> { return []; }
+  async createAdminNotification(notification: InsertAdminNotification): Promise<AdminNotification> { throw new Error("Database required"); }
+  async markNotificationRead(id: string): Promise<boolean> { return false; }
+  
+  async getInventoryAlerts(): Promise<InventoryAlert[]> { return []; }
+  async createInventoryAlert(alert: InsertInventoryAlert): Promise<InventoryAlert> { throw new Error("Database required"); }
+  async acknowledgeAlert(id: string): Promise<boolean> { return false; }
+  
+  async getRefunds(): Promise<Refund[]> { return []; }
+  async getRefund(id: string): Promise<Refund | undefined> { return undefined; }
+  async createRefund(refund: InsertRefund): Promise<Refund> { throw new Error("Database required"); }
+  async updateRefund(id: string, refund: Partial<InsertRefund>): Promise<Refund | undefined> { return undefined; }
+  
+  async getAnalyticsData(): Promise<AnalyticsData[]> { return []; }
+  async createAnalyticsData(data: InsertAnalyticsData): Promise<AnalyticsData> { throw new Error("Database required"); }
+  
+  async getIntegrations(): Promise<Integration[]> { return []; }
+  async getIntegration(name: string): Promise<Integration | undefined> { return undefined; }
+  async createIntegration(integration: InsertIntegration): Promise<Integration> { throw new Error("Database required"); }
+  async updateIntegration(name: string, integration: Partial<InsertIntegration>): Promise<Integration | undefined> { return undefined; }
+  
+  async getTags(): Promise<Tag[]> { return []; }
+  async createTag(tag: InsertTag): Promise<Tag> { throw new Error("Database required"); }
+  async deleteTag(id: string): Promise<boolean> { return false; }
+  
+  async getCurrencies(): Promise<Currency[]> { return []; }
+  async createCurrency(currency: InsertCurrency): Promise<Currency> { throw new Error("Database required"); }
+  async updateCurrency(id: string, currency: Partial<InsertCurrency>): Promise<Currency | undefined> { return undefined; }
+  
+  async getAffiliates(): Promise<Affiliate[]> { return []; }
+  async createAffiliate(affiliate: InsertAffiliate): Promise<Affiliate> { throw new Error("Database required"); }
+  async updateAffiliate(id: string, affiliate: Partial<InsertAffiliate>): Promise<Affiliate | undefined> { return undefined; }
+  
+  async getEmailCampaigns(): Promise<EmailCampaign[]> { return []; }
+  async createEmailCampaign(campaign: InsertEmailCampaign): Promise<EmailCampaign> { throw new Error("Database required"); }
+  async updateEmailCampaign(id: string, campaign: Partial<InsertEmailCampaign>): Promise<EmailCampaign | undefined> { return undefined; }
 }
 
-export const storage = new MemStorage();
+// Database Storage Implementation
+export class DatabaseStorage implements IStorage {
+  // Products
+  async getProducts(): Promise<Product[]> {
+    return await db.select().from(products);
+  }
+
+  async getProduct(id: string): Promise<Product | undefined> {
+    const result = await db.select().from(products).where(eq(products.id, id));
+    return result[0] || undefined;
+  }
+
+  async getFeaturedProducts(): Promise<Product[]> {
+    return await db.select().from(products).where(eq(products.featured, true));
+  }
+
+  async getProductsByCategory(category: string): Promise<Product[]> {
+    return await db.select().from(products).where(eq(products.category, category));
+  }
+
+  async createProduct(product: InsertProduct): Promise<Product> {
+    const result = await db.insert(products).values(product).returning();
+    return result[0];
+  }
+
+  async updateProduct(id: string, product: Partial<InsertProduct>): Promise<Product | undefined> {
+    const result = await db.update(products).set(product).where(eq(products.id, id)).returning();
+    return result[0] || undefined;
+  }
+
+  async deleteProduct(id: string): Promise<boolean> {
+    const result = await db.delete(products).where(eq(products.id, id));
+    return result.rowCount > 0;
+  }
+
+  // Categories
+  async getCategories(): Promise<Category[]> {
+    return await db.select().from(categories);
+  }
+
+  async getCategory(id: string): Promise<Category | undefined> {
+    const result = await db.select().from(categories).where(eq(categories.id, id));
+    return result[0] || undefined;
+  }
+
+  async createCategory(category: InsertCategory): Promise<Category> {
+    const result = await db.insert(categories).values(category).returning();
+    return result[0];
+  }
+
+  async updateCategory(id: string, category: Partial<InsertCategory>): Promise<Category | undefined> {
+    const result = await db.update(categories).set(category).where(eq(categories.id, id)).returning();
+    return result[0] || undefined;
+  }
+
+  async deleteCategory(id: string): Promise<boolean> {
+    const result = await db.delete(categories).where(eq(categories.id, id));
+    return result.rowCount > 0;
+  }
+
+  // Cart
+  async getCartItems(sessionId: string): Promise<CartItem[]> {
+    return await db.select().from(cartItems).where(eq(cartItems.sessionId, sessionId));
+  }
+
+  async addToCart(item: InsertCartItem): Promise<CartItem> {
+    const result = await db.insert(cartItems).values(item).returning();
+    return result[0];
+  }
+
+  async updateCartItem(id: string, quantity: number): Promise<CartItem | undefined> {
+    const result = await db.update(cartItems).set({ quantity }).where(eq(cartItems.id, id)).returning();
+    return result[0] || undefined;
+  }
+
+  async removeFromCart(id: string): Promise<boolean> {
+    const result = await db.delete(cartItems).where(eq(cartItems.id, id));
+    return result.rowCount > 0;
+  }
+
+  async clearCart(sessionId: string): Promise<boolean> {
+    const result = await db.delete(cartItems).where(eq(cartItems.sessionId, sessionId));
+    return result.rowCount > 0;
+  }
+
+  // Newsletter
+  async subscribeNewsletter(newsletter: InsertNewsletter): Promise<Newsletter> {
+    const result = await db.insert(newsletters).values(newsletter).returning();
+    return result[0];
+  }
+
+  async getNewsletters(): Promise<Newsletter[]> {
+    return await db.select().from(newsletters);
+  }
+
+  // Users (Admin Management)
+  async getUsers(): Promise<User[]> {
+    return await db.select().from(users);
+  }
+
+  async getUser(id: string): Promise<User | undefined> {
+    const result = await db.select().from(users).where(eq(users.id, id));
+    return result[0] || undefined;
+  }
+
+  async getUserByEmail(email: string): Promise<User | undefined> {
+    const result = await db.select().from(users).where(eq(users.email, email));
+    return result[0] || undefined;
+  }
+
+  async createUser(user: InsertUser): Promise<User> {
+    const result = await db.insert(users).values(user).returning();
+    return result[0];
+  }
+
+  async updateUser(id: string, user: Partial<InsertUser>): Promise<User | undefined> {
+    const result = await db.update(users).set(user).where(eq(users.id, id)).returning();
+    return result[0] || undefined;
+  }
+
+  async deleteUser(id: string): Promise<boolean> {
+    const result = await db.delete(users).where(eq(users.id, id));
+    return result.rowCount > 0;
+  }
+
+  // Orders (Admin Management)
+  async getOrders(): Promise<Order[]> {
+    return await db.select().from(orders);
+  }
+
+  async getOrder(id: string): Promise<Order | undefined> {
+    const result = await db.select().from(orders).where(eq(orders.id, id));
+    return result[0] || undefined;
+  }
+
+  async getOrdersByUser(userId: string): Promise<Order[]> {
+    return await db.select().from(orders).where(eq(orders.userId, userId));
+  }
+
+  async createOrder(order: InsertOrder): Promise<Order> {
+    const result = await db.insert(orders).values(order).returning();
+    return result[0];
+  }
+
+  async updateOrder(id: string, order: Partial<InsertOrder>): Promise<Order | undefined> {
+    const result = await db.update(orders).set(order).where(eq(orders.id, id)).returning();
+    return result[0] || undefined;
+  }
+
+  async deleteOrder(id: string): Promise<boolean> {
+    const result = await db.delete(orders).where(eq(orders.id, id));
+    return result.rowCount > 0;
+  }
+
+  // Admin Notifications
+  async getAdminNotifications(): Promise<AdminNotification[]> {
+    return await db.select().from(adminNotifications);
+  }
+
+  async createAdminNotification(notification: InsertAdminNotification): Promise<AdminNotification> {
+    const result = await db.insert(adminNotifications).values(notification).returning();
+    return result[0];
+  }
+
+  async markNotificationRead(id: string): Promise<boolean> {
+    const result = await db.update(adminNotifications).set({ isRead: true }).where(eq(adminNotifications.id, id));
+    return result.rowCount > 0;
+  }
+
+  // Inventory & Alerts
+  async getInventoryAlerts(): Promise<InventoryAlert[]> {
+    return await db.select().from(inventoryAlerts);
+  }
+
+  async createInventoryAlert(alert: InsertInventoryAlert): Promise<InventoryAlert> {
+    const result = await db.insert(inventoryAlerts).values(alert).returning();
+    return result[0];
+  }
+
+  async acknowledgeAlert(id: string): Promise<boolean> {
+    const result = await db.update(inventoryAlerts).set({ acknowledged: true }).where(eq(inventoryAlerts.id, id));
+    return result.rowCount > 0;
+  }
+
+  // Refunds & Returns
+  async getRefunds(): Promise<Refund[]> {
+    return await db.select().from(refunds);
+  }
+
+  async getRefund(id: string): Promise<Refund | undefined> {
+    const result = await db.select().from(refunds).where(eq(refunds.id, id));
+    return result[0] || undefined;
+  }
+
+  async createRefund(refund: InsertRefund): Promise<Refund> {
+    const result = await db.insert(refunds).values(refund).returning();
+    return result[0];
+  }
+
+  async updateRefund(id: string, refund: Partial<InsertRefund>): Promise<Refund | undefined> {
+    const result = await db.update(refunds).set(refund).where(eq(refunds.id, id)).returning();
+    return result[0] || undefined;
+  }
+
+  // Analytics
+  async getAnalyticsData(): Promise<AnalyticsData[]> {
+    return await db.select().from(analyticsData);
+  }
+
+  async createAnalyticsData(data: InsertAnalyticsData): Promise<AnalyticsData> {
+    const result = await db.insert(analyticsData).values(data).returning();
+    return result[0];
+  }
+
+  // Integrations
+  async getIntegrations(): Promise<Integration[]> {
+    return await db.select().from(integrations);
+  }
+
+  async getIntegration(name: string): Promise<Integration | undefined> {
+    const result = await db.select().from(integrations).where(eq(integrations.name, name));
+    return result[0] || undefined;
+  }
+
+  async createIntegration(integration: InsertIntegration): Promise<Integration> {
+    const result = await db.insert(integrations).values(integration).returning();
+    return result[0];
+  }
+
+  async updateIntegration(name: string, integration: Partial<InsertIntegration>): Promise<Integration | undefined> {
+    const result = await db.update(integrations).set(integration).where(eq(integrations.name, name)).returning();
+    return result[0] || undefined;
+  }
+
+  // Tags
+  async getTags(): Promise<Tag[]> {
+    return await db.select().from(tags);
+  }
+
+  async createTag(tag: InsertTag): Promise<Tag> {
+    const result = await db.insert(tags).values(tag).returning();
+    return result[0];
+  }
+
+  async deleteTag(id: string): Promise<boolean> {
+    const result = await db.delete(tags).where(eq(tags.id, id));
+    return result.rowCount > 0;
+  }
+
+  // Currencies
+  async getCurrencies(): Promise<Currency[]> {
+    return await db.select().from(currencies);
+  }
+
+  async createCurrency(currency: InsertCurrency): Promise<Currency> {
+    const result = await db.insert(currencies).values(currency).returning();
+    return result[0];
+  }
+
+  async updateCurrency(id: string, currency: Partial<InsertCurrency>): Promise<Currency | undefined> {
+    const result = await db.update(currencies).set(currency).where(eq(currencies.id, id)).returning();
+    return result[0] || undefined;
+  }
+
+  // Affiliates
+  async getAffiliates(): Promise<Affiliate[]> {
+    return await db.select().from(affiliates);
+  }
+
+  async createAffiliate(affiliate: InsertAffiliate): Promise<Affiliate> {
+    const result = await db.insert(affiliates).values(affiliate).returning();
+    return result[0];
+  }
+
+  async updateAffiliate(id: string, affiliate: Partial<InsertAffiliate>): Promise<Affiliate | undefined> {
+    const result = await db.update(affiliates).set(affiliate).where(eq(affiliates.id, id)).returning();
+    return result[0] || undefined;
+  }
+
+  // Email Campaigns
+  async getEmailCampaigns(): Promise<EmailCampaign[]> {
+    return await db.select().from(emailCampaigns);
+  }
+
+  async createEmailCampaign(campaign: InsertEmailCampaign): Promise<EmailCampaign> {
+    const result = await db.insert(emailCampaigns).values(campaign).returning();
+    return result[0];
+  }
+
+  async updateEmailCampaign(id: string, campaign: Partial<InsertEmailCampaign>): Promise<EmailCampaign | undefined> {
+    const result = await db.update(emailCampaigns).set(campaign).where(eq(emailCampaigns.id, id)).returning();
+    return result[0] || undefined;
+  }
+}
+
+export const storage = new DatabaseStorage();
