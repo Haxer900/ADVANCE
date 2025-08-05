@@ -7,6 +7,7 @@ import { apiRequest } from "@/lib/queryClient";
 import { useCartStore } from "@/components/cart-store";
 import { useToast } from "@/hooks/use-toast";
 import { useMemo } from "react";
+import { formatCurrency } from "@/lib/utils";
 import type { CartItem, Product } from "@shared/schema";
 
 export default function Cart() {
@@ -141,7 +142,7 @@ export default function Cart() {
                       {item.product.category}
                     </p>
                     <p className="text-xl font-playfair font-bold text-zenthra-black">
-                      ${item.product.price}
+                      {formatCurrency(item.product.price)}
                     </p>
                   </div>
 
@@ -189,7 +190,7 @@ export default function Cart() {
 
                   <div className="text-right">
                     <p className="text-xl font-playfair font-bold text-zenthra-black">
-                      ${(parseFloat(item.product.price) * item.quantity).toFixed(2)}
+                      {formatCurrency(parseFloat(item.product.price) * item.quantity)}
                     </p>
                   </div>
                 </div>
@@ -203,7 +204,7 @@ export default function Cart() {
             <div className="flex justify-between items-center mb-6">
               <span className="text-xl font-semibold text-zenthra-black">Total:</span>
               <span className="text-3xl font-playfair font-bold text-zenthra-black">
-                ${totalPrice.toFixed(2)}
+                {formatCurrency(totalPrice)}
               </span>
             </div>
             

@@ -90,24 +90,14 @@ const integrations = [
     icon: CreditCard,
   },
   {
-    name: "Shipping APIs",
-    href: "/admin/integrations/shipping",
-    icon: Truck,
-  },
-  {
     name: "Email Marketing",
-    href: "/admin/integrations/email",
+    href: "/admin/email-marketing",
     icon: Mail,
   },
   {
     name: "SMS/WhatsApp",
-    href: "/admin/integrations/messaging",
+    href: "/admin/sms-whatsapp",
     icon: MessageSquare,
-  },
-  {
-    name: "Analytics",
-    href: "/admin/integrations/analytics",
-    icon: TrendingUp,
   },
 ];
 

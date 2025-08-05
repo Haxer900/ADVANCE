@@ -5,6 +5,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useCartStore } from "./cart-store";
 import { useToast } from "@/hooks/use-toast";
+import { formatCurrency } from "@/lib/utils";
 import type { Product } from "@shared/schema";
 
 interface ProductCardProps {
@@ -81,7 +82,7 @@ export default function ProductCard({ product }: ProductCardProps) {
         </p>
         <div className="flex items-center justify-between">
           <span className="font-poppins text-2xl font-bold text-zenthra-primary gradient-text">
-            ${product.price}
+            {formatCurrency(product.price)}
           </span>
           <Button 
             onClick={() => addToCartMutation.mutate()}

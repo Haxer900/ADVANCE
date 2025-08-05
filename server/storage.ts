@@ -237,10 +237,10 @@ export class MemStorage implements IStorage {
     // Initialize default admin user
     const adminUser: User = {
       id: randomUUID(),
-      email: "admin@zenthra.com",
-      password: "$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi", // password
-      firstName: "Admin",
-      lastName: "User",
+      email: "yashparmar77077@gmail.com",
+      password: "$2b$10$OgXOn/TS.HBSlw83wmyov.vhvuSJG6HZxKjRZvbtMOfVcUfQLrblO", // Yash@23072005
+      firstName: "Yash",
+      lastName: "Parmar",
       phone: null,
       role: "admin",
       isVerified: true,

@@ -27,6 +27,15 @@ import AdminLogin from "@/pages/admin/login";
 import AdminLayout from "@/pages/admin/layout";
 import AdminDashboard from "@/pages/admin/dashboard";
 import AdminProducts from "@/pages/admin/products";
+import AdminOrders from "@/pages/admin/orders";
+import AdminUsers from "@/pages/admin/users";
+import AdminCategories from "@/pages/admin/categories";
+import AdminAnalytics from "@/pages/admin/analytics";
+import AdminNotifications from "@/pages/admin/notifications";
+import AdminEmailMarketing from "@/pages/admin/email-marketing";
+import AdminSettings from "@/pages/admin/settings";
+import AdminSMSWhatsApp from "@/pages/admin/sms-whatsapp";
+import AdminRefunds from "@/pages/admin/refunds";
 import PaymentIntegrations from "@/pages/admin/integrations/payments";
 import { useCartStore } from "@/components/cart-store";
 import { useQuery } from "@tanstack/react-query";
@@ -69,6 +78,15 @@ function Router() {
               <Switch>
                 <Route path="/admin/dashboard" component={AdminDashboard} />
                 <Route path="/admin/products" component={AdminProducts} />
+                <Route path="/admin/orders" component={AdminOrders} />
+                <Route path="/admin/users" component={AdminUsers} />
+                <Route path="/admin/categories" component={AdminCategories} />
+                <Route path="/admin/analytics" component={AdminAnalytics} />
+                <Route path="/admin/notifications" component={AdminNotifications} />
+                <Route path="/admin/email-marketing" component={AdminEmailMarketing} />
+                <Route path="/admin/sms-whatsapp" component={AdminSMSWhatsApp} />
+                <Route path="/admin/refunds" component={AdminRefunds} />
+                <Route path="/admin/settings" component={AdminSettings} />
                 <Route path="/admin/integrations/payments" component={PaymentIntegrations} />
                 <Route component={() => <div className="p-6"><h1 className="text-white text-2xl">Admin Page Coming Soon</h1></div>} />
               </Switch>
