@@ -134,7 +134,7 @@ export default function AdminDashboard() {
           </CardHeader>
           <CardContent>
             <ScrollArea className="h-48">
-              {alerts?.slice(0, 5).map((alert: any) => (
+              {Array.isArray(alerts) ? alerts.slice(0, 5).map((alert: any) => (
                 <div key={alert.id} className="flex items-center justify-between py-2 border-b border-neutral-700 last:border-0">
                   <div>
                     <p className="text-sm font-medium text-white">{alert.type.replace('_', ' ').toUpperCase()}</p>
@@ -144,7 +144,7 @@ export default function AdminDashboard() {
                     {alert.type}
                   </Badge>
                 </div>
-              )) || (
+              )) : (
                 <p className="text-neutral-400 text-sm">No alerts at the moment</p>
               )}
             </ScrollArea>
@@ -158,11 +158,11 @@ export default function AdminDashboard() {
               <Bell className="w-5 h-5 mr-2 text-blue-500" />
               Recent Notifications
             </CardTitle>
-            <Badge>{notifications?.filter((n: any) => !n.isRead).length || 0}</Badge>
+            <Badge>{Array.isArray(notifications) ? notifications.filter((n: any) => !n.isRead).length : 0}</Badge>
           </CardHeader>
           <CardContent>
             <ScrollArea className="h-48">
-              {notifications?.slice(0, 5).map((notification: any) => (
+              {Array.isArray(notifications) ? notifications.slice(0, 5).map((notification: any) => (
                 <div key={notification.id} className="flex items-start space-x-3 py-2 border-b border-neutral-700 last:border-0">
                   <div className={`w-2 h-2 rounded-full mt-2 ${notification.isRead ? 'bg-neutral-500' : 'bg-blue-500'}`} />
                   <div className="flex-1">
@@ -173,7 +173,7 @@ export default function AdminDashboard() {
                     </p>
                   </div>
                 </div>
-              )) || (
+              )) : (
                 <p className="text-neutral-400 text-sm">No notifications</p>
               )}
             </ScrollArea>
