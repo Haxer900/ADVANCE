@@ -1,21 +1,38 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useRoute } from "wouter";
+import { useRoute, Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Minus, Plus, ShoppingBag, Heart, Share2 } from "lucide-react";
-import { useState } from "react";
+import { Separator } from "@/components/ui/separator";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Minus, Plus, ShoppingBag, Heart, Share2, ArrowLeft, Truck, Shield, RotateCcw, Star } from "lucide-react";
+import { useState, useEffect } from "react";
 import { apiRequest } from "@/lib/queryClient";
 import { useCartStore } from "@/components/cart-store";
 import { useToast } from "@/hooks/use-toast";
+import { WishlistButton } from "@/components/wishlist-button";
+import { ProductReviews } from "@/components/product-reviews";
+import { RecentlyViewed } from "@/components/recently-viewed";
 import type { Product } from "@shared/schema";
 
 export default function ProductDetail() {
   const [, params] = useRoute("/product/:id");
   const [quantity, setQuantity] = useState(1);
+  const [selectedImage, setSelectedImage] = useState(0);
   const { sessionId, incrementCartCount } = useCartStore();
   const { toast } = useToast();
   const queryClient = useQueryClient();
+
+  // Track recently viewed
+  useEffect(() => {
+    if (params?.id && sessionId) {
+      fetch(`/api/recently-viewed`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ productId: params.id, userId: sessionId })
+      }).catch(() => {}); // Silent fail
+    }
+  }, [params?.id, sessionId]);
 
   const { data: product, isLoading } = useQuery({
     queryKey: ["/api/products", params?.id],
