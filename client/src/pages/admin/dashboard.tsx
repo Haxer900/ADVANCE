@@ -30,36 +30,15 @@ interface DashboardData {
 export default function AdminDashboard() {
   const { data: dashboardData, isLoading, refetch } = useQuery<DashboardData>({
     queryKey: ["/api/admin/dashboard"],
-    queryFn: async () => {
-      const token = localStorage.getItem("admin-token");
-      const response = await apiRequest("GET", "/api/admin/dashboard", undefined, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      return response.json();
-    },
     refetchInterval: 30000, // Refresh every 30 seconds
   });
 
   const { data: notifications } = useQuery({
     queryKey: ["/api/admin/notifications"],
-    queryFn: async () => {
-      const token = localStorage.getItem("admin-token");
-      const response = await apiRequest("GET", "/api/admin/notifications", undefined, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      return response.json();
-    },
   });
 
   const { data: alerts } = useQuery({
     queryKey: ["/api/admin/inventory/alerts"],
-    queryFn: async () => {
-      const token = localStorage.getItem("admin-token");
-      const response = await apiRequest("GET", "/api/admin/inventory/alerts", undefined, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      return response.json();
-    },
   });
 
   if (isLoading) {
