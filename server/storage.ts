@@ -100,12 +100,14 @@ export class MemStorage implements IStorage {
   private categories: Map<string, Category>;
   private cartItems: Map<string, CartItem>;
   private newsletters: Map<string, Newsletter>;
+  private users: Map<string, User>;
 
   constructor() {
     this.products = new Map();
     this.categories = new Map();
     this.cartItems = new Map();
     this.newsletters = new Map();
+    this.users = new Map();
     this.initializeData();
   }
 
@@ -231,6 +233,21 @@ export class MemStorage implements IStorage {
     products.forEach(product => {
       this.products.set(product.id, product);
     });
+
+    // Initialize default admin user
+    const adminUser: User = {
+      id: randomUUID(),
+      email: "admin@zenthra.com",
+      password: "$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi", // password
+      firstName: "Admin",
+      lastName: "User",
+      phone: null,
+      role: "admin",
+      isVerified: true,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+    this.users.set(adminUser.id, adminUser);
   }
 
   async getProducts(): Promise<Product[]> {
@@ -371,13 +388,44 @@ export class MemStorage implements IStorage {
     return Array.from(this.newsletters.values());
   }
 
-  // Stub implementations for admin methods (return empty arrays/false for memory storage)
-  async getUsers(): Promise<User[]> { return []; }
-  async getUser(id: string): Promise<User | undefined> { return undefined; }
-  async getUserByEmail(email: string): Promise<User | undefined> { return undefined; }
-  async createUser(user: InsertUser): Promise<User> { throw new Error("Database required for user management"); }
-  async updateUser(id: string, user: Partial<InsertUser>): Promise<User | undefined> { return undefined; }
-  async deleteUser(id: string): Promise<boolean> { return false; }
+  // User management for admin functionality
+  async getUsers(): Promise<User[]> { 
+    return Array.from(this.users.values()); 
+  }
+  async getUser(id: string): Promise<User | undefined> { 
+    return this.users.get(id); 
+  }
+  async getUserByEmail(email: string): Promise<User | undefined> { 
+    return Array.from(this.users.values()).find(user => user.email === email);
+  }
+  async createUser(insertUser: InsertUser): Promise<User> { 
+    const id = randomUUID();
+    const user: User = {
+      ...insertUser,
+      id,
+      firstName: insertUser.firstName ?? null,
+      lastName: insertUser.lastName ?? null,
+      phone: insertUser.phone ?? null,
+      role: insertUser.role ?? "customer",
+      isVerified: insertUser.isVerified ?? false,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+    this.users.set(id, user);
+    return user;
+  }
+  async updateUser(id: string, userUpdate: Partial<InsertUser>): Promise<User | undefined> { 
+    const user = this.users.get(id);
+    if (user) {
+      const updatedUser = { ...user, ...userUpdate, updatedAt: new Date() };
+      this.users.set(id, updatedUser);
+      return updatedUser;
+    }
+    return undefined;
+  }
+  async deleteUser(id: string): Promise<boolean> { 
+    return this.users.delete(id);
+  }
   
   async getOrders(): Promise<Order[]> { return []; }
   async getOrder(id: string): Promise<Order | undefined> { return undefined; }
