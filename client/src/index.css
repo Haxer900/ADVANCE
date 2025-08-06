@@ -26,17 +26,14 @@
   --ring: hsl(0, 0%, 0%);
   --radius: 0.5rem;
   
-  /* ZENTHRA Brand Colors - Modern Vibrant Palette */
+  /* ZENTHRA Brand Colors - Classic Premium Palette */
   --zenthra-primary: hsl(220, 13%, 9%); /* Deep charcoal */
-  --zenthra-secondary: hsl(24, 100%, 50%); /* Vibrant orange */
-  --zenthra-accent: hsl(280, 100%, 70%); /* Purple accent */
+  --zenthra-black: hsl(220, 13%, 9%); /* Premium black */
+  --zenthra-gold: hsl(45, 100%, 51%); /* Classic gold */
   --zenthra-text: hsl(220, 13%, 18%); /* Dark text */
   --zenthra-light: hsl(220, 13%, 97%); /* Light background */
   --zenthra-gray: hsl(220, 9%, 46%); /* Medium gray */
   --zenthra-white: hsl(0, 0%, 100%); /* Pure white */
-  --zenthra-gradient-1: linear-gradient(135deg, hsl(24, 100%, 50%), hsl(40, 100%, 50%));
-  --zenthra-gradient-2: linear-gradient(135deg, hsl(280, 100%, 70%), hsl(260, 100%, 60%));
-  --zenthra-gradient-3: linear-gradient(135deg, hsl(220, 13%, 9%), hsl(220, 13%, 25%));
 }
 
 .dark {
@@ -83,7 +80,7 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(135deg, hsl(220, 13%, 9%), hsl(220, 13%, 25%));
+  background: var(--zenthra-black);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -105,10 +102,7 @@
   font-family: 'Poppins', sans-serif;
   font-size: 3rem;
   font-weight: 700;
-  background: var(--zenthra-gradient-1);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: var(--zenthra-gold);
   margin-bottom: 2rem;
   letter-spacing: 0.2em;
 }

@@ -1,74 +1,76 @@
-export default function ZenthraLogo({ className = "h-8 w-auto" }: { className?: string }) {
+interface LogoProps {
+  className?: string;
+  variant?: 'default' | 'white' | 'dark';
+  size?: 'sm' | 'md' | 'lg';
+}
+
+export function Logo({ className = '', variant = 'default', size = 'md' }: LogoProps) {
+  const sizeClasses = {
+    sm: 'h-8',
+    md: 'h-10',
+    lg: 'h-12'
+  };
+
+  const colorClasses = {
+    default: 'text-zenthra-black',
+    white: 'text-white',
+    dark: 'text-zenthra-black'
+  };
+
+  const textColor = variant === 'white' ? 'text-white' : 'text-zenthra-black';
+  const accentColor = variant === 'white' ? 'text-white' : 'text-zenthra-gold';
+
   return (
-    <svg 
-      className={className} 
-      viewBox="0 0 200 50" 
-      fill="none" 
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <defs>
-        <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-          <stop offset="0%" stopColor="hsl(24, 100%, 50%)" />
-          <stop offset="50%" stopColor="hsl(280, 100%, 70%)" />
-          <stop offset="100%" stopColor="hsl(24, 100%, 50%)" />
-        </linearGradient>
-        <filter id="glow">
-          <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
-          <feMerge> 
-            <feMergeNode in="coloredBlur"/>
-            <feMergeNode in="SourceGraphic"/>
-          </feMerge>
-        </filter>
-      </defs>
+    <div className={`flex items-center ${className}`}>
+      {/* Classic Logo Icon */}
+      <div className={`${sizeClasses[size]} flex items-center justify-center mr-3`}>
+        <svg
+          viewBox="0 0 40 40"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          className={`${sizeClasses[size]} w-auto`}
+        >
+          {/* Elegant Z lettermark with premium styling */}
+          <rect
+            x="2"
+            y="2"
+            width="36"
+            height="36"
+            rx="4"
+            className={`stroke-2 fill-none ${textColor}`}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+          
+          {/* Z design */}
+          <path
+            d="M12 14 L28 14 L12 26 L28 26"
+            className={`stroke-3 ${accentColor}`}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            fill="none"
+          />
+          
+          {/* Decorative elements */}
+          <circle
+            cx="32"
+            cy="8"
+            r="2"
+            className={`${accentColor} opacity-60`}
+            fill="currentColor"
+          />
+        </svg>
+      </div>
       
-      {/* Z */}
-      <path 
-        d="M15 10 L35 10 L35 15 L25 32 L35 32 L35 37 L15 37 L15 32 L25 15 L15 15 Z" 
-        fill="url(#logoGradient)"
-        filter="url(#glow)"
-      />
-      
-      {/* E */}
-      <path 
-        d="M45 10 L65 10 L65 15 L50 15 L50 21 L62 21 L62 26 L50 26 L50 32 L65 32 L65 37 L45 37 Z" 
-        fill="url(#logoGradient)"
-        filter="url(#glow)"
-      />
-      
-      {/* N */}
-      <path 
-        d="M75 10 L80 10 L80 25 L88 10 L93 10 L93 37 L88 37 L88 22 L80 37 L75 37 Z" 
-        fill="url(#logoGradient)"
-        filter="url(#glow)"
-      />
-      
-      {/* T */}
-      <path 
-        d="M103 10 L123 10 L123 15 L116 15 L116 37 L111 37 L111 15 L103 15 Z" 
-        fill="url(#logoGradient)"
-        filter="url(#glow)"
-      />
-      
-      {/* H */}
-      <path 
-        d="M133 10 L138 10 L138 21 L146 21 L146 10 L151 10 L151 37 L146 37 L146 26 L138 26 L138 37 L133 37 Z" 
-        fill="url(#logoGradient)"
-        filter="url(#glow)"
-      />
-      
-      {/* R */}
-      <path 
-        d="M161 10 L175 10 Q180 10 180 15 Q180 21 175 21 L170 21 L176 37 L171 37 L166 21 L166 37 L161 37 Z M166 15 L166 16 L175 16 Q175 15 175 15 Z" 
-        fill="url(#logoGradient)"
-        filter="url(#glow)"
-      />
-      
-      {/* A */}
-      <path 
-        d="M185 37 L180 23 L175 37 L170 37 L178 10 L182 10 L190 37 Z M176 19 L184 19 L180 15 Z" 
-        fill="url(#logoGradient)"
-        filter="url(#glow)"
-      />
-    </svg>
+      {/* Brand Text */}
+      <div className="flex flex-col">
+        <span className={`font-bold text-xl tracking-wide ${textColor}`} style={{ fontFamily: 'Poppins, sans-serif' }}>
+          ZENTHRA
+        </span>
+        <span className={`text-xs tracking-widest ${accentColor} opacity-60`} style={{ fontFamily: 'Inter, sans-serif' }}>
+          PREMIUM
+        </span>
+      </div>
+    </div>
   );
 }

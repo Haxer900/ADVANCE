@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { useCartStore } from "./cart-store";
-import ZenthraLogo from "./logo";
+import { Logo } from "./logo";
 import { useQuery } from "@tanstack/react-query";
 
 export default function Header() {
@@ -42,7 +42,7 @@ export default function Header() {
           {/* Logo */}
           <div className="flex-shrink-0">
             <Link href="/">
-              <ZenthraLogo className="h-8 w-auto hover:scale-105 transition-transform duration-300" />
+              <Logo className="hover:scale-105 transition-transform duration-300" size="md" />
             </Link>
           </div>
           
