@@ -28,12 +28,19 @@
   
   /* Fashion Brand Colors - Modern Bright Palette */
   --morethanfashion-primary: hsl(0, 0%, 0%); /* Pure black */
+  --morethanfashion-secondary: hsl(300, 100%, 60%); /* Bright pink */
+  --morethanfashion-accent: hsl(45, 100%, 50%); /* Gold accent */
   --morethanfashion-black: hsl(0, 0%, 0%); /* Pure black */
   --morethanfashion-gold: hsl(300, 100%, 60%); /* Bright pink instead of gold */
   --morethanfashion-text: hsl(0, 0%, 100%); /* White text */
   --morethanfashion-light: hsl(0, 0%, 10%); /* Dark background */
   --morethanfashion-gray: hsl(0, 0%, 60%); /* Light gray */
   --morethanfashion-white: hsl(0, 0%, 100%); /* Pure white */
+  
+  /* Gradient Variables */
+  --morethanfashion-gradient-1: linear-gradient(135deg, hsl(300, 100%, 60%) 0%, hsl(45, 100%, 50%) 100%);
+  --morethanfashion-gradient-2: linear-gradient(135deg, hsl(0, 0%, 0%) 0%, hsl(300, 100%, 60%) 100%);
+  --morethanfashion-gradient-3: linear-gradient(135deg, hsl(45, 100%, 50%) 0%, hsl(300, 100%, 60%) 100%);
 }
 
 .dark {
@@ -255,6 +262,18 @@ select:focus-visible {
   .bg-zenthra-white { background-color: var(--morethanfashion-white); }
   .border-zenthra-secondary { border-color: var(--morethanfashion-secondary); }
   .border-zenthra-accent { border-color: var(--morethanfashion-accent); }
+  
+@layer utilities {
+  /* More Than Fashion Utilities */
+  .text-morethanfashion-primary { color: var(--morethanfashion-primary); }
+  .text-morethanfashion-secondary { color: var(--morethanfashion-secondary); }
+  .text-morethanfashion-accent { color: var(--morethanfashion-accent); }
+  .border-morethanfashion-secondary { border-color: var(--morethanfashion-secondary); }
+  .border-morethanfashion-accent { border-color: var(--morethanfashion-accent); }
+  .bg-morethanfashion-primary { background-color: var(--morethanfashion-primary); }
+  .bg-morethanfashion-secondary { background-color: var(--morethanfashion-secondary); }
+  .bg-morethanfashion-accent { background-color: var(--morethanfashion-accent); }
+}
 
   /* Advanced Button Styles with 3D Effects */
   .btn-primary {
