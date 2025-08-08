@@ -1,6 +1,6 @@
-# ZENTHRA Content Management Guide
+# MORE THAN FASHION Content Management Guide
 
-This guide explains how to edit all the information and content on your ZENTHRA e-commerce platform.
+This guide explains how to edit all the information and content on your MORE THAN FASHION e-commerce platform.
 
 ## 🛍️ Product Management
 
@@ -67,7 +67,7 @@ Current products are stored in the `products` array. To modify:
 
 ### Website Title & SEO
 **Location**: `client/index.html`
-- Page title: `<title>ZENTHRA - Premium Luxury Lifestyle</title>`
+- Page title: `<title>MORE THAN FASHION - Premium Luxury Lifestyle</title>`
 - Meta description for SEO
 - Open Graph data for social media
 
@@ -243,4 +243,4 @@ If you need help with any specific edits:
 - "Change website colors"
 - "Add new blog post"
 
-Your ZENTHRA platform is fully customizable - every piece of text, image, color, and functionality can be modified to match your exact needs!
+Your MORE THAN FASHION platform is fully customizable - every piece of text, image, color, and functionality can be modified to match your exact needs!

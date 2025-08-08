@@ -1,7 +1,7 @@
 {
-  "name": "zenthra-backend",
+  "name": "morethanfashion-backend",
   "version": "1.0.0",
-  "description": "ZENTHRA E-commerce Backend API",
+  "description": "MORE THAN FASHION E-commerce Backend API",
   "main": "dist/index.js",
   "scripts": {
     "dev": "tsx watch src/index.ts",

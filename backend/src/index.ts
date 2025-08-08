@@ -54,7 +54,7 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // Session configuration
 app.use(session({
-  secret: process.env.SESSION_SECRET || 'zenthra-secret-key-change-in-production',
+  secret: process.env.SESSION_SECRET || 'morethanfashion-secret-key-change-in-production',
   resave: false,
   saveUninitialized: false,
   cookie: {
@@ -94,7 +94,7 @@ app.use('*', (req, res) => {
 
 // Start server
 app.listen(PORT, () => {
-  console.log(`🚀 ZENTHRA Backend API running on port ${PORT}`);
+  console.log(`🚀 MORE THAN FASHION Backend API running on port ${PORT}`);
   console.log(`📍 Environment: ${process.env.NODE_ENV || 'development'}`);
   console.log(`🔗 Health check: http://localhost:${PORT}/health`);
 });

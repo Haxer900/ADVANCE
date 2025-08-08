@@ -64,7 +64,7 @@ export default function Blog() {
     <div className="container mx-auto px-4 py-8">
       {/* Header */}
       <div className="text-center mb-12">
-        <h1 className="text-4xl font-bold mb-4">ZENTHRA Journal</h1>
+        <h1 className="text-4xl font-bold mb-4">MORE THAN FASHION Journal</h1>
         <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
           Discover the latest trends, style guides, and lifestyle insights from our curated collection
         </p>

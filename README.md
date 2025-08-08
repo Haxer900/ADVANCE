@@ -1,4 +1,4 @@
-# ZENTHRA E-commerce Platform
+# MORE THAN FASHION E-commerce Platform
 
 A premium e-commerce platform built with modern technologies, featuring a comprehensive admin panel, MongoDB integration, and a classic design aesthetic.
 
@@ -6,7 +6,7 @@ A premium e-commerce platform built with modern technologies, featuring a compre
 
 ### Frontend
 - **Framework**: React 18 with TypeScript
-- **Styling**: Tailwind CSS with custom ZENTHRA branding
+- **Styling**: Tailwind CSS with custom MORE THAN FASHION branding
 - **Routing**: Wouter for client-side routing
 - **State Management**: Zustand for cart & session, TanStack Query for server state
 - **UI Components**: Radix UI with Shadcn/ui styling
@@ -30,7 +30,7 @@ A premium e-commerce platform built with modern technologies, featuring a compre
 1. **Clone the repository**
    ```bash
    git clone <repository-url>
-   cd zenthra-ecommerce
+   cd morethanfashion-ecommerce
    ```
 
 2. **Backend Setup**
@@ -58,7 +58,7 @@ A premium e-commerce platform built with modern technologies, featuring a compre
 
 ### Backend (.env)
 ```env
-MONGODB_URI=mongodb://localhost:27017/zenthra
+MONGODB_URI=mongodb://localhost:27017/morethanfashion
 PORT=5000
 NODE_ENV=development
 FRONTEND_URL=http://localhost:3000
@@ -226,11 +226,11 @@ npm start           # Production server
 - Comprehensive error handling
 
 ## 📞 Support
-For technical support or questions about the ZENTHRA platform, please contact the development team.
+For technical support or questions about the MORE THAN FASHION platform, please contact the development team.
 
 ## 📄 License
-This project is proprietary software developed for ZENTHRA e-commerce platform.
+This project is proprietary software developed for MORE THAN FASHION e-commerce platform.
 
 ---
 
-**ZENTHRA** - Premium E-commerce Experience
+**MORE THAN FASHION** - Premium E-commerce Experience

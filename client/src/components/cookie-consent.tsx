@@ -7,7 +7,7 @@ export function CookieConsent() {
   const [showConsent, setShowConsent] = useState(false);
 
   useEffect(() => {
-    const consent = localStorage.getItem("zenthra-cookie-consent");
+    const consent = localStorage.getItem("morethanfashion-cookie-consent");
     if (!consent) {
       const timer = setTimeout(() => setShowConsent(true), 2000);
       return () => clearTimeout(timer);
@@ -15,12 +15,12 @@ export function CookieConsent() {
   }, []);
 
   const acceptCookies = () => {
-    localStorage.setItem("zenthra-cookie-consent", "accepted");
+    localStorage.setItem("morethanfashion-cookie-consent", "accepted");
     setShowConsent(false);
   };
 
   const declineCookies = () => {
-    localStorage.setItem("zenthra-cookie-consent", "declined");
+    localStorage.setItem("morethanfashion-cookie-consent", "declined");
     setShowConsent(false);
   };
 

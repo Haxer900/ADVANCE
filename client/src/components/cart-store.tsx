@@ -17,7 +17,7 @@ interface CartStore {
 
 export const useCartStore = create<CartStore>((set) => ({
   sessionId: typeof window !== 'undefined' ? 
-    (localStorage.getItem('zenthra_session_id') || generateSessionId()) : 
+    (localStorage.getItem('morethanfashion_session_id') || generateSessionId()) : 
     generateSessionId(),
   cartCount: 0,
   setCartCount: (count) => set({ cartCount: count }),
@@ -28,7 +28,7 @@ export const useCartStore = create<CartStore>((set) => ({
 function generateSessionId(): string {
   const sessionId = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
   if (typeof window !== 'undefined') {
-    localStorage.setItem('zenthra_session_id', sessionId);
+    localStorage.setItem('morethanfashion_session_id', sessionId);
   }
   return sessionId;
 }

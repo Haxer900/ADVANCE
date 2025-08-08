@@ -60,7 +60,7 @@ export default function AdminSMSWhatsApp() {
     {
       id: "delivery-notification",
       name: "Delivery Notification",
-      content: "Your order #[ORDER_ID] has been delivered! Thank you for shopping with ZENTHRA.",
+      content: "Your order #[ORDER_ID] has been delivered! Thank you for shopping with MORE THAN FASHION.",
       active: false,
     },
   ];
@@ -69,7 +69,7 @@ export default function AdminSMSWhatsApp() {
     {
       id: "welcome-message",
       name: "Welcome Message",
-      content: "Welcome to ZENTHRA! 🎉 Discover premium luxury products with exceptional quality. Shop now: [STORE_LINK]",
+      content: "Welcome to MORE THAN FASHION! 🎉 Discover premium luxury products with exceptional quality. Shop now: [STORE_LINK]",
       active: true,
     },
     {

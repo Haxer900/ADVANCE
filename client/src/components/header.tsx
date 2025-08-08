@@ -18,7 +18,7 @@ export default function Header() {
   const { cartCount } = useCartStore();
 
   // Get wishlist count
-  const sessionId = localStorage.getItem("zenthra-session-id");
+  const sessionId = localStorage.getItem("morethanfashion-session-id");
   const { data: wishlist = [] } = useQuery({
     queryKey: ["/api/wishlist", sessionId],
     enabled: !!sessionId,

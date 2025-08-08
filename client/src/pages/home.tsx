@@ -60,13 +60,13 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-zenthra-white">
+    <div className="min-h-screen bg-white">
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-        <div className="absolute inset-0 morphing-bg"></div>
+        <div className="absolute inset-0 bg-white"></div>
         <div 
           ref={parallaxRef}
-          className="absolute inset-0 bg-gradient-to-br from-zenthra-primary/50 to-zenthra-secondary/30 parallax-element"
+          className="absolute inset-0 bg-white parallax-element"
         ></div>
         
         <div 
@@ -74,24 +74,24 @@ export default function Home() {
           className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center scroll-reveal"
         >
           <div className="floating-animation">
-            <Sparkles className="w-16 h-16 text-white mx-auto mb-8 pulse-glow" />
-            <h1 className="font-poppins text-6xl md:text-8xl lg:text-9xl font-bold text-white mb-8 tracking-tight">
-              ZENTHRA
+            <Sparkles className="w-16 h-16 text-zenthra-primary mx-auto mb-8 pulse-glow" />
+            <h1 className="font-poppins text-6xl md:text-8xl lg:text-9xl font-bold text-zenthra-primary mb-8 tracking-tight">
+              MORE THAN FASHION
             </h1>
-            <p className="text-xl md:text-3xl text-white/90 mb-12 max-w-4xl mx-auto leading-relaxed">
+            <p className="text-xl md:text-3xl text-zenthra-gray mb-12 max-w-4xl mx-auto leading-relaxed">
               Where premium meets perfection. Discover collections that define your lifestyle and elevate every moment.
             </p>
           </div>
           
           <div className="flex flex-col sm:flex-row gap-6 justify-center items-center fade-in-up">
             <Link href="/products">
-              <Button className="btn-primary text-lg px-12 py-6">
+              <Button className="bg-zenthra-primary text-white hover:bg-zenthra-gold text-lg px-12 py-6 rounded-3xl transition-all duration-300">
                 <ShoppingBag className="w-5 h-5 mr-2" />
                 Explore Collection
               </Button>
             </Link>
             <Link href="/our-story">
-              <Button className="btn-white text-lg px-12 py-6">
+              <Button className="bg-white border-2 border-zenthra-primary text-zenthra-primary hover:bg-zenthra-primary hover:text-white text-lg px-12 py-6 rounded-3xl transition-all duration-300">
                 <Heart className="w-5 h-5 mr-2" />
                 Our Story
               </Button>
@@ -100,13 +100,13 @@ export default function Home() {
         </div>
 
         {/* Floating Elements */}
-        <div className="absolute top-20 left-10 w-20 h-20 bg-white/10 rounded-full floating-animation blur-sm"></div>
-        <div className="absolute bottom-20 right-10 w-32 h-32 bg-white/5 rounded-full floating-animation blur-sm" style={{animationDelay: '2s'}}></div>
-        <div className="absolute top-1/2 left-20 w-16 h-16 bg-white/15 rounded-full floating-animation blur-sm" style={{animationDelay: '4s'}}></div>
+        <div className="absolute top-20 left-10 w-20 h-20 bg-zenthra-primary/10 rounded-full floating-animation blur-sm"></div>
+        <div className="absolute bottom-20 right-10 w-32 h-32 bg-zenthra-primary/5 rounded-full floating-animation blur-sm" style={{animationDelay: '2s'}}></div>
+        <div className="absolute top-1/2 left-20 w-16 h-16 bg-zenthra-primary/15 rounded-full floating-animation blur-sm" style={{animationDelay: '4s'}}></div>
       </section>
 
       {/* Categories Section */}
-      <section className="py-32 bg-zenthra-light">
+      <section className="py-32 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div 
             ref={categoriesRef}
@@ -208,24 +208,24 @@ export default function Home() {
       </section>
 
       {/* About Section */}
-      <section className="py-32 bg-gradient-to-br from-zenthra-primary to-zenthra-secondary">
+      <section className="py-32 bg-white border-t border-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div 
             ref={aboutRef}
             className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center scroll-reveal"
           >
             <div className="slide-in-left">
-              <h2 className="font-poppins text-5xl md:text-6xl font-bold text-white mb-8">
+              <h2 className="font-poppins text-5xl md:text-6xl font-bold text-zenthra-primary mb-8">
                 Crafted for Excellence
               </h2>
-              <p className="text-xl text-white/90 mb-8 leading-relaxed">
+              <p className="text-xl text-zenthra-gray mb-8 leading-relaxed">
                 Every piece in our collection tells a story of excellence, from the finest materials to the most skilled artisans. We believe in creating not just products, but experiences that enrich your daily life.
               </p>
-              <p className="text-lg text-white/80 mb-12 leading-relaxed">
+              <p className="text-lg text-zenthra-gray mb-12 leading-relaxed">
                 Our commitment to quality and sustainability ensures that each purchase contributes to a better world while elevating your lifestyle.
               </p>
               <Link href="/our-story">
-                <Button className="btn-white text-lg px-12 py-6">
+                <Button className="bg-zenthra-primary text-white hover:bg-zenthra-gold text-lg px-12 py-6 rounded-3xl transition-all duration-300">
                   <Heart className="w-5 h-5 mr-2" />
                   Discover Our Story
                 </Button>
@@ -234,7 +234,7 @@ export default function Home() {
             
             <div className="slide-in-right">
               <div className="relative">
-                <div className="absolute -inset-4 bg-gradient-to-r from-zenthra-secondary to-zenthra-accent rounded-3xl blur-lg opacity-30"></div>
+                <div className="absolute -inset-4 bg-gradient-to-r from-zenthra-primary/20 to-zenthra-gold/20 rounded-3xl blur-lg opacity-30"></div>
                 <img 
                   src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600" 
                   alt="Premium craftsmanship" 
@@ -247,19 +247,19 @@ export default function Home() {
       </section>
 
       {/* Newsletter Section */}
-      <section className="py-32 bg-zenthra-light">
+      <section className="py-32 bg-white border-t border-gray-100">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div 
             ref={newsletterRef}
             className="text-center scroll-reveal"
           >
-            <div className="glass-effect rounded-3xl p-12 md:p-16">
-              <Sparkles className="w-12 h-12 text-zenthra-secondary mx-auto mb-8 pulse-glow" />
-              <h2 className="font-poppins text-4xl md:text-5xl font-bold text-zenthra-primary mb-6 gradient-text">
+            <div className="border-2 border-zenthra-primary/10 rounded-3xl p-12 md:p-16 shadow-lg">
+              <Sparkles className="w-12 h-12 text-zenthra-primary mx-auto mb-8 pulse-glow" />
+              <h2 className="font-poppins text-4xl md:text-5xl font-bold text-zenthra-primary mb-6">
                 Stay in the Loop
               </h2>
               <p className="text-xl text-zenthra-gray mb-12 max-w-2xl mx-auto">
-                Be the first to discover new collections, exclusive offers, and insider stories from the world of ZENTHRA
+                Be the first to discover new collections, exclusive offers, and insider stories from the world of MORE THAN FASHION
               </p>
               
               <form onSubmit={handleNewsletterSubmit} className="flex flex-col sm:flex-row gap-4 max-w-lg mx-auto">
@@ -268,13 +268,13 @@ export default function Home() {
                   placeholder="Enter your email address"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="flex-1 px-6 py-4 text-lg rounded-3xl border-2 border-zenthra-secondary/20 focus:border-zenthra-secondary focus:ring-zenthra-secondary"
+                  className="flex-1 px-6 py-4 text-lg rounded-3xl border-2 border-zenthra-primary/20 focus:border-zenthra-primary focus:ring-zenthra-primary"
                   required
                 />
                 <Button 
                   type="submit"
                   disabled={newsletterMutation.isPending}
-                  className="btn-primary px-8 py-4 text-lg"
+                  className="bg-zenthra-primary text-white hover:bg-zenthra-gold px-8 py-4 text-lg rounded-3xl transition-all duration-300"
                 >
                   {newsletterMutation.isPending ? "Subscribing..." : "Subscribe"}
                 </Button>

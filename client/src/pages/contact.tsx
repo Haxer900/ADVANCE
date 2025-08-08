@@ -156,7 +156,7 @@ export default function Contact() {
                         <h4 className="font-semibold text-zenthra-black">Call Us</h4>
                         <p className="text-zenthra-gray">
                           +1 (555) 123-4567<br />
-                          Toll-free: 1-800-ZENTHRA
+                          Toll-free: 1-800-FASHION
                         </p>
                       </div>
                     </div>
@@ -166,8 +166,8 @@ export default function Contact() {
                       <div>
                         <h4 className="font-semibold text-zenthra-black">Email Us</h4>
                         <p className="text-zenthra-gray">
-                          hello@zenthra.com<br />
-                          support@zenthra.com
+                          hello@morethanfashion.com<br />
+                          support@morethanfashion.com
                         </p>
                       </div>
                     </div>

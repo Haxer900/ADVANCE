@@ -283,7 +283,7 @@ export default function TrackOrder() {
               </p>
               <div className="flex flex-col sm:flex-row gap-2 justify-center">
                 <Button variant="outline" asChild>
-                  <a href="mailto:support@zenthra.com">Email Support</a>
+                  <a href="mailto:support@morethanfashion.com">Email Support</a>
                 </Button>
                 <Button variant="outline" asChild>
                   <a href="tel:+1-555-123-4567">Call (555) 123-4567</a>

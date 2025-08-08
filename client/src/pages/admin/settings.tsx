@@ -75,7 +75,7 @@ export default function AdminSettings() {
   const queryClient = useQueryClient();
   
   const [settings, setSettings] = useState<SiteSettings>({
-    siteName: "ZENTHRA",
+    siteName: "MORE THAN FASHION",
     siteDescription: "Premium luxury lifestyle products with exceptional quality and design",
     siteLogo: "/logo.png",
     primaryColor: "#1a1a1a",
@@ -83,17 +83,17 @@ export default function AdminSettings() {
     accentColor: "#f5f5f5",
     announcementText: "Free shipping on orders over ₹2,000",
     announcementActive: true,
-    contactEmail: "support@zenthra.com",
+    contactEmail: "support@morethanfashion.com",
     contactPhone: "+91 98765 43210",
     socialMedia: {
-      facebook: "https://facebook.com/zenthra",
-      twitter: "https://twitter.com/zenthra",
-      instagram: "https://instagram.com/zenthra",
-      linkedin: "https://linkedin.com/company/zenthra",
+      facebook: "https://facebook.com/morethanfashion",
+      twitter: "https://twitter.com/morethanfashion",
+      instagram: "https://instagram.com/morethanfashion",
+      linkedin: "https://linkedin.com/company/morethanfashion",
     },
     seo: {
-      metaTitle: "ZENTHRA - Premium Luxury Products",
-      metaDescription: "Discover premium luxury products at ZENTHRA. Quality craftsmanship, elegant design, and exceptional customer service.",
+      metaTitle: "MORE THAN FASHION - Premium Luxury Products",
+      metaDescription: "Discover premium luxury products at MORE THAN FASHION. Quality craftsmanship, elegant design, and exceptional customer service.",
       keywords: "luxury, premium, fashion, lifestyle, quality, elegant",
     },
     currency: "INR",

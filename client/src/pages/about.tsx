@@ -7,7 +7,7 @@ export default function About() {
       <div className="bg-zenthra-light py-20">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="font-playfair text-5xl md:text-6xl font-bold text-zenthra-black mb-6">
-            About ZENTHRA
+            About MORE THAN FASHION
           </h1>
           <p className="text-xl text-zenthra-gray max-w-3xl mx-auto">
             Crafting exceptional experiences through timeless elegance and contemporary sophistication
@@ -24,20 +24,20 @@ export default function About() {
                 Our Story
               </h2>
               <p className="text-lg text-zenthra-gray mb-6 leading-relaxed">
-                Founded in 1999, ZENTHRA began as a vision to bridge the gap between traditional craftsmanship and modern luxury. Our founders, passionate about quality and design, set out to create a brand that would redefine premium lifestyle products.
+                Founded in 1999, MORE THAN FASHION began as a vision to bridge the gap between traditional craftsmanship and modern luxury. Our founders, passionate about quality and design, set out to create a brand that would redefine premium lifestyle products.
               </p>
               <p className="text-lg text-zenthra-gray mb-6 leading-relaxed">
                 Over the years, we have built relationships with the finest artisans and suppliers worldwide, ensuring that every piece in our collection meets our exacting standards of excellence. Our commitment to quality has made us a trusted name among discerning families who value sophistication and style.
               </p>
               <p className="text-lg text-zenthra-gray leading-relaxed">
-                Today, ZENTHRA continues to evolve while staying true to our core values of elegance, quality, and family-centered experiences.
+                Today, MORE THAN FASHION continues to evolve while staying true to our core values of elegance, quality, and family-centered experiences.
               </p>
             </div>
             
             <div className="relative">
               <img 
                 src="https://images.unsplash.com/photo-1560472354-b33ff0c44a43?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&h=600" 
-                alt="ZENTHRA craftsmanship" 
+                alt="MORE THAN FASHION craftsmanship" 
                 className="rounded-lg shadow-xl w-full"
               />
             </div>
@@ -162,7 +162,7 @@ export default function About() {
                 </h3>
                 <p className="text-zenthra-gold font-semibold mb-4">Quality Director</p>
                 <p className="text-zenthra-gray">
-                  Michael ensures that every ZENTHRA product meets our highest standards through rigorous quality control and artisan partnerships.
+                  Michael ensures that every MORE THAN FASHION product meets our highest standards through rigorous quality control and artisan partnerships.
                 </p>
               </CardContent>
             </Card>

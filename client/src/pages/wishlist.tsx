@@ -14,10 +14,10 @@ export default function Wishlist() {
   const queryClient = useQueryClient();
   const { addToCart } = useCartStore();
 
-  const sessionId = localStorage.getItem("zenthra-session-id") || 
+  const sessionId = localStorage.getItem("morethanfashion-session-id") || 
     (() => {
       const newId = Math.random().toString(36).substr(2, 9);
-      localStorage.setItem("zenthra-session-id", newId);
+      localStorage.setItem("morethanfashion-session-id", newId);
       return newId;
     })();
 

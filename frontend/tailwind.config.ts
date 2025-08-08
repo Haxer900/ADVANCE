@@ -57,13 +57,13 @@ const config = {
           foreground: "hsl(var(--card-foreground))",
         },
         zenthra: {
-          primary: "hsl(var(--zenthra-primary))",
-          black: "hsl(var(--zenthra-black))",
-          gold: "hsl(var(--zenthra-gold))",
-          text: "hsl(var(--zenthra-text))",
-          light: "hsl(var(--zenthra-light))",
-          gray: "hsl(var(--zenthra-gray))",
-          white: "hsl(var(--zenthra-white))",
+          primary: "hsl(var(--morethanfashion-primary))",
+          black: "hsl(var(--morethanfashion-black))",
+          gold: "hsl(var(--morethanfashion-gold))",
+          text: "hsl(var(--morethanfashion-text))",
+          light: "hsl(var(--morethanfashion-light))",
+          gray: "hsl(var(--morethanfashion-gray))",
+          white: "hsl(var(--morethanfashion-white))",
         }
       },
       borderRadius: {

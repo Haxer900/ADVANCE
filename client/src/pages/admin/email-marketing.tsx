@@ -191,11 +191,11 @@ export default function AdminEmailMarketing() {
   const emailTemplates = [
     {
       name: "Welcome Email",
-      subject: "Welcome to ZENTHRA - Your Premium Journey Begins",
+      subject: "Welcome to MORE THAN FASHION - Your Premium Journey Begins",
       content: `
 Dear [Name],
 
-Welcome to ZENTHRA! We're thrilled to have you join our community of discerning customers who appreciate premium quality and elegant design.
+Welcome to MORE THAN FASHION! We're thrilled to have you join our community of discerning customers who appreciate premium quality and elegant design.
 
 As a new member, you'll enjoy:
 • Exclusive access to new collections
@@ -206,7 +206,7 @@ As a new member, you'll enjoy:
 Explore our latest collection and discover the perfect pieces for your lifestyle.
 
 Best regards,
-The ZENTHRA Team
+The MORE THAN FASHION Team
       `.trim(),
     },
     {
@@ -228,7 +228,7 @@ Shop now and enjoy early access to these exclusive pieces.
 Visit our store: [Store Link]
 
 Warm regards,
-ZENTHRA Team
+MORE THAN FASHION Team
       `.trim(),
     },
   ];

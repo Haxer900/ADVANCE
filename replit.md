@@ -1,8 +1,8 @@
-# ZENTHRA E-commerce Platform
+# MORE THAN FASHION E-commerce Platform
 
 ## Overview
 
-ZENTHRA is a premium e-commerce platform built with a modern full-stack architecture featuring React frontend and Express.js backend. The application showcases luxury lifestyle products with an elegant user interface, comprehensive shopping cart functionality, and newsletter subscription capabilities. The system is designed with a focus on premium user experience, featuring sophisticated styling with custom ZENTHRA branding, responsive design, and smooth user interactions.
+MORE THAN FASHION is a premium e-commerce platform built with a modern full-stack architecture featuring React frontend and Express.js backend. The application showcases luxury lifestyle products with an elegant user interface, comprehensive shopping cart functionality, and newsletter subscription capabilities. The system is designed with a focus on premium user experience, featuring sophisticated styling with custom MORE THAN FASHION branding, responsive design, and smooth user interactions.
 
 ## User Preferences
 
@@ -11,7 +11,7 @@ Preferred communication style: Simple, everyday language.
 ## Recent Updates (January 2025)
 
 ### Comprehensive System Overhaul & Deployment Preparation (January 5, 2025)
-- **Classic Logo Design**: Replaced RGB lighting effects with elegant classic ZENTHRA logo featuring gold accents
+- **Classic Logo Design**: Replaced RGB lighting effects with elegant classic MORE THAN FASHION logo featuring gold accents
 - **Frontend/Backend Separation**: Complete architectural separation for independent hosting deployment
 - **MongoDB Integration**: Full MongoDB setup with comprehensive schemas and API endpoints
 - **Admin Credentials Updated**: Changed to yashparmar77077@gmail.com with password Yash@23072005

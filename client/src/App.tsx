@@ -130,7 +130,7 @@ function Router() {
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <ThemeProvider defaultTheme="light" storageKey="zenthra-ui-theme">
+      <ThemeProvider defaultTheme="light" storageKey="morethanfashion-ui-theme">
         <TooltipProvider>
           <Preloader />
           <CartUpdater />

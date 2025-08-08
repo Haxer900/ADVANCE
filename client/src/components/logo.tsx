@@ -22,7 +22,7 @@ export function Logo({ className = '', variant = 'default', size = 'md' }: LogoP
 
   return (
     <div className={`flex items-center ${className}`}>
-      {/* Classic Logo Icon */}
+      {/* Modern Logo Icon */}
       <div className={`${sizeClasses[size]} flex items-center justify-center mr-3`}>
         <svg
           viewBox="0 0 40 40"
@@ -50,24 +50,15 @@ export function Logo({ className = '', variant = 'default', size = 'md' }: LogoP
             strokeLinejoin="round"
             fill="none"
           />
-          
-          {/* Decorative elements */}
-          <circle
-            cx="32"
-            cy="8"
-            r="2"
-            className={`${accentColor} opacity-60`}
-            fill="currentColor"
-          />
         </svg>
       </div>
       
       {/* Brand Text */}
       <div className="flex flex-col">
         <span className={`font-bold text-xl tracking-wide ${textColor}`} style={{ fontFamily: 'Poppins, sans-serif' }}>
-          ZENTHRA
+          MORE THAN FASHION
         </span>
-        <span className={`text-xs tracking-widest ${accentColor} opacity-60`} style={{ fontFamily: 'Inter, sans-serif' }}>
+        <span className={`text-xs tracking-widest ${accentColor}`} style={{ fontFamily: 'Inter, sans-serif' }}>
           PREMIUM
         </span>
       </div>

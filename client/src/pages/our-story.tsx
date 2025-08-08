@@ -49,7 +49,7 @@ export default function OurStory() {
               </h2>
               <div className="space-y-6 text-lg text-zenthra-gray leading-relaxed">
                 <p>
-                  In 1999, ZENTHRA was born from a simple yet powerful vision: to bridge the gap between traditional craftsmanship and modern luxury. Our founders recognized that in an increasingly digital world, people yearned for products that told a story, carried meaning, and reflected their personal journey.
+                  In 1999, MORE THAN FASHION was born from a simple yet powerful vision: to bridge the gap between traditional craftsmanship and modern luxury. Our founders recognized that in an increasingly digital world, people yearned for products that told a story, carried meaning, and reflected their personal journey.
                 </p>
                 <p>
                   What started as a small atelier has evolved into a global brand, but our core values remain unchanged. We believe that true luxury isn't just about price points or exclusivity—it's about the emotion a product evokes, the memories it creates, and the way it enhances your daily life.
@@ -149,7 +149,7 @@ export default function OurStory() {
             </p>
             <div className="glass-effect rounded-3xl p-8 md:p-12">
               <p className="text-lg text-white leading-relaxed">
-                At ZENTHRA, we don't just sell products—we curate experiences. Every item in our collection is chosen with the understanding that it will become part of someone's story, part of their family's legacy. We're committed to sustainability, ethical sourcing, and creating products that stand the test of time, both in quality and style.
+                At MORE THAN FASHION, we don't just sell products—we curate experiences. Every item in our collection is chosen with the understanding that it will become part of someone's story, part of their family's legacy. We're committed to sustainability, ethical sourcing, and creating products that stand the test of time, both in quality and style.
               </p>
             </div>
           </div>

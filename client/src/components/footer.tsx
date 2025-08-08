@@ -1,6 +1,6 @@
 import { Link } from "wouter";
 import { Facebook, Instagram, Twitter, Mail } from "lucide-react";
-import zenthraLogo from "@assets/zenthra_1754316486050.png";
+import brandLogo from "@assets/zenthra_1754316486050.png";
 
 export default function Footer() {
   return (
@@ -9,9 +9,9 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Company Info */}
           <div className="col-span-1 md:col-span-2">
-            <img src={zenthraLogo} alt="ZENTHRA Logo" className="h-8 w-auto mb-6" />
+            <img src={brandLogo} alt="MORE THAN FASHION Logo" className="h-8 w-auto mb-6" />
             <p className="text-zenthra-gray mb-6 max-w-md">
-              ZENTHRA represents the pinnacle of premium lifestyle products, crafting experiences that enrich your daily life with timeless elegance and contemporary sophistication.
+              MORE THAN FASHION represents the pinnacle of premium lifestyle products, crafting experiences that enrich your daily life with timeless elegance and contemporary sophistication.
             </p>
             <div className="flex space-x-4">
               <a href="#" className="text-zenthra-gray hover:text-zenthra-gold transition-colors duration-300">
@@ -55,7 +55,7 @@ export default function Footer() {
         
         <div className="border-t border-gray-300 mt-12 pt-8 text-center">
           <p className="text-zenthra-gray">
-            © 2024 ZENTHRA. All rights reserved. | Privacy Policy | Terms of Service
+            © 2024 MORE THAN FASHION. All rights reserved. | Privacy Policy | Terms of Service
           </p>
         </div>
       </div>

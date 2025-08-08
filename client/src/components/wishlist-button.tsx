@@ -16,10 +16,10 @@ export function WishlistButton({ productId, size = "default", className = "" }: 
   const queryClient = useQueryClient();
   
   // For now, we'll use sessionId as userId since we don't have auth yet
-  const sessionId = localStorage.getItem("zenthra-session-id") || 
+  const sessionId = localStorage.getItem("morethanfashion-session-id") || 
     (() => {
       const newId = Math.random().toString(36).substr(2, 9);
-      localStorage.setItem("zenthra-session-id", newId);
+      localStorage.setItem("morethanfashion-session-id", newId);
       return newId;
     })();
 
