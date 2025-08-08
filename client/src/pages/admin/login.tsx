@@ -43,7 +43,7 @@ export default function AdminLogin() {
       localStorage.setItem("admin-user", JSON.stringify(data.user));
       toast({
         title: "Login Successful",
-        description: "Welcome to MORE THAN FASHION Admin Dashboard",
+        description: "Welcome to ZENTHRA Admin Dashboard",
       });
       setLocation("/admin/dashboard");
     },

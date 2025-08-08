@@ -167,7 +167,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                 <Shield className="w-5 h-5 text-black" />
               </div>
               <div>
-                <h2 className="text-lg font-bold text-white">MORE THAN FASHION</h2>
+                <h2 className="text-lg font-bold text-white">ZENTHRA</h2>
                 <p className="text-xs text-neutral-400">Admin Panel</p>
               </div>
             </div>

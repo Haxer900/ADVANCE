@@ -4,8 +4,18 @@ import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import session from 'express-session';
 import dotenv from 'dotenv';
-import { connectDB } from './config/database';
-import { setupRoutes } from './routes';
+import { connectMongoDB } from './config/database.js';
+import { authRoutes } from './routes/auth.js';
+import { productRoutes } from './routes/products.js';
+import { categoryRoutes } from './routes/categories.js';
+import { cartRoutes } from './routes/cart.js';
+import { orderRoutes } from './routes/orders.js';
+import { userRoutes } from './routes/users.js';
+import { adminRoutes } from './routes/admin.js';
+import { newsletterRoutes } from './routes/newsletter.js';
+import { wishlistRoutes } from './routes/wishlist.js';
+import { reviewRoutes } from './routes/reviews.js';
+import { authMiddleware } from './middleware/auth.js';
 
 // Load environment variables
 dotenv.config();
@@ -13,8 +23,8 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Connect to MongoDB
-connectDB();
+// Connect to MongoDB Atlas
+connectMongoDB();
 
 // Security middleware
 app.use(helmet({
@@ -54,7 +64,7 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // Session configuration
 app.use(session({
-  secret: process.env.SESSION_SECRET || 'morethanfashion-secret-key-change-in-production',
+  secret: process.env.SESSION_SECRET || 'zenthra-secret-key-change-in-production',
   resave: false,
   saveUninitialized: false,
   cookie: {
@@ -74,8 +84,17 @@ app.get('/health', (req, res) => {
   });
 });
 
-// Setup API routes
-setupRoutes(app);
+// API routes
+app.use('/api/auth', authRoutes);
+app.use('/api/products', productRoutes);
+app.use('/api/categories', categoryRoutes);
+app.use('/api/cart', cartRoutes);
+app.use('/api/orders', orderRoutes);
+app.use('/api/users', authMiddleware, userRoutes);
+app.use('/api/admin', authMiddleware, adminRoutes);
+app.use('/api/newsletter', newsletterRoutes);
+app.use('/api/wishlist', authMiddleware, wishlistRoutes);
+app.use('/api/reviews', reviewRoutes);
 
 // Error handling middleware
 app.use((err: Error, req: express.Request, res: express.Response, next: express.NextFunction) => {
@@ -94,18 +113,7 @@ app.use('*', (req, res) => {
 
 // Start server
 app.listen(PORT, () => {
-  console.log(`🚀 MORE THAN FASHION Backend API running on port ${PORT}`);
+  console.log(`🚀 ZENTHRA Backend API running on port ${PORT}`);
   console.log(`📍 Environment: ${process.env.NODE_ENV || 'development'}`);
   console.log(`🔗 Health check: http://localhost:${PORT}/health`);
-});
-
-// Graceful shutdown
-process.on('SIGTERM', () => {
-  console.log('🛑 SIGTERM received, shutting down gracefully');
-  process.exit(0);
-});
-
-process.on('SIGINT', () => {
-  console.log('🛑 SIGINT received, shutting down gracefully');
-  process.exit(0);
 });

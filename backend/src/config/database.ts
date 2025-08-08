@@ -1,40 +1,58 @@
-import mongoose from 'mongoose';
+import { MongoClient, Db } from 'mongodb';
 
-export const connectDB = async (): Promise<void> => {
+let db: Db;
+let client: MongoClient;
+
+export const connectMongoDB = async (): Promise<void> => {
   try {
-    const mongoURI = process.env.MONGODB_URI || process.env.DATABASE_URL || 'mongodb://localhost:27017/morethanfashion';
+    const MONGODB_URI = process.env.MONGODB_URI;
+    const DB_NAME = process.env.DB_NAME || 'zenthra';
+
+    if (!MONGODB_URI) {
+      throw new Error('MONGODB_URI environment variable is not defined');
+    }
+
+    console.log('🔄 Connecting to MongoDB Atlas...');
     
-    await mongoose.connect(mongoURI, {
-      // Modern Mongoose doesn't need these options anymore
-      // useNewUrlParser and useUnifiedTopology are deprecated
-    });
-
-    console.log('✅ MongoDB connected successfully');
+    client = new MongoClient(MONGODB_URI);
+    await client.connect();
     
-    // Handle connection events
-    mongoose.connection.on('error', (error) => {
-      console.error('❌ MongoDB connection error:', error);
-    });
-
-    mongoose.connection.on('disconnected', () => {
-      console.log('⚠️  MongoDB disconnected');
-    });
-
-    // Graceful shutdown
-    process.on('SIGINT', async () => {
-      await mongoose.connection.close();
-      console.log('💤 MongoDB connection closed through app termination');
-      process.exit(0);
-    });
+    db = client.db(DB_NAME);
+    
+    console.log('✅ Connected to MongoDB Atlas successfully');
+    console.log(`📊 Database: ${DB_NAME}`);
+    
+    // Test the connection
+    await db.admin().ping();
+    console.log('🏓 Database ping successful');
 
   } catch (error) {
-    console.error('❌ MongoDB connection failed:', error);
-    
-    // Fallback to in-memory storage for development
-    console.log('🔄 Falling back to in-memory storage for development...');
+    console.error('❌ MongoDB Atlas connection error:', error);
+    process.exit(1);
   }
 };
 
-export const isConnected = (): boolean => {
-  return mongoose.connection.readyState === 1;
+export const getDB = (): Db => {
+  if (!db) {
+    throw new Error('Database not initialized. Call connectMongoDB first.');
+  }
+  return db;
 };
+
+export const closeConnection = async (): Promise<void> => {
+  if (client) {
+    await client.close();
+    console.log('📴 MongoDB Atlas connection closed');
+  }
+};
+
+// Graceful shutdown
+process.on('SIGINT', async () => {
+  await closeConnection();
+  process.exit(0);
+});
+
+process.on('SIGTERM', async () => {
+  await closeConnection();
+  process.exit(0);
+});

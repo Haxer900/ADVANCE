@@ -76,7 +76,7 @@ export default function Home() {
           <div className="floating-animation">
             <Sparkles className="w-16 h-16 text-zenthra-primary mx-auto mb-8 pulse-glow" />
             <h1 className="font-poppins text-6xl md:text-8xl lg:text-9xl font-bold text-zenthra-primary mb-8 tracking-tight">
-              MORE THAN FASHION
+              ZENTHRA
             </h1>
             <p className="text-xl md:text-3xl text-zenthra-gray mb-12 max-w-4xl mx-auto leading-relaxed">
               Where premium meets perfection. Discover collections that define your lifestyle and elevate every moment.
@@ -85,15 +85,9 @@ export default function Home() {
           
           <div className="flex flex-col sm:flex-row gap-6 justify-center items-center fade-in-up">
             <Link href="/products">
-              <Button className="bg-zenthra-primary text-white hover:bg-zenthra-gold text-lg px-12 py-6 rounded-3xl transition-all duration-300">
-                <ShoppingBag className="w-5 h-5 mr-2" />
+              <Button className="bg-zenthra-primary text-white hover:bg-zenthra-gold text-xl px-16 py-8 rounded-3xl transition-all duration-300 hover:scale-105 hover:shadow-2xl border-2 border-transparent hover:border-zenthra-gold animate-pulse">
+                <ShoppingBag className="w-6 h-6 mr-3" />
                 Explore Collection
-              </Button>
-            </Link>
-            <Link href="/our-story">
-              <Button className="bg-white border-2 border-zenthra-primary text-zenthra-primary hover:bg-zenthra-primary hover:text-white text-lg px-12 py-6 rounded-3xl transition-all duration-300">
-                <Heart className="w-5 h-5 mr-2" />
-                Our Story
               </Button>
             </Link>
           </div>
@@ -133,7 +127,7 @@ export default function Home() {
                   <Card className="group hover-lift card-3d border-0 shadow-lg overflow-hidden">
                     <div className="relative h-80">
                       <img
-                        src={category.imageUrl}
+                        src={category.imageUrl || '/placeholder-image.jpg'}
                         alt={category.name}
                         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                       />
@@ -167,11 +161,9 @@ export default function Home() {
             className="text-center mb-20 scroll-reveal"
           >
             <div className="flex items-center justify-center mb-6">
-              <Star className="w-8 h-8 text-zenthra-secondary mr-3" />
               <h2 className="font-poppins text-5xl md:text-6xl font-bold text-zenthra-primary gradient-text">
                 Featured Products
               </h2>
-              <Star className="w-8 h-8 text-zenthra-secondary ml-3" />
             </div>
             <p className="text-xl text-zenthra-gray max-w-3xl mx-auto">
               Hand-picked selections from our premium collection
