@@ -19,6 +19,14 @@ import Checkout from "@/pages/checkout";
 import Blog from "@/pages/blog";
 import TrackOrder from "@/pages/track-order";
 import About from "@/pages/about";
+import AboutUs from "@/pages/about-us";
+import Collections from "@/pages/collections";
+import NewArrivals from "@/pages/new-arrivals";
+import SizeGuide from "@/pages/size-guide";
+import ShippingInfo from "@/pages/shipping-info";
+import Returns from "@/pages/returns";
+import FAQ from "@/pages/faq";
+import Support from "@/pages/support";
 import Contact from "@/pages/contact";
 import OurStory from "@/pages/our-story";
 import NotFound from "@/pages/not-found";
@@ -112,6 +120,14 @@ function Router() {
                 <Route path="/blog" component={Blog} />
                 <Route path="/track-order" component={TrackOrder} />
                 <Route path="/about" component={About} />
+                <Route path="/about-us" component={AboutUs} />
+                <Route path="/collections" component={Collections} />
+                <Route path="/new-arrivals" component={NewArrivals} />
+                <Route path="/size-guide" component={SizeGuide} />
+                <Route path="/shipping-info" component={ShippingInfo} />
+                <Route path="/returns" component={Returns} />
+                <Route path="/faq" component={FAQ} />
+                <Route path="/support" component={Support} />
                 <Route path="/our-story" component={OurStory} />
                 <Route path="/contact" component={Contact} />
                 <Route component={NotFound} />

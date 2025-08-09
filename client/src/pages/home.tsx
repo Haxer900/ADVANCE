@@ -216,7 +216,7 @@ export default function Home() {
                 Our commitment to quality and sustainability ensures that each purchase contributes to a better world while elevating your lifestyle.
               </p>
               <Link href="/our-story">
-                <Button className="bg-zenthra-primary text-white hover:bg-zenthra-gold text-lg px-12 py-6 rounded-3xl transition-all duration-300">
+                <Button className="text-white hover:bg-zenthra-gold text-lg px-12 py-6 rounded-3xl transition-all duration-300 traveling-border">
                   <Heart className="w-5 h-5 mr-2" />
                   Discover Our Story
                 </Button>
