@@ -123,12 +123,12 @@ export default function Home() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {(categories as Category[] || []).map((category, index) => (
                 <Link key={category.id} href={`/products?category=${category.name}`}>
-                  <Card className="group hover-lift card-3d border-0 shadow-lg overflow-hidden">
+                  <Card className="group border-0 shadow-lg overflow-hidden">
                     <div className="relative h-80">
                       <img
                         src={category.imageUrl || '/placeholder-image.jpg'}
                         alt={category.name}
-                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                        className="w-full h-full object-cover"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-zenthra-primary/80 via-transparent to-transparent"></div>
                       <div className="absolute bottom-6 left-6 right-6">
@@ -179,7 +179,7 @@ export default function Home() {
             <>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 mb-16">
                 {(featuredProducts as Product[] || []).slice(0, 8).map((product) => (
-                  <div key={product.id} className="tilt-effect">
+                  <div key={product.id}>
                     <ProductCard product={product} />
                   </div>
                 ))}

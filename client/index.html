@@ -85,13 +85,27 @@
       
       .zenthra-logo {
         font-family: 'Poppins', sans-serif;
-        font-size: 2.5rem;
+        font-size: 8rem;
         font-weight: 700;
         color: #ffd700;
-        margin-bottom: 2rem;
-        letter-spacing: 0.1em;
+        margin-bottom: 3rem;
+        letter-spacing: 0.2em;
         text-transform: uppercase;
         animation: zenthraPulse 2s ease-in-out infinite;
+      }
+      
+      @media (max-width: 768px) {
+        .zenthra-logo {
+          font-size: 5rem;
+          letter-spacing: 0.15em;
+        }
+      }
+      
+      @media (max-width: 480px) {
+        .zenthra-logo {
+          font-size: 3.5rem;
+          letter-spacing: 0.1em;
+        }
       }
       
       /* Explicitly remove any pseudo-element content */
