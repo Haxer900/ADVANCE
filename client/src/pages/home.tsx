@@ -84,7 +84,7 @@ export default function Home() {
           
           <div className="flex flex-col sm:flex-row gap-6 justify-center items-center fade-in-up">
             <Link href="/products">
-              <Button className="bg-zenthra-primary text-white hover:bg-zenthra-gold text-xl px-16 py-8 rounded-3xl transition-all duration-300 hover:scale-105 hover:shadow-2xl border-2 border-transparent hover:border-zenthra-gold spinner-border">
+              <Button className="bg-zenthra-primary text-white hover:bg-zenthra-gold text-xl px-16 py-8 rounded-3xl transition-all duration-300 hover:scale-105 hover:shadow-2xl elegant-border">
                 <ShoppingBag className="w-6 h-6 mr-3" />
                 Explore Collection
               </Button>
