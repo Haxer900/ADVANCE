@@ -115,22 +115,22 @@ export class MemStorage implements IStorage {
     // Initialize categories
     const womensCategory: Category = {
       id: randomUUID(),
-      name: "Women's Collection",
-      description: "Sophisticated elegance",
+      name: "Vestments",
+      description: "Elegance Draped",
       imageUrl: "https://images.unsplash.com/photo-1594633312681-425c7b97ccd1"
     };
     
     const mensCategory: Category = {
       id: randomUUID(),
-      name: "Men's Collection", 
-      description: "Refined sophistication",
+      name: "Breeches", 
+      description: "Tailored Grace",
       imageUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d"
     };
 
     const lifestyleCategory: Category = {
       id: randomUUID(),
-      name: "Family & Lifestyle",
-      description: "Creating memories together",
+      name: "Raiment",
+      description: "Complete Poise",
       imageUrl: "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136"
     };
 
@@ -146,7 +146,7 @@ export class MemStorage implements IStorage {
         description: "Premium leather craftsmanship with elegant design and attention to detail",
         price: "899.00",
         imageUrl: "https://images.unsplash.com/photo-1584917865442-de89df76afd3",
-        category: "Women's Collection",
+        category: "Vestments",
         inStock: true,
         featured: true,
         createdAt: new Date(),
@@ -157,7 +157,7 @@ export class MemStorage implements IStorage {
         description: "Swiss movement precision with sophisticated design elements",
         price: "1299.00",
         imageUrl: "https://images.unsplash.com/photo-1523275335684-37898b6baf30",
-        category: "Men's Collection",
+        category: "Breeches",
         inStock: true,
         featured: true,
         createdAt: new Date(),
@@ -168,7 +168,7 @@ export class MemStorage implements IStorage {
         description: "Hand-printed luxury silk with intricate patterns",
         price: "349.00",
         imageUrl: "https://images.unsplash.com/photo-1601924994987-69e26d50dc26",
-        category: "Women's Collection",
+        category: "Vestments",
         inStock: true,
         featured: true,
         createdAt: new Date(),
@@ -179,7 +179,7 @@ export class MemStorage implements IStorage {
         description: "Handcrafted Italian leather with exceptional quality",
         price: "699.00",
         imageUrl: "https://images.unsplash.com/photo-1549298916-b41d501d3772",
-        category: "Men's Collection",
+        category: "Breeches",
         inStock: true,
         featured: true,
         createdAt: new Date(),
@@ -190,9 +190,9 @@ export class MemStorage implements IStorage {
         description: "Tailored elegance with premium fabric and perfect fit",
         price: "1599.00",
         imageUrl: "https://images.unsplash.com/photo-1507038732509-8b1a9297ee71",
-        category: "Women's Collection",
+        category: "Vestments",
         inStock: true,
-        featured: false,
+        featured: true,
         createdAt: new Date(),
       },
       {
@@ -201,9 +201,9 @@ export class MemStorage implements IStorage {
         description: "Crafted from finest leather with modern functionality",
         price: "299.00",
         imageUrl: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62",
-        category: "Men's Collection",
+        category: "Breeches",
         inStock: true,
-        featured: false,
+        featured: true,
         createdAt: new Date(),
       },
       {
@@ -212,9 +212,9 @@ export class MemStorage implements IStorage {
         description: "Sophisticated jewelry piece with premium materials",
         price: "799.00",
         imageUrl: "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338",
-        category: "Women's Collection",
+        category: "Vestments",
         inStock: true,
-        featured: false,
+        featured: true,
         createdAt: new Date(),
       },
       {
@@ -223,9 +223,9 @@ export class MemStorage implements IStorage {
         description: "Premium outdoor dining experience for the whole family",
         price: "449.00",
         imageUrl: "https://images.unsplash.com/photo-1530587191325-3db32d826c18",
-        category: "Family & Lifestyle",
+        category: "Raiment",
         inStock: true,
-        featured: false,
+        featured: true,
         createdAt: new Date(),
       }
     ];

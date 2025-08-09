@@ -105,8 +105,8 @@ export default function Home() {
             ref={categoriesRef}
             className="text-center mb-20 scroll-reveal"
           >
-            <h2 className="font-poppins text-5xl md:text-6xl font-bold text-zenthra-primary mb-6 gradient-text">
-              Shop by Category
+            <h2 className="font-poppins text-5xl md:text-6xl font-bold text-zenthra-primary mb-6 gradient-text breathing-effect">
+              Make Your Choice
             </h2>
             <p className="text-xl text-zenthra-gray max-w-3xl mx-auto">
               Curated collections for every aspect of your lifestyle
@@ -161,7 +161,7 @@ export default function Home() {
           >
             <div className="flex items-center justify-center mb-6">
               <h2 className="font-poppins text-5xl md:text-6xl font-bold text-zenthra-primary gradient-text">
-                Featured Products
+                Zenthra's Eternal Elegance
               </h2>
             </div>
             <p className="text-xl text-zenthra-gray max-w-3xl mx-auto">
@@ -245,7 +245,6 @@ export default function Home() {
             className="text-center scroll-reveal"
           >
             <div className="border-2 border-zenthra-primary/10 rounded-3xl p-12 md:p-16 shadow-lg">
-              <Sparkles className="w-12 h-12 text-zenthra-primary mx-auto mb-8 pulse-glow" />
               <h2 className="font-poppins text-4xl md:text-5xl font-bold text-zenthra-primary mb-6">
                 Stay in the Loop
               </h2>
