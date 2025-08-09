@@ -80,47 +80,49 @@
   }
 }
 
-/* Preloader Styles */
-#preloader {
+/* Loading Overlay with Blur Effect */
+#loading-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: var(--zenthra-black);
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 9999;
-  transition: opacity 0.5s ease-out, visibility 0.5s ease-out;
+  transition: opacity 0.3s ease-out, visibility 0.3s ease-out;
 }
 
-#preloader.hidden {
+#loading-overlay.hidden {
   opacity: 0;
   visibility: hidden;
+  pointer-events: none;
 }
 
-.preloader-content {
-  text-align: center;
-  color: white;
+/* Simple Loading Spinner */
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  border-top-color: var(--zenthra-gold);
+  animation: spin 1s ease-in-out infinite;
 }
 
-.zenthra-logo {
-  font-family: 'Poppins', sans-serif;
-  font-size: 2.5rem;
-  font-weight: 700;
-  color: var(--zenthra-gold);
-  margin-bottom: 2rem;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  animation: zenthraPulse 2s ease-in-out infinite;
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
-/* Explicitly remove any pseudo-element content */
-.zenthra-logo::before,
-.zenthra-logo::after {
-  content: none !important;
-  display: none !important;
+/* Blur effect for main content during loading */
+#root.loading {
+  filter: blur(5px);
+  transition: filter 0.3s ease;
 }
 
 /* Explicitly remove any pseudo-element content */
