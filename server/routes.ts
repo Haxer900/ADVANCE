@@ -7,6 +7,7 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import fs from "fs/promises";
 import path from "path";
+import mediaRoutes from "./routes/media";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Products
@@ -754,6 +755,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: "Failed to fetch newsletter subscriptions" });
     }
   });
+
+  // Media management routes
+  app.use("/api/media", mediaRoutes);
 
   const httpServer = createServer(app);
   return httpServer;

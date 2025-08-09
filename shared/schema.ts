@@ -446,6 +446,125 @@ export const insertEmailCampaignSchema = createInsertSchema(emailCampaigns).omit
   createdAt: true,
 });
 
+// Media Storage Tables for Cloudinary Integration
+export const mediaTypeEnum = pgEnum("media_type", ["image", "video"]);
+export const mediaContextEnum = pgEnum("media_context", ["product", "category", "banner", "lookbook", "blog", "user", "site"]);
+
+// Media files table for Cloudinary integration
+export const mediaFiles = pgTable("media_files", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  cloudinaryPublicId: text("cloudinary_public_id").notNull().unique(),
+  cloudinarySecureUrl: text("cloudinary_secure_url").notNull(),
+  originalName: text("original_name").notNull(),
+  fileName: text("file_name").notNull(),
+  mimeType: text("mime_type").notNull(),
+  fileSize: integer("file_size").notNull(), // in bytes
+  width: integer("width"),
+  height: integer("height"),
+  duration: integer("duration"), // for videos in seconds
+  mediaType: mediaTypeEnum("media_type").notNull(),
+  context: mediaContextEnum("media_context").notNull(),
+  format: text("format").notNull(), // webp, mp4, etc.
+  transformationUrl: text("transformation_url"), // optimized CDN URL
+  alt: text("alt"),
+  title: text("title"),
+  description: text("description"),
+  tags: jsonb("tags"), // array of string tags
+  metadata: jsonb("metadata"), // additional cloudinary metadata
+  isPrimary: boolean("is_primary").default(false),
+  isActive: boolean("is_active").default(true),
+  uploadedBy: varchar("uploaded_by"), // user ID who uploaded
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// Product Media junction table
+export const productMedia = pgTable("product_media", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  productId: varchar("product_id").notNull(),
+  mediaId: varchar("media_id").notNull(),
+  displayOrder: integer("display_order").default(0),
+  variantId: varchar("variant_id"), // optional, for variant-specific media
+  isPrimary: boolean("is_primary").default(false),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// Media Collections for organizing site assets
+export const mediaCollections = pgTable("media_collections", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  name: text("name").notNull(),
+  description: text("description"),
+  context: mediaContextEnum("context").notNull(),
+  slug: text("slug").notNull().unique(),
+  isPublic: boolean("is_public").default(false),
+  metadata: jsonb("metadata"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// Media Collection Items junction table
+export const mediaCollectionItems = pgTable("media_collection_items", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  collectionId: varchar("collection_id").notNull(),
+  mediaId: varchar("media_id").notNull(),
+  displayOrder: integer("display_order").default(0),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// Media transformations for different use cases
+export const mediaTransformations = pgTable("media_transformations", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  mediaId: varchar("media_id").notNull(),
+  name: text("name").notNull(), // thumbnail, hero, card, etc.
+  transformationString: text("transformation_string").notNull(), // cloudinary transformation
+  url: text("url").notNull(),
+  width: integer("width"),
+  height: integer("height"),
+  format: text("format"),
+  quality: integer("quality"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// Insert schemas for media tables
+export const insertMediaFileSchema = createInsertSchema(mediaFiles).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertProductMediaSchema = createInsertSchema(productMedia).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertMediaCollectionSchema = createInsertSchema(mediaCollections).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertMediaCollectionItemSchema = createInsertSchema(mediaCollectionItems).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertMediaTransformationSchema = createInsertSchema(mediaTransformations).omit({
+  id: true,
+  createdAt: true,
+});
+
+// Types for media tables
+export type MediaFile = typeof mediaFiles.$inferSelect;
+export type InsertMediaFile = z.infer<typeof insertMediaFileSchema>;
+export type ProductMedia = typeof productMedia.$inferSelect;
+export type InsertProductMedia = z.infer<typeof insertProductMediaSchema>;
+export type MediaCollection = typeof mediaCollections.$inferSelect;
+export type InsertMediaCollection = z.infer<typeof insertMediaCollectionSchema>;
+export type MediaCollectionItem = typeof mediaCollectionItems.$inferSelect;
+export type InsertMediaCollectionItem = z.infer<typeof insertMediaCollectionItemSchema>;
+export type MediaTransformation = typeof mediaTransformations.$inferSelect;
+export type InsertMediaTransformation = z.infer<typeof insertMediaTransformationSchema>;
+
 // Types
 export type Product = typeof products.$inferSelect;
 export type InsertProduct = z.infer<typeof insertProductSchema>;
