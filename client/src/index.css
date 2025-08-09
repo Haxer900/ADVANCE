@@ -711,6 +711,10 @@ select:focus-visible {
   height: auto;
   transform: translate(-50%, -50%);
   z-index: -1;
+  /* Optimize video performance */
+  will-change: transform;
+  backface-visibility: hidden;
+  perspective: 1000px;
 }
 
 /* Responsive video container */

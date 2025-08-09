@@ -70,9 +70,9 @@ export default function Home() {
             muted 
             loop 
             playsInline
+            preload="metadata"
             className="video-background object-cover"
             style={{ filter: 'brightness(0.7)' }}
-            poster="/api/placeholder/1920/1080"
           >
             <source src="/fashion-hero-video.mp4" type="video/mp4" />
             Your browser does not support the video tag.
@@ -84,7 +84,7 @@ export default function Home() {
           ref={heroRef}
           className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center scroll-reveal video-text-overlay"
         >
-          <div className="floating-animation">
+          <div>
             <h1 className="font-poppins text-6xl md:text-8xl lg:text-9xl font-bold text-white mb-8 tracking-tight video-text-overlay">
               ZENTHRA
             </h1>
@@ -110,13 +110,13 @@ export default function Home() {
       </section>
 
       {/* Categories Section */}
-      <section className="py-32 bg-white">
+      <section className="py-16 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div 
             ref={categoriesRef}
             className="text-center mb-20 scroll-reveal"
           >
-            <h2 className="font-poppins text-5xl md:text-6xl font-bold text-zenthra-primary mb-6 gradient-text">
+            <h2 className="font-poppins text-5xl md:text-6xl font-bold text-zenthra-primary mb-6">
               Make Your Choice
             </h2>
             <p className="text-xl text-zenthra-gray max-w-3xl mx-auto">
@@ -164,7 +164,7 @@ export default function Home() {
       </section>
 
       {/* Featured Products */}
-      <section className="py-32 bg-zenthra-white">
+      <section className="py-16 bg-zenthra-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div 
             ref={featuredRef}
@@ -210,7 +210,7 @@ export default function Home() {
       </section>
 
       {/* About Section */}
-      <section className="py-32 bg-white border-t border-gray-100">
+      <section className="py-16 bg-white border-t border-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div 
             ref={aboutRef}
@@ -249,7 +249,7 @@ export default function Home() {
       </section>
 
       {/* Newsletter Section */}
-      <section className="py-32 bg-white border-t border-gray-100">
+      <section className="py-16 bg-white border-t border-gray-100">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div 
             ref={newsletterRef}
