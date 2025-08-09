@@ -24,5 +24,5 @@ document.addEventListener('DOMContentLoaded', () => {
         loadingOverlay.parentNode.removeChild(loadingOverlay);
       }
     }, 300);
-  }, 800); // Give React a moment to render
+  }, 500); // Reduced timing for faster loading
 });
