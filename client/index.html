@@ -94,6 +94,13 @@
         animation: zenthraPulse 2s ease-in-out infinite;
       }
       
+      /* Explicitly remove any pseudo-element content */
+      .zenthra-logo::before,
+      .zenthra-logo::after {
+        content: none !important;
+        display: none !important;
+      }
+      
       @keyframes zenthraPulse {
         0%, 100% {
           opacity: 1;
