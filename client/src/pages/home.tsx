@@ -62,29 +62,40 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-        <div className="absolute inset-0 bg-white"></div>
-        <div 
-          ref={parallaxRef}
-          className="absolute inset-0 bg-white parallax-element"
-        ></div>
+      <section className="relative min-h-screen flex items-center justify-center overflow-hidden video-container">
+        {/* Video Background */}
+        <div className="absolute inset-0 w-full h-full">
+          <video 
+            autoPlay 
+            muted 
+            loop 
+            playsInline
+            className="video-background object-cover"
+            style={{ filter: 'brightness(0.7)' }}
+            poster="/api/placeholder/1920/1080"
+          >
+            <source src="/fashion-hero-video.mp4" type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
+          <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/30 to-black/40"></div>
+        </div>
         
         <div 
           ref={heroRef}
-          className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center scroll-reveal"
+          className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center scroll-reveal video-text-overlay"
         >
           <div className="floating-animation">
-            <h1 className="font-poppins text-6xl md:text-8xl lg:text-9xl font-bold text-zenthra-primary mb-8 tracking-tight">
+            <h1 className="font-poppins text-6xl md:text-8xl lg:text-9xl font-bold text-white mb-8 tracking-tight video-text-overlay">
               ZENTHRA
             </h1>
-            <p className="text-xl md:text-3xl text-zenthra-gray mb-12 max-w-4xl mx-auto leading-relaxed">
+            <p className="text-xl md:text-3xl text-white/95 mb-12 max-w-4xl mx-auto leading-relaxed video-text-overlay">
               Where premium meets perfection. Discover collections that define your lifestyle and elevate every moment.
             </p>
           </div>
           
           <div className="flex flex-col sm:flex-row gap-6 justify-center items-center fade-in-up">
             <Link href="/products">
-              <Button className="text-white hover:bg-zenthra-gold text-xl px-16 py-8 rounded-3xl transition-all duration-300 hover:scale-105 hover:shadow-2xl traveling-border">
+              <Button className="bg-white/90 backdrop-blur-sm text-zenthra-primary hover:bg-zenthra-primary hover:text-white text-xl px-16 py-8 rounded-3xl transition-all duration-300 hover:scale-105 hover:shadow-2xl border-2 border-white/20">
                 <ShoppingBag className="w-6 h-6 mr-3" />
                 Explore Collection
               </Button>
@@ -93,9 +104,9 @@ export default function Home() {
         </div>
 
         {/* Floating Elements */}
-        <div className="absolute top-20 left-10 w-20 h-20 bg-zenthra-primary/10 rounded-full floating-animation blur-sm"></div>
-        <div className="absolute bottom-20 right-10 w-32 h-32 bg-zenthra-primary/5 rounded-full floating-animation blur-sm" style={{animationDelay: '2s'}}></div>
-        <div className="absolute top-1/2 left-20 w-16 h-16 bg-zenthra-primary/15 rounded-full floating-animation blur-sm" style={{animationDelay: '4s'}}></div>
+        <div className="absolute top-20 left-10 w-20 h-20 bg-white/10 rounded-full floating-animation blur-sm"></div>
+        <div className="absolute bottom-20 right-10 w-32 h-32 bg-white/5 rounded-full floating-animation blur-sm" style={{animationDelay: '2s'}}></div>
+        <div className="absolute top-1/2 left-20 w-16 h-16 bg-white/15 rounded-full floating-animation blur-sm" style={{animationDelay: '4s'}}></div>
       </section>
 
       {/* Categories Section */}
@@ -105,7 +116,7 @@ export default function Home() {
             ref={categoriesRef}
             className="text-center mb-20 scroll-reveal"
           >
-            <h2 className="font-poppins text-5xl md:text-6xl font-bold text-zenthra-primary mb-6 gradient-text breathing-effect">
+            <h2 className="font-poppins text-5xl md:text-6xl font-bold text-zenthra-primary mb-6 gradient-text">
               Make Your Choice
             </h2>
             <p className="text-xl text-zenthra-gray max-w-3xl mx-auto">

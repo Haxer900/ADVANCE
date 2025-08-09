@@ -700,17 +700,43 @@ select:focus-visible {
   }
 }
 
-/* Breathing Effect */
-.breathing-effect {
-  animation: breathe 3s ease-in-out infinite;
+/* Video Background Styles */
+.video-background {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  min-width: 100%;
+  min-height: 100%;
+  width: auto;
+  height: auto;
+  transform: translate(-50%, -50%);
+  z-index: -1;
 }
 
-@keyframes breathe {
-  0%, 100% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.02);
+/* Responsive video container */
+.video-container {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  height: 100vh;
+}
+
+/* Enhanced text readability on video background */
+.video-text-overlay {
+  text-shadow: 
+    0 2px 4px rgba(0, 0, 0, 0.8),
+    0 4px 8px rgba(0, 0, 0, 0.6),
+    0 8px 16px rgba(0, 0, 0, 0.4);
+  position: relative;
+  z-index: 10;
+}
+
+/* Mobile video optimization */
+@media (max-width: 768px) {
+  .video-background {
+    /* On mobile, ensure video covers full viewport */
+    min-width: 100vw;
+    min-height: 100vh;
   }
 }
 
