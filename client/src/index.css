@@ -662,10 +662,41 @@ select:focus-visible {
   to { transform: rotate(360deg); }
 }
 
-/* Elegant Static Border */
-.elegant-border {
-  border: 2px solid var(--zenthra-gold);
-  box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+/* Traveling Border Animation */
+.traveling-border {
+  position: relative;
+  background: var(--zenthra-primary);
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+.traveling-border::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  border-radius: inherit;
+  background: linear-gradient(90deg, 
+    transparent, 
+    transparent, 
+    var(--zenthra-gold), 
+    transparent, 
+    transparent
+  );
+  background-size: 200% 100%;
+  animation: travel-border 3s linear infinite;
+  z-index: -1;
+}
+
+@keyframes travel-border {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
 }
 
 .loading-dots::after {
