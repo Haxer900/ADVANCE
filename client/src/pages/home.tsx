@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
@@ -15,6 +15,8 @@ import { ArrowRight, Star, Sparkles, ShoppingBag, Heart, TrendingUp } from "luci
 
 export default function Home() {
   const [email, setEmail] = useState("");
+  const [videoLoaded, setVideoLoaded] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
   const { toast } = useToast();
   const queryClient = useQueryClient();
   
@@ -65,18 +67,30 @@ export default function Home() {
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden video-container">
         {/* Video Background */}
         <div className="absolute inset-0 w-full h-full">
+          {/* Fallback background */}
+          <div className="absolute inset-0 bg-gradient-to-br from-zenthra-primary via-zenthra-secondary to-zenthra-gold opacity-80"></div>
+          
+          {/* Video Element */}
           <video 
+            ref={videoRef}
             autoPlay 
             muted 
             loop 
             playsInline
-            preload="metadata"
-            className="video-background object-cover"
-            style={{ filter: 'brightness(0.7)' }}
+            className="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000"
+            style={{ 
+              filter: 'brightness(0.7)',
+              opacity: videoLoaded ? 1 : 0
+            }}
+            onLoadedData={() => setVideoLoaded(true)}
+            onError={(e) => {
+              console.error('Video error:', e);
+              setVideoLoaded(false);
+            }}
           >
             <source src="/fashion-hero-video.mp4" type="video/mp4" />
-            Your browser does not support the video tag.
           </video>
+          
           <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/30 to-black/40"></div>
         </div>
         
