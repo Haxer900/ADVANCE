@@ -6,7 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "@/components/theme-provider";
 import Header from "@/components/header";
 import Footer from "@/components/footer";
-import { AnnouncementBar } from "@/components/announcement-bar";
+
 import { ScrollToTop } from "@/components/scroll-to-top";
 import { CookieConsent } from "@/components/cookie-consent";
 import { Preloader } from "@/components/preloader";
@@ -107,7 +107,6 @@ function Router() {
       <Route>
         {() => (
           <div className="min-h-screen flex flex-col">
-            <AnnouncementBar />
             <Header />
             <main className="flex-1">
               <Switch>
