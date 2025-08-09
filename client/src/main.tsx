@@ -2,20 +2,27 @@ import { createRoot } from "react-dom/client";
 import App from "./App";
 import "./index.css";
 
+// Add loading class to body immediately
+document.body.classList.add("loading");
+
 // Wait for DOM to be ready
 document.addEventListener('DOMContentLoaded', () => {
   const rootElement = document.getElementById("root")!;
   const loadingOverlay = document.getElementById("loading-overlay")!;
   
-  // Add loading class to blur the content initially
-  rootElement.classList.add("loading");
-  
   // Mount React app
   createRoot(rootElement).render(<App />);
   
-  // Hide loading overlay after React app is ready
-  setTimeout(() => {
-    rootElement.classList.remove("loading");
+  // Wait for everything to load completely
+  const hideLoader = () => {
+    // Enable scrolling
+    document.body.classList.remove("loading");
+    document.body.style.overflow = "visible";
+    
+    // Show root content
+    rootElement.classList.add("loaded");
+    
+    // Hide loading overlay
     loadingOverlay.classList.add("hidden");
     
     // Remove overlay from DOM after transition
@@ -23,6 +30,17 @@ document.addEventListener('DOMContentLoaded', () => {
       if (loadingOverlay.parentNode) {
         loadingOverlay.parentNode.removeChild(loadingOverlay);
       }
-    }, 300);
-  }, 500); // Reduced timing for faster loading
+    }, 500);
+  };
+  
+  // Wait for React to mount and render, then hide loader
+  setTimeout(() => {
+    // Check if React has rendered by looking for content
+    if (rootElement.children.length > 0) {
+      hideLoader();
+    } else {
+      // If not ready, wait a bit more
+      setTimeout(hideLoader, 300);
+    }
+  }, 800);
 });

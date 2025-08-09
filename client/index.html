@@ -58,21 +58,20 @@
     </script>
     <!-- Inline Critical CSS for Immediate Loading -->
     <style>
-      /* Critical loading overlay styles - inline for immediate display */
+      /* Critical preloader styles - inline for immediate display */
       #loading-overlay {
         position: fixed;
         top: 0;
         left: 0;
-        width: 100%;
-        height: 100%;
+        width: 100vw;
+        height: 100vh;
         background: transparent;
-        backdrop-filter: blur(10px);
-        -webkit-backdrop-filter: blur(10px);
         display: flex;
         align-items: center;
         justify-content: center;
-        z-index: 9999;
-        transition: opacity 0.3s ease-out, visibility 0.3s ease-out;
+        z-index: 99999;
+        transition: opacity 0.5s ease-out, visibility 0.5s ease-out;
+        overflow: hidden;
       }
       
       #loading-overlay.hidden {
@@ -83,38 +82,56 @@
       
       /* Simple Loading Spinner */
       .loading-spinner {
-        width: 40px;
-        height: 40px;
-        border: 3px solid rgba(255, 255, 255, 0.2);
+        width: 50px;
+        height: 50px;
+        border: 4px solid rgba(255, 215, 0, 0.2);
         border-radius: 50%;
         border-top-color: #ffd700;
-        animation: spin 1s ease-in-out infinite;
+        animation: spin 1s linear infinite;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
       }
       
       @keyframes spin {
         to {
-          transform: rotate(360deg);
+          transform: translate(-50%, -50%) rotate(360deg);
         }
       }
       
-      /* Blur effect for main content during loading */
-      #root.loading {
-        filter: blur(5px);
-        transition: filter 0.3s ease;
-      }
-      
-      /* Prevent any flicker or default content */
+      /* Prevent any flicker or scrolling */
       html, body {
-        margin: 0;
-        padding: 0;
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
         background: #000000 !important;
         font-family: 'Inter', sans-serif;
-        overflow-x: hidden;
+        overflow: hidden !important;
+        position: relative;
       }
       
-      /* Ensure immediate black background */
-      html {
-        background-color: #000000 !important;
+      /* Hide root initially */
+      #root {
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.5s ease-in;
+        width: 100%;
+        height: 100%;
+      }
+      
+      #root.loaded {
+        opacity: 1;
+        visibility: visible;
+      }
+      
+      /* Body loading state */
+      body.loading {
+        overflow: hidden !important;
+        position: fixed !important;
+        width: 100% !important;
+        height: 100% !important;
       }
     </style>
   </head>
