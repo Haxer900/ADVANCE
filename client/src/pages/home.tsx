@@ -74,7 +74,6 @@ export default function Home() {
           className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center scroll-reveal"
         >
           <div className="floating-animation">
-            <Sparkles className="w-16 h-16 text-zenthra-primary mx-auto mb-8 pulse-glow" />
             <h1 className="font-poppins text-6xl md:text-8xl lg:text-9xl font-bold text-zenthra-primary mb-8 tracking-tight">
               ZENTHRA
             </h1>
