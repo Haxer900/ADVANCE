@@ -124,16 +124,21 @@ export default function Home() {
       </section>
 
       {/* Categories Section */}
-      <section className="py-16 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="py-16 bg-gradient-to-br from-gray-50 via-white to-gray-100 relative overflow-hidden">
+        {/* Decorative Elements */}
+        <div className="absolute top-10 right-10 w-64 h-64 bg-zenthra-primary/5 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-10 left-10 w-48 h-48 bg-zenthra-secondary/10 rounded-full blur-2xl"></div>
+        
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
           <div 
             ref={categoriesRef}
             className="text-center mb-20 scroll-reveal"
           >
-            <h2 className="font-poppins text-5xl md:text-6xl font-bold text-zenthra-primary mb-6">
+            <h2 className="font-poppins text-5xl md:text-6xl font-bold text-zenthra-primary mb-6 relative">
               Make Your Choice
+              <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-24 h-1 bg-gradient-to-r from-zenthra-secondary to-zenthra-gold rounded-full"></div>
             </h2>
-            <p className="text-xl text-zenthra-gray max-w-3xl mx-auto">
+            <p className="text-xl text-zenthra-gray max-w-3xl mx-auto mt-8">
               Curated collections for every aspect of your lifestyle
             </p>
           </div>
@@ -178,18 +183,24 @@ export default function Home() {
       </section>
 
       {/* Featured Products */}
-      <section className="py-16 bg-zenthra-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="py-16 bg-gradient-to-r from-zenthra-primary/5 via-zenthra-secondary/10 to-zenthra-gold/5 relative overflow-hidden">
+        {/* Decorative Elements */}
+        <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-zenthra-primary via-zenthra-secondary to-zenthra-gold opacity-30"></div>
+        <div className="absolute top-16 left-16 w-32 h-32 bg-zenthra-gold/10 rounded-full blur-xl"></div>
+        <div className="absolute bottom-16 right-16 w-40 h-40 bg-zenthra-secondary/10 rounded-full blur-2xl"></div>
+        
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
           <div 
             ref={featuredRef}
             className="text-center mb-20 scroll-reveal"
           >
             <div className="flex items-center justify-center mb-6">
-              <h2 className="font-poppins text-5xl md:text-6xl font-bold text-zenthra-primary gradient-text">
+              <h2 className="font-poppins text-5xl md:text-6xl font-bold text-zenthra-primary gradient-text relative">
                 Zenthra's Eternal Elegance
+                <div className="absolute -bottom-3 left-1/2 transform -translate-x-1/2 w-32 h-1 bg-gradient-to-r from-zenthra-secondary to-zenthra-gold rounded-full"></div>
               </h2>
             </div>
-            <p className="text-xl text-zenthra-gray max-w-3xl mx-auto">
+            <p className="text-xl text-zenthra-gray max-w-3xl mx-auto mt-8">
               Hand-picked selections from our premium collection
             </p>
           </div>
@@ -224,15 +235,19 @@ export default function Home() {
       </section>
 
       {/* About Section */}
-      <section className="py-16 bg-white border-t border-gray-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="py-16 bg-gradient-to-bl from-zenthra-secondary/5 via-white to-zenthra-primary/5 border-t border-gray-100 relative overflow-hidden">
+        {/* Decorative Elements */}
+        <div className="absolute top-20 right-20 w-56 h-56 bg-zenthra-secondary/5 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-20 left-20 w-44 h-44 bg-zenthra-primary/10 rounded-full blur-2xl"></div>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
           <div 
             ref={aboutRef}
             className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center scroll-reveal"
           >
             <div className="slide-in-left">
-              <h2 className="font-poppins text-5xl md:text-6xl font-bold text-zenthra-primary mb-8">
+              <h2 className="font-poppins text-5xl md:text-6xl font-bold text-zenthra-primary mb-8 relative">
                 Crafted for Excellence
+                <div className="absolute -bottom-2 left-0 w-28 h-1 bg-gradient-to-r from-zenthra-secondary to-zenthra-gold rounded-full"></div>
               </h2>
               <p className="text-xl text-zenthra-gray mb-8 leading-relaxed">
                 Every piece in our collection tells a story of excellence, from the finest materials to the most skilled artisans. We believe in creating not just products, but experiences that enrich your daily life.
@@ -263,15 +278,20 @@ export default function Home() {
       </section>
 
       {/* Newsletter Section */}
-      <section className="py-16 bg-white border-t border-gray-100">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="py-16 bg-gradient-to-t from-zenthra-gold/10 via-zenthra-secondary/5 to-white border-t border-gray-100 relative overflow-hidden">
+        {/* Decorative Elements */}
+        <div className="absolute top-10 left-10 w-72 h-72 bg-zenthra-gold/5 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-10 right-10 w-52 h-52 bg-zenthra-secondary/10 rounded-full blur-2xl"></div>
+        
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative">
           <div 
             ref={newsletterRef}
             className="text-center scroll-reveal"
           >
-            <div className="border-2 border-zenthra-primary/10 rounded-3xl p-12 md:p-16 shadow-lg">
-              <h2 className="font-poppins text-4xl md:text-5xl font-bold text-zenthra-primary mb-6">
+            <div className="border-2 border-zenthra-primary/10 rounded-3xl p-12 md:p-16 shadow-lg bg-white/50 backdrop-blur-sm">
+              <h2 className="font-poppins text-4xl md:text-5xl font-bold text-zenthra-primary mb-6 relative">
                 Stay in the Loop
+                <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-20 h-1 bg-gradient-to-r from-zenthra-secondary to-zenthra-gold rounded-full"></div>
               </h2>
               <p className="text-xl text-zenthra-gray mb-12 max-w-2xl mx-auto">
                 Be the first to discover new collections, exclusive offers, and insider stories from the world of MORE THAN FASHION
