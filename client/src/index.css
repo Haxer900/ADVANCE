@@ -662,6 +662,39 @@ select:focus-visible {
   to { transform: rotate(360deg); }
 }
 
+/* Spinning Border Animation */
+.spinner-border {
+  position: relative;
+  overflow: hidden;
+}
+
+.spinner-border::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: conic-gradient(
+    transparent, 
+    transparent, 
+    transparent, 
+    var(--zenthra-gold)
+  );
+  border-radius: inherit;
+  animation: rotate-border 2s linear infinite;
+  z-index: -1;
+}
+
+@keyframes rotate-border {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
 .loading-dots::after {
   content: '';
   animation: dots 1.5s steps(5, end) infinite;
