@@ -88,7 +88,7 @@ export default function Home() {
               setVideoLoaded(false);
             }}
           >
-            <source src="/fashion-hero-video.mp4" type="video/mp4" />
+            <source src="https://res.cloudinary.com/dfittnogt/video/upload/v1754731899/A_high-quality__slow-motion_cinematic_video_of_a_stylish_female_fashion_model_walking_confidently_toward_the_camera_in_a_premium_indoor_studio_setting__wearing_elegant_modern_clothing_in_neutral_tones._The_backgroun_dbi0x2.mp4" type="video/mp4" />
           </video>
           
           <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/30 to-black/40"></div>
