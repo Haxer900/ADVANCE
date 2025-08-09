@@ -8,6 +8,8 @@ import jwt from "jsonwebtoken";
 import fs from "fs/promises";
 import path from "path";
 import mediaRoutes from "./routes/media";
+import productsMediaRoutes from "./routes/products-media";
+import healthRoutes from "./routes/health";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Products
@@ -758,6 +760,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Media management routes
   app.use("/api/media", mediaRoutes);
+  
+  // Product with media management routes
+  app.use("/api/products-media", productsMediaRoutes);
+
+  // Health check and system validation routes
+  app.use("/api/health", healthRoutes);
 
   const httpServer = createServer(app);
   return httpServer;

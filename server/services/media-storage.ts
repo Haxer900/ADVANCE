@@ -1,4 +1,5 @@
 import { cloudinaryService, type CloudinaryUploadResult } from './cloudinary';
+import { mongoMediaStorage } from './mongodb';
 import { nanoid } from 'nanoid';
 
 export interface MediaMetadata {
@@ -125,6 +126,13 @@ class InMemoryMediaStorage {
       // Store in memory
       this.mediaFiles.set(mediaId, mediaMetadata);
 
+      // Also save to MongoDB if available
+      try {
+        await mongoMediaStorage.saveMedia(mediaMetadata);
+      } catch (error) {
+        console.warn('Failed to save to MongoDB, continuing with in-memory storage:', error);
+      }
+
       // Associate with product if specified
       if (options.productId) {
         if (options.isPrimary) {
@@ -188,6 +196,14 @@ class InMemoryMediaStorage {
 
     const updatedMedia = { ...media, ...updates, updatedAt: new Date() };
     this.mediaFiles.set(mediaId, updatedMedia);
+
+    // Also update in MongoDB if available
+    try {
+      await mongoMediaStorage.updateMedia(mediaId, updates);
+    } catch (error) {
+      console.warn('Failed to update in MongoDB, continuing with in-memory storage:', error);
+    }
+
     return updatedMedia;
   }
 
@@ -202,6 +218,13 @@ class InMemoryMediaStorage {
 
     // Delete from Cloudinary
     await cloudinaryService.deleteFile(media.cloudinaryPublicId, media.mediaType);
+
+    // Also delete from MongoDB if available
+    try {
+      await mongoMediaStorage.deleteMedia(mediaId);
+    } catch (error) {
+      console.warn('Failed to delete from MongoDB, continuing with in-memory storage:', error);
+    }
 
     // Remove from storage
     this.mediaFiles.delete(mediaId);
@@ -333,7 +356,7 @@ class InMemoryMediaStorage {
   }
 
   /**
-   * Validate file type
+   * Validate file type (Only JPEG, PNG, WebP, MP4 as requested)
    */
   private validateFileType(mimeType: string): void {
     const allowedTypes = [
@@ -341,14 +364,12 @@ class InMemoryMediaStorage {
       'image/jpg',
       'image/png',
       'image/webp',
-      'video/mp4',
-      'video/quicktime',
-      'video/x-msvideo'
+      'video/mp4'
     ];
 
     if (!allowedTypes.includes(mimeType)) {
       throw new Error(
-        `Unsupported file type: ${mimeType}. Allowed types: ${allowedTypes.join(', ')}`
+        `Invalid file type: ${mimeType}. Only JPEG, PNG, WebP, and MP4 files are allowed.`
       );
     }
   }
