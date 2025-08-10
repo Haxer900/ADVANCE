@@ -15,9 +15,12 @@ document.addEventListener('DOMContentLoaded', () => {
   
   // Wait for everything to load completely
   const hideLoader = () => {
-    // Enable scrolling
+    // Enable scrolling by removing loading class and restoring body overflow
     document.body.classList.remove("loading");
-    document.body.style.overflow = "visible";
+    document.body.style.overflow = "";
+    document.body.style.position = "";
+    document.body.style.height = "";
+    document.documentElement.style.overflow = "";
     
     // Show root content
     rootElement.classList.add("loaded");

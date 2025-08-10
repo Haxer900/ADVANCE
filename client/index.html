@@ -100,16 +100,20 @@
         }
       }
       
-      /* Prevent any flicker or scrolling */
+      /* Prevent any flicker during loading */
       html, body {
         margin: 0 !important;
         padding: 0 !important;
         width: 100% !important;
-        height: 100% !important;
         background: #000000 !important;
         font-family: 'Inter', sans-serif;
-        overflow: hidden !important;
         position: relative;
+      }
+      
+      body.loading {
+        overflow: hidden !important;
+        height: 100% !important;
+        position: fixed !important;
       }
       
       /* Hide root initially */
