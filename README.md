@@ -1,236 +1,194 @@
-# MORE THAN FASHION E-commerce Platform
+# ZENTHRA - Premium Women's Fashion E-commerce Platform
 
-A premium e-commerce platform built with modern technologies, featuring a comprehensive admin panel, MongoDB integration, and a classic design aesthetic.
+A modern, full-stack e-commerce platform with separate frontend website, admin panel, and backend APIs designed for independent deployment.
 
-## 🏗️ Architecture
+## Project Structure
 
-### Frontend
-- **Framework**: React 18 with TypeScript
-- **Styling**: Tailwind CSS with custom MORE THAN FASHION branding
-- **Routing**: Wouter for client-side routing
-- **State Management**: Zustand for cart & session, TanStack Query for server state
-- **UI Components**: Radix UI with Shadcn/ui styling
-- **Build Tool**: Vite for fast development and optimized builds
+```
+├── frontend-website/     # Main customer-facing website (Deploy to Vercel)
+├── frontend-admin/       # Admin panel interface (Deploy to Netlify)
+├── backend-api/          # Customer API backend (Deploy to Render)
+├── backend-admin/        # Admin API backend (Deploy to Render)
+├── shared-types/         # Shared TypeScript types and schemas
+└── attached_assets/      # Project assets and documentation
+```
 
-### Backend
-- **Framework**: Express.js with TypeScript
-- **Database**: MongoDB with Mongoose ODM
-- **Authentication**: JWT tokens with bcryptjs encryption
-- **Security**: Helmet, CORS, Rate limiting, Session management
-- **API**: RESTful API with comprehensive endpoints
+## Architecture Overview
 
-## 🚀 Getting Started
+### Frontend Website (Vercel Deployment)
+- **Technology**: React 18 + TypeScript + Vite
+- **Styling**: Tailwind CSS + Shadcn/ui Components
+- **State Management**: Zustand + TanStack Query
+- **Deployment**: Vercel (optimized for React/Vite)
+
+### Admin Panel (Netlify Deployment)
+- **Technology**: React 18 + TypeScript + Vite
+- **Styling**: Tailwind CSS + Shadcn/ui Components
+- **Features**: Product management, Order management, Analytics, Media management
+- **Deployment**: Netlify (optimized for admin workflows)
+
+### Backend API (Render Deployment)
+- **Technology**: Express.js + TypeScript
+- **Database**: PostgreSQL (Neon) + MongoDB Atlas
+- **Media Storage**: Cloudinary
+- **Features**: Customer APIs, Product catalog, Cart, Orders, Authentication
+
+### Backend Admin (Render Deployment)
+- **Technology**: Express.js + TypeScript
+- **Database**: PostgreSQL (Neon) + MongoDB Atlas
+- **Features**: Admin APIs, Media management, Analytics, User management
+
+## Deployment Guide
+
+### 1. Frontend Website (Vercel)
+```bash
+cd frontend-website
+npm install
+npm run build
+# Deploy to Vercel via GitHub integration
+```
+
+### 2. Admin Panel (Netlify)
+```bash
+cd frontend-admin
+npm install
+npm run build
+# Deploy to Netlify via GitHub integration
+```
+
+### 3. Backend API (Render)
+```bash
+cd backend-api
+npm install
+npm run build
+# Deploy to Render with start command: npm start
+```
+
+### 4. Backend Admin (Render)
+```bash
+cd backend-admin
+npm install
+npm run build
+# Deploy to Render with start command: npm start
+```
+
+## Environment Configuration
+
+Each component has its own `.env.example` file with required environment variables:
+
+- `frontend-website/.env.example` - Website environment variables
+- `frontend-admin/.env.example` - Admin panel environment variables
+- `backend-api/.env.example` - Customer API environment variables
+- `backend-admin/.env.example` - Admin API environment variables
+
+## Development Setup
 
 ### Prerequisites
-- Node.js 18+ and npm
-- MongoDB instance (local or cloud)
+- Node.js 18+
+- PostgreSQL database (Neon)
+- MongoDB Atlas cluster
+- Cloudinary account
 
-### Quick Start
+### Local Development
+```bash
+# Terminal 1 - Frontend Website
+cd frontend-website
+npm install
+npm run dev # Runs on port 3000
 
-1. **Clone the repository**
-   ```bash
-   git clone <repository-url>
-   cd morethanfashion-ecommerce
-   ```
+# Terminal 2 - Admin Panel
+cd frontend-admin
+npm install
+npm run dev # Runs on port 3001
 
-2. **Backend Setup**
-   ```bash
-   cd backend
-   npm install
-   cp .env.example .env
-   # Update .env with your MongoDB connection string
-   npm run dev
-   ```
+# Terminal 3 - Backend API
+cd backend-api
+npm install
+npm run dev # Runs on port 5000
 
-3. **Frontend Setup**
-   ```bash
-   cd frontend
-   npm install
-   npm run dev
-   ```
-
-4. **Access the Application**
-   - Frontend: http://localhost:3000
-   - Backend API: http://localhost:5000
-   - Admin Panel: http://localhost:3000/admin/login
-
-## 🔧 Environment Variables
-
-### Backend (.env)
-```env
-MONGODB_URI=mongodb://localhost:27017/morethanfashion
-PORT=5000
-NODE_ENV=development
-FRONTEND_URL=http://localhost:3000
-SESSION_SECRET=your-session-secret
-ADMIN_EMAIL=yashparmar77077@gmail.com
-ADMIN_PASSWORD=Yash@23072005
-JWT_SECRET=your-jwt-secret
+# Terminal 4 - Backend Admin
+cd backend-admin
+npm install
+npm run dev # Runs on port 5001
 ```
 
-## 🎨 Features
+## Features
 
-### Customer Features
-- ✅ Product catalog with filtering and search
-- ✅ Shopping cart with session persistence
-- ✅ Wishlist functionality
-- ✅ User registration and authentication
-- ✅ Order placement and tracking
-- ✅ Product reviews and ratings
+### Customer Website
+- ✅ Premium product catalog
+- ✅ Shopping cart functionality
+- ✅ User authentication
+- ✅ Order management
+- ✅ Wishlist and favorites
 - ✅ Newsletter subscription
-- ✅ Coupon code system
-- ✅ Responsive design with dark/light themes
+- ✅ Responsive design
+- ✅ Dark/light theme toggle
 
-### Admin Features
-- ✅ Comprehensive dashboard with analytics
-- ✅ Product management (CRUD operations)
-- ✅ Order management with status updates
+### Admin Panel
+- ✅ Product management (CRUD)
+- ✅ Order management
 - ✅ User management
-- ✅ Category management
-- ✅ Email marketing campaigns
-- ✅ SMS/WhatsApp integration ready
-- ✅ Refund request management
-- ✅ Site settings configuration
-- ✅ Notification system
+- ✅ Analytics dashboard
+- ✅ Media management (Cloudinary)
+- ✅ Email marketing
+- ✅ Settings management
+- ✅ Real-time notifications
 
-## 🗄️ Database Schema
+### Backend Features
+- ✅ RESTful API design
+- ✅ PostgreSQL + MongoDB integration
+- ✅ Cloudinary media storage
+- ✅ JWT authentication
+- ✅ Rate limiting
+- ✅ CORS configuration
+- ✅ Security headers (Helmet)
+- ✅ Input validation
 
-### Core Collections
-- **Products**: Product catalog with variants, pricing, inventory
-- **Categories**: Product categorization
-- **Users**: User accounts with authentication
-- **Orders**: Order management with status tracking
-- **Cart**: Shopping cart items
-- **Wishlist**: User favorites
-- **Reviews**: Product reviews and ratings
-- **Newsletter**: Email subscriptions
-- **Coupons**: Discount codes
-- **Settings**: Site configuration
+## Technology Stack
 
-## 🔐 Authentication
+- **Frontend**: React 18, TypeScript, Vite, Tailwind CSS
+- **Backend**: Express.js, TypeScript, Node.js
+- **Database**: PostgreSQL (Neon), MongoDB Atlas
+- **Media Storage**: Cloudinary
+- **Authentication**: JWT
+- **Deployment**: Vercel, Netlify, Render
+- **State Management**: Zustand, TanStack Query
+- **UI Components**: Shadcn/ui, Radix UI
 
-### Admin Access
-- **Email**: yashparmar77077@gmail.com
-- **Password**: Yash@23072005
+## API Endpoints
 
-### API Authentication
-- JWT tokens for user sessions
-- Role-based access control (user/admin)
-- Secure password hashing with bcryptjs
+### Customer API (Port 5000)
+- `GET /api/products` - Get all products
+- `GET /api/products/featured` - Get featured products
+- `GET /api/categories` - Get all categories
+- `POST /api/cart` - Manage shopping cart
+- `POST /api/newsletter` - Newsletter subscription
 
-## 🎯 API Endpoints
-
-### Public Endpoints
-- `GET /api/products` - Get products
-- `GET /api/categories` - Get categories
-- `POST /api/newsletter/subscribe` - Newsletter signup
-- `POST /api/users/register` - User registration
-- `POST /api/users/login` - User login
-
-### Protected Endpoints
-- `POST /api/cart` - Cart management
-- `POST /api/orders` - Order placement
-- `GET /api/wishlist/:sessionId` - Wishlist access
-
-### Admin Endpoints
-- `POST /api/admin/login` - Admin authentication
-- `GET /api/admin/stats` - Dashboard statistics
+### Admin API (Port 5001)
+- `GET /api/admin/products` - Admin product management
 - `GET /api/admin/orders` - Order management
-- All product/category CRUD operations
+- `GET /api/admin/users` - User management
+- `POST /api/admin/media` - Media upload/management
+- `GET /api/admin/analytics` - Analytics data
 
-## 🌟 Design System
+## Security Features
 
-### Brand Colors (Classic Premium)
-- **Primary Black**: `hsl(220, 13%, 9%)` - Deep charcoal for elegance
-- **Classic Gold**: `hsl(45, 100%, 51%)` - Premium accent color
-- **Text**: `hsl(220, 13%, 18%)` - Dark readable text
-- **Light**: `hsl(220, 13%, 97%)` - Light backgrounds
-- **Gray**: `hsl(220, 9%, 46%)` - Medium gray for secondary elements
-
-### Typography
-- **Headings**: Poppins (modern, clean)
-- **Body**: Inter (readable, professional)
-- **Brand**: Custom ZENTHRA classic logo design
-
-## 🚀 Deployment
-
-### Frontend Deployment
-```bash
-cd frontend
-npm run build
-# Deploy the 'dist' folder to your hosting service
-```
-
-### Backend Deployment
-```bash
-cd backend
-npm run build
-npm start
-# Deploy to your preferred hosting platform
-```
-
-### Environment Setup
-- Set `NODE_ENV=production` for production builds
-- Update `FRONTEND_URL` to your frontend domain
-- Configure MongoDB connection string
-- Set secure session secrets and JWT keys
-
-## 📱 Mobile Support
-- Fully responsive design
-- Touch-friendly interface
-- Mobile-optimized navigation
-- Progressive Web App ready
-
-## 🔒 Security Features
-- CORS protection
-- Rate limiting
-- Helmet.js security headers
-- Secure session management
-- Password encryption
+- JWT-based authentication
+- CORS configuration for each deployment
+- Rate limiting on API endpoints
 - Input validation and sanitization
+- Secure headers via Helmet
+- Environment-based configuration
+- Separate admin and customer APIs
 
-## 🎨 UI/UX Highlights
-- Clean, minimal design
-- Smooth animations and transitions
-- Accessible components (Radix UI)
-- Dark/light theme support
-- Loading states and error handling
-- Intuitive navigation
+## Contributing
 
-## 📊 Performance
-- Code splitting and lazy loading
-- Image optimization
-- CDN ready
-- Caching strategies
-- Optimized bundle sizes
+1. Clone the repository
+2. Create feature branch
+3. Make changes in appropriate folder
+4. Test locally
+5. Submit pull request
 
-## 🛠️ Development
+## License
 
-### Scripts
-```bash
-# Frontend
-npm run dev          # Development server
-npm run build        # Production build
-npm run preview      # Preview production build
-
-# Backend
-npm run dev          # Development with auto-reload
-npm run build        # TypeScript compilation
-npm start           # Production server
-```
-
-### Code Quality
-- TypeScript for type safety
-- ESLint for code linting
-- Prettier for code formatting
-- Comprehensive error handling
-
-## 📞 Support
-For technical support or questions about the MORE THAN FASHION platform, please contact the development team.
-
-## 📄 License
-This project is proprietary software developed for MORE THAN FASHION e-commerce platform.
-
----
-
-**MORE THAN FASHION** - Premium E-commerce Experience
+MIT License - See LICENSE file for details

@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+    
+    <!-- SEO Meta Tags -->
+    <title>ZENTHRA - Premium Women's Fashion E-commerce</title>
+    <meta name="description" content="Discover ZENTHRA's premium women's fashion collection with free shipping on orders over $100. Shop our curated selection of elegant clothing, accessories, and fashion essentials designed exclusively for women." />
+    <meta name="keywords" content="women's fashion, luxury clothing, premium fashion, elegant women's wear, designer clothes, luxury e-commerce, ZENTHRA" />
+    <meta name="author" content="ZENTHRA" />
+    <meta name="robots" content="index, follow" />
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://morethanfashion.replit.app/" />
+    <meta property="og:title" content="ZENTHRA - Premium Women's Fashion E-commerce" />
+    <meta property="og:description" content="Discover ZENTHRA's premium women's fashion collection with free shipping on orders over $100. Shop our curated selection of elegant clothing, accessories, and fashion essentials designed exclusively for women." />
+    <meta property="og:image" content="https://morethanfashion.replit.app/og-image.jpg" />
+    <meta property="og:site_name" content="ZENTHRA" />
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="https://morethanfashion.replit.app/" />
+    <meta property="twitter:title" content="ZENTHRA - Premium Women's Fashion E-commerce" />
+    <meta property="twitter:description" content="Discover ZENTHRA's premium women's fashion collection with free shipping on orders over $100." />
+    <meta property="twitter:image" content="https://morethanfashion.replit.app/twitter-image.jpg" />
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta name="theme-color" content="#FF6000" />
+    
+    <!-- Preconnect to external domains -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    
+    <!-- Schema.org structured data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Store",
+      "name": "ZENTHRA",
+      "description": "Premium women's fashion e-commerce platform",
+      "url": "https://zenthra.replit.app",
+      "logo": "https://zenthra.replit.app/logo.png",
+      "address": {
+        "@type": "PostalAddress",
+        "addressCountry": "US"
+      },
+      "openingHours": "Mo-Su 00:00-23:59",
+      "paymentAccepted": ["Credit Card", "Debit Card", "PayPal"],
+      "priceRange": "$$"
+    }
+    </script>
+    <!-- Inline Critical CSS for Immediate Loading -->
+    <style>
+      /* Critical preloader styles - inline for immediate display */
+      #loading-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: transparent;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 99999;
+        transition: opacity 0.5s ease-out, visibility 0.5s ease-out;
+        overflow: hidden;
+      }
+      
+      #loading-overlay.hidden {
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+      }
+      
+      /* Simple Loading Spinner */
+      .loading-spinner {
+        width: 50px;
+        height: 50px;
+        border: 4px solid rgba(255, 215, 0, 0.2);
+        border-radius: 50%;
+        border-top-color: #ffd700;
+        animation: spin 1s linear infinite;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
+      
+      @keyframes spin {
+        to {
+          transform: translate(-50%, -50%) rotate(360deg);
+        }
+      }
+      
+      /* Prevent any flicker during loading */
+      html, body {
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 100% !important;
+        background: #000000 !important;
+        font-family: 'Inter', sans-serif;
+        position: relative;
+      }
+      
+      body.loading {
+        overflow: hidden !important;
+        height: 100% !important;
+        position: fixed !important;
+      }
+      
+      /* Hide root initially */
+      #root {
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.5s ease-in;
+        width: 100%;
+        height: 100%;
+      }
+      
+      #root.loaded {
+        opacity: 1;
+        visibility: visible;
+      }
+      
+      /* Body loading state */
+      body.loading {
+        overflow: hidden !important;
+        position: fixed !important;
+        width: 100% !important;
+        height: 100% !important;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Loading Overlay with Blur Effect -->
+    <div id="loading-overlay">
+      <div class="loading-spinner"></div>
+    </div>
+    
+    <!-- Main App Container -->
+    <div id="root"></div>
+    
+    <!-- Scroll to top button -->
+    <button id="scroll-top" aria-label="Scroll to top">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M7 14L12 9L17 14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+    
+    <script type="module" src="/src/main.tsx"></script>
+    <!-- This is a replit script which adds a banner on the top of the page when opened in development mode outside the replit environment -->
+    <script type="text/javascript" src="https://replit.com/public/js/replit-dev-banner.js"></script>
+  </body>
+</html>
