@@ -1,7 +1,7 @@
 import express from "express";
 import helmet from "helmet";
 import dotenv from "dotenv";
-import routes from "./routes.js";
+import { registerRoutes } from "./routes.js";
 
 dotenv.config();
 
@@ -55,16 +55,34 @@ app.use((req, res, next) => {
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// API routes
-app.use('/api', routes);
-
 // Health check
 app.get('/health', (req, res) => {
   res.status(200).json({ status: 'OK', message: 'ZENTHRA Website API is running' });
 });
 
-app.listen(PORT, '0.0.0.0', () => {
-  console.log(`🚀 ZENTHRA Website API server running on port ${PORT}`);
-});
+async function startServer() {
+  try {
+    // Register routes
+    const server = await registerRoutes(app);
+    
+    // Start server only if not imported as module
+    if (import.meta.url === `file://${process.argv[1]}`) {
+      server.listen(PORT, '0.0.0.0', () => {
+        console.log(`🚀 ZENTHRA Website API server running on port ${PORT}`);
+      });
+    }
+    
+    return server;
+  } catch (error) {
+    console.error('Failed to start server:', error);
+    process.exit(1);
+  }
+}
+
+// Start server if this file is run directly
+if (import.meta.url === `file://${process.argv[1]}`) {
+  startServer();
+}
 
 export default app;
+export { startServer };

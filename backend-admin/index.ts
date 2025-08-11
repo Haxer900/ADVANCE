@@ -1,6 +1,7 @@
 import express from "express";
 import helmet from "helmet";
 import dotenv from "dotenv";
+import cors from "cors";
 
 dotenv.config();
 
@@ -51,21 +52,30 @@ app.use((req, res, next) => {
 });
 
 // Body parsing middleware
-app.use(express.json({ limit: '50mb' }));
-app.use(express.urlencoded({ extended: true, limit: '50mb' }));
-
-// Admin API routes (placeholder for now)
-app.get('/api/admin/health', (req, res) => {
-  res.json({ status: 'OK', message: 'Admin API is running' });
-});
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // Health check
 app.get('/health', (req, res) => {
   res.status(200).json({ status: 'OK', message: 'ZENTHRA Admin API is running' });
 });
 
-app.listen(PORT, '0.0.0.0', () => {
-  console.log(`🚀 ZENTHRA Admin API server running on port ${PORT}`);
+// Admin API routes
+app.get('/api/admin/dashboard', (req, res) => {
+  res.json({ message: 'Admin dashboard API ready' });
 });
+
+// Error handling
+app.use((error: any, req: any, res: any, next: any) => {
+  console.error('Error:', error);
+  res.status(500).json({ message: 'Internal server error' });
+});
+
+// Start server only if not imported as module
+if (import.meta.url === `file://${process.argv[1]}`) {
+  app.listen(PORT, '0.0.0.0', () => {
+    console.log(`🚀 ZENTHRA Admin API server running on port ${PORT}`);
+  });
+}
 
 export default app;

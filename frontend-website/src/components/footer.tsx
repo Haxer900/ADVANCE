@@ -1,6 +1,6 @@
 import { Link } from "wouter";
 import { Facebook, Instagram, Twitter, Mail } from "lucide-react";
-import brandLogo from "@assets/zenthra_1754316486050.png";
+import brandLogo from "@assets/zenthra_logo.svg";
 
 export default function Footer() {
   return (
