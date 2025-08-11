@@ -1,7 +1,7 @@
-import { type Product, type InsertProduct, type Category, type InsertCategory, type CartItem, type InsertCartItem, type Newsletter, type InsertNewsletter, type User, type InsertUser, type Order, type InsertOrder, type AdminNotification, type InsertAdminNotification, type InventoryAlert, type InsertInventoryAlert, type Refund, type InsertRefund, type AnalyticsData, type InsertAnalyticsData, type Integration, type InsertIntegration, type Tag, type InsertTag, type Currency, type InsertCurrency, type Affiliate, type InsertAffiliate, type EmailCampaign, type InsertEmailCampaign } from "@shared/schema";
+import { type Product, type InsertProduct, type Category, type InsertCategory, type CartItem, type InsertCartItem, type Newsletter, type InsertNewsletter, type User, type InsertUser, type Order, type InsertOrder, type AdminNotification, type InsertAdminNotification, type InventoryAlert, type InsertInventoryAlert, type Refund, type InsertRefund, type AnalyticsData, type InsertAnalyticsData, type Integration, type InsertIntegration, type Tag, type InsertTag, type Currency, type InsertCurrency, type Affiliate, type InsertAffiliate, type EmailCampaign, type InsertEmailCampaign } from "./shared/schema";
 import { db } from "./db";
 import { eq } from "drizzle-orm";
-import { products, categories, cartItems, newsletters, users, orders, adminNotifications, inventoryAlerts, refunds, analyticsData, integrations, tags, currencies, affiliates, emailCampaigns } from "@shared/schema";
+import { products, categories, cartItems, newsletters, users, orders, adminNotifications, inventoryAlerts, refunds, analyticsData, integrations, tags, currencies, affiliates, emailCampaigns } from "./shared/schema";
 import { randomUUID } from "crypto";
 
 export interface IStorage {

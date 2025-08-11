@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertCartItemSchema, insertNewsletterSchema, insertProductSchema, insertCategorySchema, insertUserSchema, insertOrderSchema, insertAdminNotificationSchema, insertInventoryAlertSchema, insertRefundSchema, insertAnalyticsDataSchema, insertIntegrationSchema, insertTagSchema, insertCurrencySchema, insertAffiliateSchema, insertEmailCampaignSchema } from "@shared/schema";
+import { insertCartItemSchema, insertNewsletterSchema, insertProductSchema, insertCategorySchema, insertUserSchema, insertOrderSchema, insertAdminNotificationSchema, insertInventoryAlertSchema, insertRefundSchema, insertAnalyticsDataSchema, insertIntegrationSchema, insertTagSchema, insertCurrencySchema, insertAffiliateSchema, insertEmailCampaignSchema } from "./shared/schema";
 import { z } from "zod";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";

@@ -3,7 +3,7 @@ import { body, param, query } from 'express-validator';
 import { mediaStorage } from '../services/media-storage';
 import { storage } from '../storage';
 import { uploadSingle, uploadMultiple, handleUploadError } from '../middleware/upload';
-import { insertProductSchema } from '@shared/schema';
+import { insertProductSchema } from '../shared/schema';
 import { z } from 'zod';
 
 const router = Router();
