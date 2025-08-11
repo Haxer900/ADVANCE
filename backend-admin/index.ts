@@ -70,11 +70,12 @@ app.use((error: any, req: any, res: any, next: any) => {
   res.status(500).json({ message: 'Internal server error' });
 });
 
-// Start server only if not imported as module
-if (import.meta.url === `file://${process.argv[1]}`) {
+// Start server only if not imported as module (CommonJS compatible)
+if (require.main === module) {
   app.listen(PORT, '0.0.0.0', () => {
     console.log(`🚀 ZENTHRA Admin API server running on port ${PORT}`);
   });
 }
 
-export default app;
+module.exports = app;
+module.exports.default = app;

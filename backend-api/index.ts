@@ -65,8 +65,8 @@ async function startServer() {
     // Register routes
     const server = await registerRoutes(app);
     
-    // Start server only if not imported as module
-    if (import.meta.url === `file://${process.argv[1]}`) {
+    // Start server only if not imported as module (CommonJS compatible)
+    if (require.main === module) {
       server.listen(PORT, '0.0.0.0', () => {
         console.log(`🚀 ZENTHRA Website API server running on port ${PORT}`);
       });
@@ -79,10 +79,11 @@ async function startServer() {
   }
 }
 
-// Start server if this file is run directly
-if (import.meta.url === `file://${process.argv[1]}`) {
+// Start server if this file is run directly (CommonJS compatible)
+if (require.main === module) {
   startServer();
 }
 
-export default app;
-export { startServer };
+module.exports = app;
+module.exports.startServer = startServer;
+module.exports.default = app;
