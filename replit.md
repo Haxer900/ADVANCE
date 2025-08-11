@@ -6,6 +6,13 @@ MORE THAN FASHION is a premium e-commerce platform showcasing luxury lifestyle p
 ## User Preferences
 Preferred communication style: Simple, everyday language.
 
+## Recent Changes - August 11, 2025
+- **Domain Connection**: Successfully configured zenthra.fashion custom domain connection
+- **Frontend Deployment Fix**: Resolved styling and theme issues on production deployment
+- **Backend API Optimization**: Enhanced both customer and admin APIs with proper root endpoints
+- **UptimeRobot Monitoring**: Configured 5-minute ping monitoring for both backend services
+- **Production Build**: Successfully created optimized production build (99.8KB CSS, 1.3MB JS)
+
 ## System Architecture
 
 ### Frontend Architecture

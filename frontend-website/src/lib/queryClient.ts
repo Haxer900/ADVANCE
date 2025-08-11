@@ -26,7 +26,15 @@ export async function apiRequest(
     }
   }
 
-  const res = await fetch(url, {
+  // Get the correct API base URL
+  const baseUrl = url.includes('/admin/') 
+    ? (import.meta.env?.VITE_ADMIN_API_URL || 'https://zenthra-backend-admin.onrender.com')
+    : (import.meta.env?.VITE_API_URL || 'https://zenthra-backend-api.onrender.com');
+
+  // Build full URL if it's a relative path
+  const fullUrl = url.startsWith('http') ? url : `${baseUrl}${url}`;
+
+  const res = await fetch(fullUrl, {
     method,
     headers,
     body: data ? JSON.stringify(data) : undefined,
@@ -54,7 +62,15 @@ export const getQueryFn: <T>(options: {
       }
     }
 
-    const res = await fetch(url, {
+    // Get the correct API base URL
+    const baseUrl = url.includes('/admin/') 
+      ? (import.meta.env?.VITE_ADMIN_API_URL || 'https://zenthra-backend-admin.onrender.com')
+      : (import.meta.env?.VITE_API_URL || 'https://zenthra-backend-api.onrender.com');
+
+    // Build full URL if it's a relative path
+    const fullUrl = url.startsWith('http') ? url : `${baseUrl}${url}`;
+
+    const res = await fetch(fullUrl, {
       headers,
       credentials: "include",
     });

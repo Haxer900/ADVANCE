@@ -13,18 +13,18 @@
     
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://morethanfashion.replit.app/" />
+    <meta property="og:url" content="https://zenthra.fashion/" />
     <meta property="og:title" content="ZENTHRA - Premium Women's Fashion E-commerce" />
     <meta property="og:description" content="Discover ZENTHRA's premium women's fashion collection with free shipping on orders over $100. Shop our curated selection of elegant clothing, accessories, and fashion essentials designed exclusively for women." />
-    <meta property="og:image" content="https://morethanfashion.replit.app/og-image.jpg" />
+    <meta property="og:image" content="https://zenthra.fashion/og-image.jpg" />
     <meta property="og:site_name" content="ZENTHRA" />
     
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image" />
-    <meta property="twitter:url" content="https://morethanfashion.replit.app/" />
+    <meta property="twitter:url" content="https://zenthra.fashion/" />
     <meta property="twitter:title" content="ZENTHRA - Premium Women's Fashion E-commerce" />
     <meta property="twitter:description" content="Discover ZENTHRA's premium women's fashion collection with free shipping on orders over $100." />
-    <meta property="twitter:image" content="https://morethanfashion.replit.app/twitter-image.jpg" />
+    <meta property="twitter:image" content="https://zenthra.fashion/twitter-image.jpg" />
     
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
@@ -45,8 +45,8 @@
       "@type": "Store",
       "name": "ZENTHRA",
       "description": "Premium women's fashion e-commerce platform",
-      "url": "https://zenthra.replit.app",
-      "logo": "https://zenthra.replit.app/logo.png",
+      "url": "https://zenthra.fashion",
+      "logo": "https://zenthra.fashion/logo.png",
       "address": {
         "@type": "PostalAddress",
         "addressCountry": "US"
@@ -155,8 +155,26 @@
       </svg>
     </button>
     
+    <script>
+      // Hide loading overlay once page is loaded
+      window.addEventListener('DOMContentLoaded', function() {
+        setTimeout(function() {
+          const loadingOverlay = document.getElementById('loading-overlay');
+          const root = document.getElementById('root');
+          
+          if (loadingOverlay) {
+            loadingOverlay.classList.add('hidden');
+          }
+          
+          if (root) {
+            root.classList.add('loaded');
+          }
+          
+          // Remove loading class from body
+          document.body.classList.remove('loading');
+        }, 500);
+      });
+    </script>
     <script type="module" src="/src/main.tsx"></script>
-    <!-- This is a replit script which adds a banner on the top of the page when opened in development mode outside the replit environment -->
-    <script type="text/javascript" src="https://replit.com/public/js/replit-dev-banner.js"></script>
   </body>
 </html>

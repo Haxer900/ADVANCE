@@ -10,6 +10,7 @@ export default defineConfig({
       "@assets": path.resolve(__dirname, "./src/assets"),
     },
   },
+  base: "/",
   define: {
     "process.env": process.env,
   },
@@ -19,6 +20,17 @@ export default defineConfig({
   },
   build: {
     outDir: "dist",
-    sourcemap: true,
+    sourcemap: false,
+    assetsDir: "assets",
+    rollupOptions: {
+      output: {
+        assetFileNames: 'assets/[name]-[hash][extname]',
+        chunkFileNames: 'assets/[name]-[hash].js',
+        entryFileNames: 'assets/[name]-[hash].js'
+      }
+    }
   },
+  css: {
+    postcss: "./postcss.config.js"
+  }
 });
