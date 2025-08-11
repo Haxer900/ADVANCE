@@ -11,27 +11,44 @@ const PORT = Number(process.env.PORT) || 5000;
 // Security middleware
 app.use(helmet());
 
-// CORS middleware
+// CORS middleware - Allow all origins for development, specific origins for production
 app.use((req, res, next) => {
   const allowedOrigins = [
-    process.env.FRONTEND_URL || "http://localhost:3000",
-    process.env.FRONTEND_URL_VERCEL || "https://zenthra-website.vercel.app"
-  ];
+    "http://localhost:3000",
+    "https://localhost:3000",
+    "http://127.0.0.1:3000",
+    "https://zenthra-website.vercel.app",
+    "https://*.vercel.app",
+    process.env.FRONTEND_URL,
+    process.env.FRONTEND_URL_VERCEL,
+    // Add any custom domains
+    process.env.CUSTOM_DOMAIN
+  ].filter(Boolean);
   
   const origin = req.headers.origin;
-  if (allowedOrigins.includes(origin as string)) {
-    res.setHeader('Access-Control-Allow-Origin', origin as string);
+  const isAllowed = allowedOrigins.some(allowedOrigin => {
+    if (allowedOrigin?.includes('*')) {
+      const pattern = allowedOrigin.replace(/\*/g, '.*');
+      return new RegExp(pattern).test(origin || '');
+    }
+    return allowedOrigin === origin;
+  });
+  
+  // Allow all origins in development
+  if (process.env.NODE_ENV === 'development' || isAllowed) {
+    res.setHeader('Access-Control-Allow-Origin', origin || '*');
   }
   
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, Accept, Origin');
   res.setHeader('Access-Control-Allow-Credentials', 'true');
+  res.setHeader('Access-Control-Max-Age', '86400'); // Cache preflight for 24 hours
   
   if (req.method === 'OPTIONS') {
-    res.sendStatus(200);
-  } else {
-    next();
+    return res.status(200).end();
   }
+  
+  next();
 });
 
 // Body parsing middleware

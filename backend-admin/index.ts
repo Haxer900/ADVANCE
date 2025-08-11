@@ -10,27 +10,44 @@ const PORT = Number(process.env.PORT) || 5001;
 // Security middleware
 app.use(helmet());
 
-// CORS middleware for admin panel
+// CORS middleware for admin panel - Allow all origins for development, specific origins for production
 app.use((req, res, next) => {
   const allowedOrigins = [
-    process.env.ADMIN_FRONTEND_URL || "http://localhost:3001",
-    process.env.ADMIN_FRONTEND_URL_NETLIFY || "https://zenthra-admin.netlify.app"
-  ];
+    "http://localhost:3001",
+    "https://localhost:3001", 
+    "http://127.0.0.1:3001",
+    "https://zenthra-admin.netlify.app",
+    "https://*.netlify.app",
+    process.env.ADMIN_FRONTEND_URL,
+    process.env.ADMIN_FRONTEND_URL_NETLIFY,
+    // Add any custom admin domains
+    process.env.CUSTOM_ADMIN_DOMAIN
+  ].filter(Boolean);
   
   const origin = req.headers.origin;
-  if (allowedOrigins.includes(origin as string)) {
-    res.setHeader('Access-Control-Allow-Origin', origin as string);
+  const isAllowed = allowedOrigins.some(allowedOrigin => {
+    if (allowedOrigin?.includes('*')) {
+      const pattern = allowedOrigin.replace(/\*/g, '.*');
+      return new RegExp(pattern).test(origin || '');
+    }
+    return allowedOrigin === origin;
+  });
+  
+  // Allow all origins in development
+  if (process.env.NODE_ENV === 'development' || isAllowed) {
+    res.setHeader('Access-Control-Allow-Origin', origin || '*');
   }
   
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, Accept, Origin');
   res.setHeader('Access-Control-Allow-Credentials', 'true');
+  res.setHeader('Access-Control-Max-Age', '86400'); // Cache preflight for 24 hours
   
   if (req.method === 'OPTIONS') {
-    res.sendStatus(200);
-  } else {
-    next();
+    return res.status(200).end();
   }
+  
+  next();
 });
 
 // Body parsing middleware
