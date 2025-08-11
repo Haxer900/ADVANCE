@@ -54,6 +54,25 @@ app.use((req, res, next) => {
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
+// Root endpoint - Admin API welcome page
+app.get('/', (req, res) => {
+  res.json({
+    name: 'ZENTHRA Admin API',
+    version: '1.0.0',
+    status: 'running',
+    description: 'Administrative backend API for MORE THAN FASHION platform',
+    endpoints: {
+      health: '/health',
+      dashboard: '/api/admin/dashboard',
+      users: '/api/admin/users',
+      orders: '/api/admin/orders',
+      products: '/api/admin/products',
+      analytics: '/api/admin/analytics'
+    },
+    timestamp: new Date().toISOString()
+  });
+});
+
 // Enhanced health check for UptimeRobot monitoring (every 5 minutes)
 app.get('/health', (req, res) => {
   try {

@@ -55,6 +55,24 @@ app.use((req, res, next) => {
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
+// Root endpoint - API welcome page
+app.get('/', (req, res) => {
+  res.json({
+    name: 'ZENTHRA Website API',
+    version: '1.0.0',
+    status: 'running',
+    description: 'Premium e-commerce backend API for MORE THAN FASHION platform',
+    endpoints: {
+      health: '/health',
+      products: '/api/products',
+      categories: '/api/categories',
+      cart: '/api/cart',
+      newsletter: '/api/newsletter'
+    },
+    timestamp: new Date().toISOString()
+  });
+});
+
 // Enhanced health check for UptimeRobot monitoring (every 5 minutes)
 app.get('/health', (req, res) => {
   try {
