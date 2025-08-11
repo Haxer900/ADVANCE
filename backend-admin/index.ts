@@ -54,9 +54,25 @@ app.use((req, res, next) => {
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// Health check
+// Enhanced health check for UptimeRobot monitoring (every 5 minutes)
 app.get('/health', (req, res) => {
-  res.status(200).json({ status: 'OK', message: 'ZENTHRA Admin API is running' });
+  try {
+    const healthData = {
+      status: 'OK',
+      message: 'ZENTHRA Admin API is running',
+      timestamp: new Date().toISOString(),
+      uptime: process.uptime(),
+      memory: process.memoryUsage(),
+      version: '1.0.0'
+    };
+    res.status(200).json(healthData);
+  } catch (error: any) {
+    res.status(500).json({ 
+      status: 'ERROR', 
+      message: 'Health check failed',
+      error: error.message || 'Unknown error'
+    });
+  }
 });
 
 // Admin API routes
@@ -74,6 +90,7 @@ app.use((error: any, req: any, res: any, next: any) => {
 if (require.main === module) {
   app.listen(PORT, '0.0.0.0', () => {
     console.log(`🚀 ZENTHRA Admin API server running on port ${PORT}`);
+    console.log(`✅ UptimeRobot monitoring endpoint: /health`);
   });
 }
 
