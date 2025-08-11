@@ -62,7 +62,7 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-black animate-fade-in-up">
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden video-container">
         {/* Video Background */}

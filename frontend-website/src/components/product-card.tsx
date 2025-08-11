@@ -43,15 +43,20 @@ export default function ProductCard({ product }: ProductCardProps) {
   });
 
   return (
-    <Card className="group overflow-hidden hover-lift card-3d border-0 shadow-lg bg-zenthra-white">
+    <Card className="group overflow-hidden hover-lift border-0 shadow-lg bg-white transition-all duration-500 hover:shadow-2xl hover:shadow-yellow-400/20 hover:-translate-y-2 hover:rotate-1">
       <div className="relative">
         <Link href={`/product/${product.id}`}>
-          <div className="aspect-square overflow-hidden">
+          <div className="aspect-square overflow-hidden relative">
             <img 
               src={product.imageUrl} 
               alt={product.name}
-              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+              className="w-full h-full object-cover transition-all duration-700 group-hover:scale-110"
             />
+            {/* Golden overlay on hover */}
+            <div className="absolute inset-0 bg-gradient-to-t from-yellow-400/0 via-transparent to-yellow-400/0 opacity-0 group-hover:opacity-20 transition-opacity duration-500"></div>
+            
+            {/* Shimmer effect */}
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
           </div>
         </Link>
         <div className="absolute inset-0 bg-gradient-to-t from-zenthra-primary/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>

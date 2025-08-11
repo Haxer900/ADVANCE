@@ -36,13 +36,13 @@ export default function Header() {
   ];
 
   return (
-    <header className="sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b">
+    <header className="sticky top-0 z-50 bg-black/95 backdrop-blur supports-[backdrop-filter]:bg-black/60 border-b border-yellow-400/20 transition-all duration-300">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20 py-4">
           {/* Logo */}
           <div className="flex-shrink-0">
             <Link href="/">
-              <Logo className="hover:scale-105 transition-transform duration-300" size="md" />
+              <Logo className="hover:scale-105 transition-transform duration-300" variant="white" size="md" />
             </Link>
           </div>
           
