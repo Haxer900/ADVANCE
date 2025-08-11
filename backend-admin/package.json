@@ -38,6 +38,7 @@
     "speakeasy": "^2.0.0",
     "stripe": "^18.4.0",
     "typescript": "5.6.3",
+    "ws": "^8.18.0",
     "zod": "^3.24.2",
     "zod-validation-error": "^3.4.0"
   },
@@ -54,6 +55,7 @@
     "@types/passport-google-oauth20": "^2.0.16",
     "@types/passport-local": "^1.0.38",
     "@types/qrcode": "^1.5.5",
+    "@types/ws": "^8.5.13",
     "drizzle-kit": "^0.30.4",
     "tsx": "^4.20.3"
   }
