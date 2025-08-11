@@ -34,8 +34,9 @@
 ```
 Service Name: zenthra-user-api
 Build Command: npm install && npm run build
-Start Command: npm start
+Start Command: node dist/index.js
 Environment: Node
+Node Version: 18.x
 ```
 
 ### 1.3 Add Environment Variables
@@ -88,8 +89,9 @@ FRONTEND_URL_VERCEL=https://your-app-name.vercel.app
 ```
 Service Name: zenthra-admin-api
 Build Command: npm install && npm run build
-Start Command: npm start
+Start Command: node dist/index.js
 Environment: Node
+Node Version: 18.x
 ```
 
 ### 2.3 Add Environment Variables
