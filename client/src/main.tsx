@@ -19,23 +19,29 @@ document.addEventListener('DOMContentLoaded', () => {
   
   // Wait for everything to load completely
   const hideLoader = () => {
-    // Remove blur effect from root
+    // Remove blur effect from root with smooth transition
     rootElement.classList.add("loaded");
     
-    // Enable interactions by removing loading class
-    document.body.classList.remove("loading");
-    document.body.classList.add("loaded");
-    document.body.style.overflow = "";
-    
-    // Hide loading overlay
+    // Hide loading overlay first
     loadingOverlay.classList.add("hidden");
     
-    // Remove overlay from DOM after transition
+    // Enable interactions after a brief delay to ensure smooth transition
+    setTimeout(() => {
+      document.body.classList.remove("loading");
+      document.body.classList.add("loaded");
+      document.body.style.overflow = "";
+      document.body.style.position = "";
+      document.body.style.height = "";
+      document.body.style.width = "";
+      document.body.style.touchAction = "";
+    }, 300);
+    
+    // Remove overlay from DOM after transition completes
     setTimeout(() => {
       if (loadingOverlay.parentNode) {
         loadingOverlay.parentNode.removeChild(loadingOverlay);
       }
-    }, 800); // Match the transition duration
+    }, 1000); // Match the transition duration
   };
   
   // Wait for all assets to load
@@ -80,11 +86,11 @@ document.addEventListener('DOMContentLoaded', () => {
         checkReactReady();
       })
     ]).then(() => {
-      // Add small delay for smooth transition
-      setTimeout(hideLoader, 300);
+      // Add small delay for smooth transition and to ensure content is ready
+      setTimeout(hideLoader, 500);
     }).catch(() => {
-      // Fallback in case of errors
-      setTimeout(hideLoader, 1000);
+      // Fallback in case of errors - always hide loader
+      setTimeout(hideLoader, 1500);
     });
   };
 

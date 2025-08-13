@@ -75,11 +75,13 @@
     </script>
     <!-- Inline Critical CSS for Immediate Loading -->
     <style>
-      /* Blurred Homepage Preloader - Critical CSS */
+      /* Blurred Content Preloader - No Black Background */
       #root {
-        filter: blur(8px);
-        transition: filter 0.8s cubic-bezier(0.4, 0.0, 0.2, 1);
+        filter: blur(10px);
+        transition: filter 1s cubic-bezier(0.4, 0.0, 0.2, 1);
         will-change: filter;
+        opacity: 1;
+        visibility: visible;
       }
       
       #root.loaded {
@@ -92,15 +94,13 @@
         left: 0;
         width: 100vw;
         height: 100vh;
-        background: rgba(0, 0, 0, 0.3);
+        background: transparent;
         display: flex;
         align-items: center;
         justify-content: center;
         z-index: 99999;
-        transition: opacity 0.8s cubic-bezier(0.4, 0.0, 0.2, 1), visibility 0.8s cubic-bezier(0.4, 0.0, 0.2, 1);
+        transition: opacity 1s cubic-bezier(0.4, 0.0, 0.2, 1), visibility 1s cubic-bezier(0.4, 0.0, 0.2, 1);
         pointer-events: none;
-        backdrop-filter: blur(2px);
-        -webkit-backdrop-filter: blur(2px);
       }
       
       #loading-overlay.hidden {
@@ -108,53 +108,60 @@
         visibility: hidden;
       }
       
-      /* Elegant Loading Animation */
+      /* Elegant Loading Animation - Floating in Center */
       .loading-container {
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        background: rgba(0, 0, 0, 0.8);
-        padding: 40px;
+        background: rgba(0, 0, 0, 0.85);
+        padding: 30px 40px;
         border-radius: 20px;
-        backdrop-filter: blur(10px);
-        -webkit-backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 215, 0, 0.2);
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px);
+        border: 1px solid rgba(255, 215, 0, 0.3);
+        box-shadow: 
+          0 20px 40px rgba(0, 0, 0, 0.3),
+          0 0 0 1px rgba(255, 255, 255, 0.1);
+        animation: floatLoader 3s ease-in-out infinite;
       }
       
       .loading-spinner {
-        width: 60px;
-        height: 60px;
+        width: 50px;
+        height: 50px;
         border: 3px solid rgba(255, 215, 0, 0.2);
         border-radius: 50%;
         border-top-color: #ffd700;
         border-right-color: #ffd700;
-        animation: elegantSpin 1.2s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
-        margin-bottom: 20px;
+        animation: smoothSpin 1s linear infinite;
+        margin-bottom: 15px;
       }
       
       .loading-text {
         color: #ffd700;
         font-family: 'Poppins', sans-serif;
-        font-size: 18px;
-        font-weight: 300;
-        letter-spacing: 3px;
+        font-size: 14px;
+        font-weight: 400;
+        letter-spacing: 2px;
         text-transform: uppercase;
         opacity: 0.9;
-        animation: fadeInOut 2s ease-in-out infinite;
-        text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+        animation: textPulse 2s ease-in-out infinite;
+        text-shadow: 0 0 10px rgba(255, 215, 0, 0.4);
       }
       
-      @keyframes elegantSpin {
-        0% { transform: rotate(0deg) scale(1); }
-        50% { transform: rotate(180deg) scale(1.1); }
-        100% { transform: rotate(360deg) scale(1); }
+      @keyframes smoothSpin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
       }
       
-      @keyframes fadeInOut {
-        0%, 100% { opacity: 0.7; }
+      @keyframes textPulse {
+        0%, 100% { opacity: 0.8; }
         50% { opacity: 1; }
+      }
+      
+      @keyframes floatLoader {
+        0%, 100% { transform: translateY(0px); }
+        50% { transform: translateY(-5px); }
       }
       
       /* Prevent any flicker during loading - Critical Performance CSS */
@@ -191,21 +198,31 @@
         min-height: 100vh;
       }
       
-      /* Body loading state - allow content to be visible */
+      /* Body loading state - disable interactions while showing content */
       body.loading {
         overflow: hidden !important;
+        height: 100vh !important;
+        position: fixed !important;
         width: 100% !important;
-        height: 100% !important;
       }
       
-      body.loading * {
+      body.loading *:not(#loading-overlay):not(.loading-container):not(.loading-spinner):not(.loading-text) {
         pointer-events: none !important;
         user-select: none !important;
+        -webkit-user-select: none !important;
+        -moz-user-select: none !important;
+        -ms-user-select: none !important;
       }
       
       body.loaded * {
         pointer-events: auto !important;
         user-select: auto !important;
+      }
+      
+      /* Prevent scrolling during load on mobile */
+      body.loading {
+        touch-action: none !important;
+        -webkit-overflow-scrolling: auto !important;
       }
     </style>
   </head>
