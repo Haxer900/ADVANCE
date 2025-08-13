@@ -1,5 +1,74 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
 
+/* Performance Critical CSS - Load immediately */
+* {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* Enhanced Blur Loading System */
+body.loading #root {
+  filter: blur(8px);
+  -webkit-filter: blur(8px);
+  pointer-events: none;
+  user-select: none;
+}
+
+body.loaded #root {
+  filter: blur(0px);
+  -webkit-filter: blur(0px);
+  pointer-events: auto;
+  user-select: auto;
+  transition: filter 0.8s cubic-bezier(0.4, 0.0, 0.2, 1);
+}
+
+/* Mobile optimizations for blur effect */
+@media (max-width: 768px) {
+  body.loading #root {
+    filter: blur(6px);
+    -webkit-filter: blur(6px);
+  }
+}
+
+/* Performance optimization for blur */
+#root {
+  will-change: filter;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+/* GPU acceleration for smooth animations */
+.gpu-accelerated {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+  will-change: transform;
+}
+
+/* Performance-optimized elements */
+img, video {
+  will-change: transform, opacity;
+  transform: translateZ(0);
+}
+
+/* Optimized button interactions */
+button, .btn-primary, .btn-secondary {
+  will-change: transform, box-shadow;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+/* Critical performance classes for instant loading */
+.performance-optimized {
+  contain: layout style;
+  will-change: auto;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -83,6 +152,11 @@
     padding: 0;
     width: 100%;
     min-height: 100vh;
+    transform: translateZ(0);
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    -webkit-perspective: 1000px;
+    perspective: 1000px;
   }
 
   body.loading {
@@ -253,51 +327,189 @@ select:focus-visible {
   outline-offset: 2px;
 }
 
-/* Utility animations */
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+/* Enhanced Performance-Optimized Animations */
+@keyframes smoothFadeIn {
+  from { 
+    opacity: 0; 
+    transform: translateY(10px);
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0);
+  }
 }
 
 @keyframes slideInFromTop {
-  from { transform: translateY(-20px); opacity: 0; }
+  from { transform: translateY(-15px); opacity: 0; }
   to { transform: translateY(0); opacity: 1; }
 }
 
 @keyframes slideInFromBottom {
-  from { transform: translateY(20px); opacity: 0; }
+  from { transform: translateY(15px); opacity: 0; }
   to { transform: translateY(0); opacity: 1; }
 }
 
 @keyframes slideInFromLeft {
-  from { transform: translateX(-20px); opacity: 0; }
+  from { transform: translateX(-15px); opacity: 0; }
   to { transform: translateX(0); opacity: 1; }
 }
 
 @keyframes slideInFromRight {
-  from { transform: translateX(20px); opacity: 0; }
+  from { transform: translateX(15px); opacity: 0; }
   to { transform: translateX(0); opacity: 1; }
 }
 
-/* Utility classes */
+@keyframes hoverLift {
+  0% { transform: translateY(0) scale(1); }
+  100% { transform: translateY(-2px) scale(1.01); }
+}
+
+@keyframes floatingElement {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-10px) rotate(2deg); }
+}
+
+/* Optimized utility classes - shorter durations for snappier feel */
 .animate-fade-in {
-  animation: fadeIn 0.6s ease-out;
+  animation: smoothFadeIn 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
 }
 
 .animate-slide-in-top {
-  animation: slideInFromTop 0.6s ease-out;
+  animation: slideInFromTop 0.4s cubic-bezier(0.4, 0.0, 0.2, 1);
 }
 
 .animate-slide-in-bottom {
-  animation: slideInFromBottom 0.6s ease-out;
+  animation: slideInFromBottom 0.4s cubic-bezier(0.4, 0.0, 0.2, 1);
 }
 
 .animate-slide-in-left {
-  animation: slideInFromLeft 0.6s ease-out;
+  animation: slideInFromLeft 0.4s cubic-bezier(0.4, 0.0, 0.2, 1);
 }
 
 .animate-slide-in-right {
-  animation: slideInFromRight 0.6s ease-out;
+  animation: slideInFromRight 0.4s cubic-bezier(0.4, 0.0, 0.2, 1);
+}
+
+.hover-lift {
+  transition: transform 0.2s cubic-bezier(0.4, 0.0, 0.2, 1);
+}
+
+.hover-lift:hover {
+  animation: hoverLift 0.2s cubic-bezier(0.4, 0.0, 0.2, 1) forwards;
+}
+
+.floating-animation {
+  animation: floatingElement 6s ease-in-out infinite;
+}
+
+/* Immediate content visibility - no lazy loading */
+.scroll-reveal {
+  opacity: 1;
+  transform: translateY(0);
+  transition: all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+  will-change: opacity, transform;
+  contain: layout;
+}
+
+.revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Advanced 3D Card Effects */
+.card-3d {
+  transform: perspective(1000px) rotateX(0deg) rotateY(0deg);
+  transition: transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+  will-change: transform;
+}
+
+.card-3d:hover {
+  transform: perspective(1000px) rotateX(2deg) rotateY(5deg) translateY(-10px);
+  box-shadow: 
+    0 25px 50px rgba(0, 0, 0, 0.15),
+    0 10px 20px rgba(255, 215, 0, 0.1);
+}
+
+/* Gradient text effects */
+.gradient-text {
+  background: linear-gradient(135deg, #ffd700, #ff6b6b, #4ecdc4);
+  background-size: 200% 200%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: gradientShift 3s ease infinite;
+}
+
+@keyframes gradientShift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+/* Premium hover effects */
+.hover-lift {
+  transition: all 0.2s cubic-bezier(0.4, 0.0, 0.2, 1);
+  will-change: transform, box-shadow;
+}
+
+.hover-lift:hover {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 
+    0 10px 30px rgba(0, 0, 0, 0.2),
+    0 5px 15px rgba(255, 215, 0, 0.1);
+}
+
+/* Pulse glow effect */
+.pulse-glow {
+  animation: pulseGlow 2s ease-in-out infinite alternate;
+}
+
+@keyframes pulseGlow {
+  from { box-shadow: 0 0 10px rgba(255, 215, 0, 0.5); }
+  to { box-shadow: 0 0 20px rgba(255, 215, 0, 0.8), 0 0 30px rgba(255, 215, 0, 0.3); }
+}
+
+/* Loading overlay enhancements */
+.loading-container {
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 215, 0, 0.2);
+  box-shadow: 
+    0 20px 40px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+/* Mobile-specific loading optimizations */
+@media (max-width: 768px) {
+  .loading-container {
+    padding: 30px;
+    border-radius: 15px;
+  }
+  
+  .loading-spinner {
+    width: 50px;
+    height: 50px;
+    margin-bottom: 15px;
+  }
+  
+  .loading-text {
+    font-size: 16px;
+    letter-spacing: 2px;
+  }
+}
+
+/* Reduce motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+  #root {
+    transition: filter 0.3s ease;
+  }
+  
+  #loading-overlay {
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+  }
+  
+  .loading-spinner {
+    animation-duration: 2s;
+  }
 }
 
 @layer components {
@@ -341,11 +553,12 @@ select:focus-visible {
     background: var(--zenthra-gradient-1);
     color: white;
     transform: translateZ(0);
-    transition: all 0.6s cubic-bezier(0.23, 1, 0.320, 1);
+    transition: all 0.2s cubic-bezier(0.4, 0.0, 0.2, 1);
     box-shadow: 
-      0 10px 40px rgba(255, 126, 0, 0.3),
-      0 6px 20px rgba(255, 126, 0, 0.2),
+      0 4px 20px rgba(138, 43, 226, 0.3),
+      0 2px 10px rgba(219, 39, 119, 0.2),
       inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    will-change: transform, box-shadow;
   }
   
   .btn-primary::before {
@@ -356,19 +569,23 @@ select:focus-visible {
     width: 100%;
     height: 100%;
     background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
-    transition: left 0.6s cubic-bezier(0.23, 1, 0.320, 1);
+    transition: left 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
   }
   
   .btn-primary:hover {
-    transform: translateY(-6px) scale(1.05);
+    transform: translateY(-3px) scale(1.02);
     box-shadow: 
-      0 20px 60px rgba(255, 126, 0, 0.4),
-      0 15px 35px rgba(255, 126, 0, 0.3),
+      0 8px 30px rgba(138, 43, 226, 0.4),
+      0 4px 15px rgba(219, 39, 119, 0.3),
       inset 0 1px 0 rgba(255, 255, 255, 0.2);
   }
   
   .btn-primary:hover::before {
     left: 100%;
+  }
+  
+  .btn-primary:active {
+    transform: translateY(-1px) scale(1.01);
   }
 
   .btn-secondary {

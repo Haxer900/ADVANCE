@@ -5,8 +5,8 @@ export function Preloader() {
 
   useEffect(() => {
     // Hide preloader after React app fully loads
-    const timer = setTimeout(() => {
-      const preloader = document.getElementById("preloader");
+    const hidePreloader = () => {
+      const preloader = document.getElementById("loading-overlay");
       const root = document.getElementById("root");
       
       if (preloader && root) {
@@ -17,6 +17,7 @@ export function Preloader() {
         preloader.classList.add("hidden");
         
         // Allow scrolling again
+        document.body.classList.remove("loading");
         document.body.style.overflow = "visible";
         
         // Remove preloader from DOM after animation
@@ -25,11 +26,31 @@ export function Preloader() {
           if (preloader.parentNode) {
             preloader.parentNode.removeChild(preloader);
           }
-        }, 500);
+        }, 300);
       }
-    }, 2000); // Show preloader for 2 seconds
+    };
 
-    return () => clearTimeout(timer);
+    // Wait for fonts and critical resources to load
+    Promise.all([
+      document.fonts.ready,
+      new Promise(resolve => {
+        if (document.readyState === 'complete') {
+          resolve(true);
+        } else {
+          window.addEventListener('load', resolve);
+        }
+      })
+    ]).then(() => {
+      // Add small delay for smooth transition
+      setTimeout(hidePreloader, 800);
+    });
+
+    // Fallback timeout
+    const fallbackTimer = setTimeout(hidePreloader, 3000);
+    
+    return () => {
+      clearTimeout(fallbackTimer);
+    };
   }, []);
 
   if (!isVisible) return null;

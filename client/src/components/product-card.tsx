@@ -43,14 +43,16 @@ export default function ProductCard({ product }: ProductCardProps) {
   });
 
   return (
-    <Card className="group overflow-hidden hover-lift card-3d border-0 shadow-lg bg-zenthra-white">
+    <Card className="group overflow-hidden hover-lift card-3d border-0 shadow-lg bg-zenthra-white transform transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl">
       <div className="relative">
         <Link href={`/product/${product.id}`}>
           <div className="aspect-square overflow-hidden">
             <img 
               src={product.imageUrl} 
               alt={product.name}
-              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+              className="w-full h-full object-cover transition-all duration-500 group-hover:scale-110 group-hover:brightness-110"
+              loading="eager"
+              decoding="async"
             />
           </div>
         </Link>
@@ -81,15 +83,18 @@ export default function ProductCard({ product }: ProductCardProps) {
           {product.description}
         </p>
         <div className="flex items-center justify-between">
-          <span className="font-poppins text-2xl font-bold text-zenthra-primary gradient-text">
-            {formatCurrency(product.price)}
-          </span>
+          <div className="flex flex-col">
+            <span className="text-xs text-gray-500 uppercase tracking-wider mb-1">Price</span>
+            <span className="font-poppins text-2xl font-bold bg-gradient-to-r from-gold-400 via-yellow-500 to-gold-600 bg-clip-text text-transparent">
+              {formatCurrency(product.price)}
+            </span>
+          </div>
           <Button 
             onClick={() => addToCartMutation.mutate()}
             disabled={!product.inStock || addToCartMutation.isPending}
-            className="btn-primary text-sm px-6 py-3"
+            className="btn-primary text-sm px-6 py-3 bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 hover:from-purple-700 hover:via-pink-700 hover:to-blue-700 transform transition-all duration-300 hover:scale-105 hover:shadow-lg"
           >
-            {addToCartMutation.isPending ? "Adding..." : "Add to Cart"}
+            {addToCartMutation.isPending ? "Adding..." : "View Now"}
           </Button>
         </div>
       </CardContent>

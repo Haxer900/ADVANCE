@@ -1,6 +1,10 @@
 import { createRoot } from "react-dom/client";
 import App from "./App";
 import "./index.css";
+import { initializePerformance } from "./lib/performance";
+
+// Initialize performance optimizations immediately
+initializePerformance();
 
 // Add loading class to body immediately
 document.body.classList.add("loading");
@@ -15,15 +19,13 @@ document.addEventListener('DOMContentLoaded', () => {
   
   // Wait for everything to load completely
   const hideLoader = () => {
-    // Enable scrolling by removing loading class and restoring body overflow
-    document.body.classList.remove("loading");
-    document.body.style.overflow = "";
-    document.body.style.position = "";
-    document.body.style.height = "";
-    document.documentElement.style.overflow = "";
-    
-    // Show root content
+    // Remove blur effect from root
     rootElement.classList.add("loaded");
+    
+    // Enable interactions by removing loading class
+    document.body.classList.remove("loading");
+    document.body.classList.add("loaded");
+    document.body.style.overflow = "";
     
     // Hide loading overlay
     loadingOverlay.classList.add("hidden");
@@ -33,17 +35,59 @@ document.addEventListener('DOMContentLoaded', () => {
       if (loadingOverlay.parentNode) {
         loadingOverlay.parentNode.removeChild(loadingOverlay);
       }
-    }, 500);
+    }, 800); // Match the transition duration
   };
   
-  // Wait for React to mount and render, then hide loader
-  setTimeout(() => {
-    // Check if React has rendered by looking for content
-    if (rootElement.children.length > 0) {
-      hideLoader();
-    } else {
-      // If not ready, wait a bit more
+  // Wait for all assets to load
+  const loadComplete = () => {
+    Promise.all([
+      // Wait for fonts to load
+      document.fonts.ready,
+      // Wait for images to load
+      new Promise((resolve) => {
+        const images = Array.from(document.images);
+        if (images.length === 0) {
+          resolve(true);
+          return;
+        }
+        
+        let loadedCount = 0;
+        const checkComplete = () => {
+          loadedCount++;
+          if (loadedCount === images.length) {
+            resolve(true);
+          }
+        };
+        
+        images.forEach(img => {
+          if (img.complete) {
+            checkComplete();
+          } else {
+            img.addEventListener('load', checkComplete);
+            img.addEventListener('error', checkComplete);
+          }
+        });
+      }),
+      // Wait for React to fully render
+      new Promise((resolve) => {
+        const checkReactReady = () => {
+          if (rootElement.children.length > 0) {
+            resolve(true);
+          } else {
+            setTimeout(checkReactReady, 50);
+          }
+        };
+        checkReactReady();
+      })
+    ]).then(() => {
+      // Add small delay for smooth transition
       setTimeout(hideLoader, 300);
-    }
-  }, 800);
+    }).catch(() => {
+      // Fallback in case of errors
+      setTimeout(hideLoader, 1000);
+    });
+  };
+
+  // Start the loading process
+  loadComplete();
 });

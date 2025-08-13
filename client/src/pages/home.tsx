@@ -77,12 +77,14 @@ export default function Home() {
             muted 
             loop 
             playsInline
-            className="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000"
+            preload="auto"
+            className="absolute inset-0 w-full h-full object-cover transition-opacity duration-500"
             style={{ 
               filter: 'brightness(0.7)',
               opacity: videoLoaded ? 1 : 0
             }}
             onLoadedData={() => setVideoLoaded(true)}
+            onCanPlayThrough={() => setVideoLoaded(true)}
             onError={(e) => {
               console.error('Video error:', e);
               setVideoLoaded(false);
@@ -158,7 +160,9 @@ export default function Home() {
                       <img
                         src={category.imageUrl || '/placeholder-image.jpg'}
                         alt={category.name}
-                        className="w-full h-full object-cover"
+                        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                        loading="eager"
+                        decoding="async"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-zenthra-primary/80 via-transparent to-transparent"></div>
                       <div className="absolute bottom-6 left-6 right-6">
@@ -270,6 +274,8 @@ export default function Home() {
                   src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600" 
                   alt="Premium craftsmanship" 
                   className="relative rounded-3xl shadow-2xl w-full card-3d"
+                  loading="eager"
+                  decoding="async"
                 />
               </div>
             </div>
