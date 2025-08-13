@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
@@ -9,8 +9,9 @@ import { useToast } from "@/hooks/use-toast";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useScrollAnimation, useParallax } from "@/hooks/use-scroll-animation";
+import { usePerformanceOptimization, useVideoOptimization } from "@/hooks/use-performance";
 import type { Product, Category } from "@shared/schema";
-import ProductCard from "@/components/product-card";
+import OptimizedProductCard from "@/components/optimized-product-card";
 import { ArrowRight, Star, Sparkles, ShoppingBag, Heart, TrendingUp } from "lucide-react";
 
 export default function Home() {
@@ -26,6 +27,17 @@ export default function Home() {
   const aboutRef = useScrollAnimation();
   const newsletterRef = useScrollAnimation();
   const parallaxRef = useParallax();
+  
+  // Performance hooks
+  const { observeElement } = usePerformanceOptimization();
+  const { optimizeVideo } = useVideoOptimization();
+
+  // Optimize video on mount
+  useEffect(() => {
+    if (videoRef.current) {
+      optimizeVideo(videoRef.current);
+    }
+  }, [optimizeVideo]);
 
   const { data: featuredProducts, isLoading: productsLoading } = useQuery({
     queryKey: ["/api/products/featured"],
@@ -62,7 +74,7 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white performance-optimized smooth-scroll">
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden video-container">
         {/* Video Background */}
@@ -77,11 +89,12 @@ export default function Home() {
             muted 
             loop 
             playsInline
-            preload="auto"
-            className="absolute inset-0 w-full h-full object-cover transition-opacity duration-500"
+            preload="metadata"
+            className="absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ease-out"
             style={{ 
               filter: 'brightness(0.7)',
-              opacity: videoLoaded ? 1 : 0
+              opacity: videoLoaded ? 1 : 0,
+              willChange: 'auto'
             }}
             onLoadedData={() => setVideoLoaded(true)}
             onCanPlayThrough={() => setVideoLoaded(true)}
@@ -218,9 +231,9 @@ export default function Home() {
           ) : (
             <>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 mb-16">
-                {(featuredProducts as Product[] || []).slice(0, 8).map((product) => (
+                {(featuredProducts as Product[] || []).slice(0, 8).map((product, index) => (
                   <div key={product.id}>
-                    <ProductCard product={product} />
+                    <OptimizedProductCard product={product} priority={index < 4} />
                   </div>
                 ))}
               </div>

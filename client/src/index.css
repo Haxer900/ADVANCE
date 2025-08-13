@@ -1,14 +1,48 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
 
 /* Performance Critical CSS - Load immediately */
 * {
   box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
 html {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
+  scroll-behavior: smooth;
+  overflow-x: hidden;
+}
+
+body {
+  scroll-behavior: smooth;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: none;
+}
+
+/* Critical performance optimization for smooth scrolling */
+html, body {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.5);
 }
 
 /* Enhanced Blur Loading System */
@@ -37,9 +71,10 @@ body.loaded #root {
 
 /* Performance optimization for blur */
 #root {
-  will-change: filter;
+  will-change: auto;
   transform: translateZ(0);
   backface-visibility: hidden;
+  contain: layout style paint;
 }
 
 /* GPU acceleration for smooth animations */
@@ -48,25 +83,108 @@ body.loaded #root {
   backface-visibility: hidden;
   perspective: 1000px;
   will-change: transform;
+  contain: layout style paint;
 }
 
 /* Performance-optimized elements */
 img, video {
-  will-change: transform, opacity;
+  will-change: auto;
   transform: translateZ(0);
+  backface-visibility: hidden;
+  contain: layout;
 }
 
 /* Optimized button interactions */
 button, .btn-primary, .btn-secondary {
-  will-change: transform, box-shadow;
+  will-change: auto;
   transform: translateZ(0);
   backface-visibility: hidden;
+  contain: layout style;
 }
 
 /* Critical performance classes for instant loading */
 .performance-optimized {
+  contain: layout style paint;
+  will-change: auto;
+}
+
+/* Smooth scrolling performance optimizations */
+.smooth-scroll {
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: none;
+}
+
+/* Prevent layout shifts */
+.layout-stable {
+  contain: layout;
+}
+
+/* Video performance optimization */
+.video-container {
   contain: layout style;
   will-change: auto;
+}
+
+.video-container video {
+  will-change: auto;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+/* Animation performance */
+.animate-fade-in {
+  animation: fadeIn 0.6s ease-out forwards;
+  will-change: opacity;
+}
+
+.animate-slide-up {
+  animation: slideUp 0.8s ease-out forwards;
+  will-change: transform, opacity;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { 
+    opacity: 0; 
+    transform: translateY(30px);
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0);
+  }
+}
+
+/* Remove will-change after animations complete */
+.animation-complete {
+  will-change: auto;
+}
+
+/* Additional performance optimizations */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Reduce font loading for better performance */
+.font-optimized {
+  font-display: swap;
+}
+
+/* Improved button hover effects */
+.btn-hover-scale {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn-hover-scale:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
 }
 
 @tailwind base;
