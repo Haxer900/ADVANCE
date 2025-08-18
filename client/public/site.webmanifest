@@ -1,0 +1,21 @@
+{
+  "name": "ZENTHRA - Premium Women's Fashion",
+  "short_name": "ZENTHRA",
+  "description": "Premium women's fashion e-commerce platform",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "/favicon.ico",
+      "sizes": "16x16 32x32 48x48",
+      "type": "image/x-icon"
+    }
+  ],
+  "theme_color": "#D4AF37",
+  "background_color": "#000000",
+  "display": "standalone",
+  "start_url": "/"
+}
