@@ -58,6 +58,12 @@ const navigation = [
     current: false,
   },
   {
+    name: "Staff",
+    href: "/admin/staff",
+    icon: Shield,
+    current: false,
+  },
+  {
     name: "Categories",
     href: "/admin/categories",
     icon: Tags,

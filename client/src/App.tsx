@@ -46,6 +46,7 @@ import AdminSettings from "@/pages/admin/settings";
 import AdminSMSWhatsApp from "@/pages/admin/sms-whatsapp";
 import AdminRefunds from "@/pages/admin/refunds";
 import PaymentIntegrations from "@/pages/admin/integrations/payments";
+import StaffAdmin from "@/pages/admin/staff";
 import { useCartStore } from "@/components/cart-store";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
@@ -96,6 +97,7 @@ function Router() {
                 <Route path="/admin/sms-whatsapp" component={AdminSMSWhatsApp} />
                 <Route path="/admin/refunds" component={AdminRefunds} />
                 <Route path="/admin/settings" component={AdminSettings} />
+                <Route path="/admin/staff" component={StaffAdmin} />
                 <Route path="/admin/integrations/payments" component={PaymentIntegrations} />
                 <Route component={() => <div className="p-6"><h1 className="text-white text-2xl">Admin Page Coming Soon</h1></div>} />
               </Switch>

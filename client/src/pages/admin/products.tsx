@@ -15,12 +15,14 @@ import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { Plus, Edit, Trash2, Eye, Package } from "lucide-react";
+import { ImageUpload } from "@/components/image-upload";
 
 const productSchema = z.object({
   name: z.string().min(1, "Name is required"),
   description: z.string().min(1, "Description is required"),
   price: z.string().refine((val) => !isNaN(parseFloat(val)), "Price must be a number"),
-  imageUrl: z.string().url("Must be a valid URL"),
+  imageUrl: z.string().url("Must be a valid URL").optional(),
+  images: z.array(z.string().url()).min(1, "At least one image is required"),
   category: z.string().min(1, "Category is required"),
   inStock: z.boolean().optional(),
   featured: z.boolean().optional(),
@@ -41,6 +43,7 @@ export default function ProductsAdmin() {
       description: "",
       price: "",
       imageUrl: "",
+      images: [],
       category: "",
       inStock: true,
       featured: false,
@@ -142,12 +145,14 @@ export default function ProductsAdmin() {
     form.reset({
       name: product.name,
       description: product.description,
-      price: product.price,
+      price: product.price.toString(),
       imageUrl: product.imageUrl,
+      images: product.images || [product.imageUrl].filter(Boolean),
       category: product.category,
       inStock: product.inStock,
       featured: product.featured,
     });
+    setIsCreateDialogOpen(true);
   };
 
   const handleToggleStock = (product: any) => {
@@ -267,15 +272,14 @@ export default function ProductsAdmin() {
                   />
                   <FormField
                     control={form.control}
-                    name="imageUrl"
+                    name="images"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-neutral-200">Image URL</FormLabel>
                         <FormControl>
-                          <Input
-                            {...field}
-                            type="url"
-                            className="bg-neutral-700 border-neutral-600 text-white"
+                          <ImageUpload
+                            images={field.value || []}
+                            onImagesChange={field.onChange}
+                            maxImages={10}
                           />
                         </FormControl>
                         <FormMessage />
@@ -397,7 +401,6 @@ export default function ProductsAdmin() {
                         <Switch
                           checked={product.inStock}
                           onCheckedChange={() => handleToggleStock(product)}
-                          size="sm"
                         />
                         <Badge
                           variant={product.inStock ? "default" : "destructive"}
@@ -411,7 +414,6 @@ export default function ProductsAdmin() {
                       <Switch
                         checked={product.featured}
                         onCheckedChange={() => handleToggleFeatured(product)}
-                        size="sm"
                       />
                     </TableCell>
                     <TableCell>
