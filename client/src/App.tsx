@@ -10,6 +10,7 @@ import Footer from "@/components/footer";
 import { ScrollToTop } from "@/components/scroll-to-top";
 import { CookieConsent } from "@/components/cookie-consent";
 import { Preloader } from "@/components/preloader";
+import { PerformanceWrapper } from "@/components/performance-wrapper";
 import Home from "@/pages/home";
 import Products from "@/pages/products";
 import ProductDetail from "@/pages/product-detail";
@@ -147,10 +148,12 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <ThemeProvider defaultTheme="light" storageKey="morethanfashion-ui-theme">
         <TooltipProvider>
-          <Preloader />
-          <CartUpdater />
-          <Toaster />
-          <Router />
+          <PerformanceWrapper>
+            <Preloader />
+            <CartUpdater />
+            <Toaster />
+            <Router />
+          </PerformanceWrapper>
         </TooltipProvider>
       </ThemeProvider>
     </QueryClientProvider>

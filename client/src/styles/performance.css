@@ -1,0 +1,72 @@
+/* Ultra-aggressive performance optimizations for smooth scrolling */
+
+/* GPU layer for all elements */
+* {
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
+/* Remove expensive operations on scroll */
+body {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  overscroll-behavior: none;
+}
+
+body::-webkit-scrollbar {
+  display: none;
+}
+
+/* Optimize animations */
+@media (prefers-reduced-motion: no-preference) {
+  .smooth-scroll {
+    scroll-behavior: smooth;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Critical rendering optimizations */
+img, video, iframe {
+  content-visibility: auto;
+  contain-intrinsic-size: 300px 200px;
+}
+
+/* Disable transitions on mobile for performance */
+@media (max-width: 768px) {
+  * {
+    transition: none !important;
+    animation: none !important;
+    transform: none !important;
+  }
+  
+  html {
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Container queries optimization */
+.video-container {
+  container-type: inline-size;
+  contain: layout style paint size;
+}
+
+/* Optimize text rendering */
+.text-optimized {
+  text-rendering: optimizeSpeed;
+  font-smooth: never;
+  -webkit-font-smoothing: subpixel-antialiased;
+}
+
+/* Layout containment */
+.contained {
+  contain: layout style paint;
+}

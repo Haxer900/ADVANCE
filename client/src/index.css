@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+@import './styles/performance.css';
 
 /* Performance Critical CSS - Load immediately */
 * {
@@ -13,6 +14,7 @@ html {
   text-rendering: optimizeLegibility;
   scroll-behavior: smooth;
   overflow-x: hidden;
+  height: 100%;
 }
 
 body {
@@ -20,6 +22,60 @@ body {
   overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
   overscroll-behavior: none;
+  height: 100%;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+/* Force hardware acceleration and smooth rendering globally */
+* {
+  -webkit-transform: translateZ(0);
+  -moz-transform: translateZ(0);
+  -ms-transform: translateZ(0);
+  -o-transform: translateZ(0);
+  transform: translateZ(0);
+  -webkit-backface-visibility: hidden;
+  -moz-backface-visibility: hidden;
+  -ms-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
+/* Critical performance fixes for scrolling lag */
+body * {
+  will-change: auto;
+}
+
+/* Aggressive scroll optimization */
+html {
+  scroll-snap-type: none;
+}
+
+body {
+  contain: layout style;
+  isolation: isolate;
+}
+
+/* Optimize all interactive elements */
+button, a, input, textarea, select {
+  will-change: transform;
+  backface-visibility: hidden;
+  transform: translateZ(0);
+}
+
+/* Remove laggy transitions on mobile */
+@media (max-width: 768px) {
+  * {
+    -webkit-transition: none !important;
+    -moz-transition: none !important;
+    -o-transition: none !important;
+    transition: none !important;
+  }
+  
+  .video-container video {
+    transform: none;
+    backface-visibility: visible;
+  }
 }
 
 /* Critical performance optimization for smooth scrolling */
@@ -122,14 +178,40 @@ button, .btn-primary, .btn-secondary {
 
 /* Video performance optimization */
 .video-container {
-  contain: layout style;
+  contain: layout style paint;
   will-change: auto;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  overflow: hidden;
 }
 
 .video-container video {
   will-change: auto;
   transform: translateZ(0);
   backface-visibility: hidden;
+  max-width: 100%;
+  height: auto;
+}
+
+/* Enhanced scroll performance */
+.scroll-container {
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+/* Disable smooth scrolling on mobile for better performance */
+@media (max-width: 768px) {
+  html, body {
+    scroll-behavior: auto;
+  }
+  
+  .smooth-scroll {
+    scroll-behavior: auto;
+  }
 }
 
 /* Animation performance */

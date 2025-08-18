@@ -36,7 +36,7 @@ export default function Header() {
   ];
 
   return (
-    <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm supports-[backdrop-filter]:bg-background/60 border-b performance-optimized">
+    <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm supports-[backdrop-filter]:bg-background/60 border-b performance-optimized" style={{ transform: 'translateZ(0)', backfaceVisibility: 'hidden', contain: 'layout style' }}>
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20 py-4 layout-stable">
           {/* Logo */}
