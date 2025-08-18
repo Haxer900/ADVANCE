@@ -394,7 +394,7 @@ export default function ProductsAdmin() {
                       </Badge>
                     </TableCell>
                     <TableCell className="text-white font-medium">
-                      ${product.price}
+                      ₹{product.price}
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center space-x-2">

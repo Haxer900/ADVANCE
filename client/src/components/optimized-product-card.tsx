@@ -63,7 +63,7 @@ export const OptimizedProductCard = memo(function OptimizedProductCard({
         </Link>
         
         <div className="flex items-center justify-between">
-          <span className="text-lg font-semibold">${product.price}</span>
+          <span className="text-lg font-semibold">₹{product.price}</span>
           
           <div className="flex items-center space-x-1">
             {[...Array(5)].map((_, i) => (

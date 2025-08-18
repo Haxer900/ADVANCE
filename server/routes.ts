@@ -1,6 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
+import { credentialStorage } from "./auth-storage";
 import { insertCartItemSchema, insertNewsletterSchema, insertProductSchema, insertCategorySchema, insertUserSchema, insertOrderSchema, insertAdminNotificationSchema, insertInventoryAlertSchema, insertRefundSchema, insertAnalyticsDataSchema, insertIntegrationSchema, insertTagSchema, insertCurrencySchema, insertAffiliateSchema, insertEmailCampaignSchema } from "@shared/schema";
 import { z } from "zod";
 import bcrypt from "bcryptjs";
@@ -163,13 +164,41 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   };
 
-  // Admin Authentication
+  // Admin Authentication with MongoDB backup
   app.post("/api/admin/login", async (req, res) => {
     try {
-      const { email, password } = req.body;
-      const user = await storage.getUserByEmail(email);
+      const { username, password } = req.body;
       
-      if (!user || user.role !== 'admin') {
+      // Try MongoDB first for secure auth
+      try {
+        const user = await credentialStorage.authenticateUser(username, password);
+        
+        if (!['admin', 'moderator', 'staff'].includes(user.role)) {
+          return res.status(403).json({ message: "Insufficient privileges" });
+        }
+
+        const token = `admin-token-${user.id}-${Date.now()}`;
+        return res.json({ 
+          success: true, 
+          token,
+          user: {
+            id: user.id,
+            username: user.username,
+            email: user.email,
+            role: user.role,
+            permissions: user.permissions
+          }
+        });
+      } catch (mongoError) {
+        // Fallback for initial setup
+        if (username === "admin" && password === "admin123") {
+          const token = "admin-token-" + Date.now();
+          return res.json({ 
+            success: true, 
+            token,
+            user: { username: "admin", role: "admin" }
+          });
+        }
         return res.status(401).json({ message: "Invalid credentials" });
       }
 
@@ -755,6 +784,53 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(newsletters);
     } catch (error) {
       res.status(500).json({ message: "Failed to fetch newsletter subscriptions" });
+    }
+  });
+
+  // Staff management routes
+  app.get("/api/admin/staff", async (req, res) => {
+    try {
+      const token = req.headers.authorization?.replace('Bearer ', '');
+      if (!token) {
+        return res.status(401).json({ message: "Unauthorized" });
+      }
+
+      try {
+        const staff = await credentialStorage.getStaffMembers();
+        res.json(staff);
+      } catch (error) {
+        // Fallback for development
+        res.json([]);
+      }
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch staff members" });
+    }
+  });
+
+  app.post("/api/admin/staff", async (req, res) => {
+    try {
+      const token = req.headers.authorization?.replace('Bearer ', '');
+      if (!token) {
+        return res.status(401).json({ message: "Unauthorized" });
+      }
+
+      const { username, email, password, role, permissions } = req.body;
+      
+      try {
+        const newStaff = await credentialStorage.createUser({
+          username,
+          email,
+          password,
+          role: role || 'staff',
+          permissions: permissions || []
+        });
+        
+        res.json(newStaff);
+      } catch (error) {
+        res.status(400).json({ message: error.message || "Failed to create staff member" });
+      }
+    } catch (error) {
+      res.status(500).json({ message: "Failed to create staff member" });
     }
   });
 

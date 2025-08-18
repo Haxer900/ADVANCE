@@ -234,7 +234,7 @@ export default function AdminDashboard() {
                     <p className="text-xs text-neutral-400">{product.category}</p>
                   </div>
                   <div className="text-right">
-                    <p className="text-sm font-medium text-white">${product.price}</p>
+                    <p className="text-sm font-medium text-white">₹{product.price}</p>
                     <Badge variant="outline" className="border-amber-500 text-amber-500">
                       Featured
                     </Badge>

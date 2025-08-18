@@ -154,7 +154,7 @@ export default function Wishlist() {
 
                   <div className={`flex items-center justify-between ${viewMode === "list" ? "mb-4" : "mb-4"}`}>
                     <span className="text-lg font-bold">
-                      ${parseFloat(item.product.price).toFixed(2)}
+                      ₹{parseFloat(item.product.price).toFixed(2)}
                     </span>
                     {item.product.featured && (
                       <Badge variant="secondary">Featured</Badge>
