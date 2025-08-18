@@ -1,11 +1,17 @@
 /* Ultra-aggressive performance optimizations for smooth scrolling */
 
-/* GPU layer for all elements */
-* {
+/* Selective GPU acceleration - only for interactive elements */
+button, a, img, video {
   -webkit-transform: translateZ(0);
   transform: translateZ(0);
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
+}
+
+/* Remove GPU acceleration from static elements */
+p, h1, h2, h3, h4, h5, h6, span, div {
+  transform: none;
+  backface-visibility: visible;
 }
 
 /* Remove expensive operations on scroll */
@@ -40,12 +46,26 @@ img, video, iframe {
   contain-intrinsic-size: 300px 200px;
 }
 
-/* Disable transitions on mobile for performance */
+/* Ultra mobile performance - disable ALL animations and transitions */
 @media (max-width: 768px) {
   * {
+    -webkit-transition: none !important;
+    -moz-transition: none !important;
+    -o-transition: none !important;
     transition: none !important;
     animation: none !important;
     transform: none !important;
+  }
+  
+  .video-container video {
+    transform: none;
+    backface-visibility: visible;
+  }
+  
+  /* Force immediate layout updates on mobile */
+  body {
+    contain: none;
+    will-change: auto;
   }
   
   html {
