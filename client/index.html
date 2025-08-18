@@ -74,96 +74,7 @@
     </script>
     <!-- Inline Critical CSS for Immediate Loading -->
     <style>
-      /* Blurred Content Preloader - No Black Background */
-      #root {
-        filter: blur(10px);
-        transition: filter 1s cubic-bezier(0.4, 0.0, 0.2, 1);
-        will-change: filter;
-        opacity: 1;
-        visibility: visible;
-      }
-      
-      #root.loaded {
-        filter: blur(0px);
-      }
-      
-      #loading-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100vw;
-        height: 100vh;
-        background: transparent;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 99999;
-        transition: opacity 1s cubic-bezier(0.4, 0.0, 0.2, 1), visibility 1s cubic-bezier(0.4, 0.0, 0.2, 1);
-        pointer-events: none;
-      }
-      
-      #loading-overlay.hidden {
-        opacity: 0;
-        visibility: hidden;
-      }
-      
-      /* Elegant Loading Animation - Floating in Center */
-      .loading-container {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        background: rgba(0, 0, 0, 0.85);
-        padding: 30px 40px;
-        border-radius: 20px;
-        backdrop-filter: blur(15px);
-        -webkit-backdrop-filter: blur(15px);
-        border: 1px solid rgba(255, 215, 0, 0.3);
-        box-shadow: 
-          0 20px 40px rgba(0, 0, 0, 0.3),
-          0 0 0 1px rgba(255, 255, 255, 0.1);
-        animation: floatLoader 3s ease-in-out infinite;
-      }
-      
-      .loading-spinner {
-        width: 50px;
-        height: 50px;
-        border: 3px solid rgba(255, 215, 0, 0.2);
-        border-radius: 50%;
-        border-top-color: #ffd700;
-        border-right-color: #ffd700;
-        animation: smoothSpin 1s linear infinite;
-        margin-bottom: 15px;
-      }
-      
-      .loading-text {
-        color: #ffd700;
-        font-family: 'Poppins', sans-serif;
-        font-size: 14px;
-        font-weight: 400;
-        letter-spacing: 2px;
-        text-transform: uppercase;
-        opacity: 0.9;
-        animation: textPulse 2s ease-in-out infinite;
-        text-shadow: 0 0 10px rgba(255, 215, 0, 0.4);
-      }
-      
-      @keyframes smoothSpin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-      }
-      
-      @keyframes textPulse {
-        0%, 100% { opacity: 0.8; }
-        50% { opacity: 1; }
-      }
-      
-      @keyframes floatLoader {
-        0%, 100% { transform: translateY(0px); }
-        50% { transform: translateY(-5px); }
-      }
-      
-      /* Prevent any flicker during loading - Critical Performance CSS */
+      /* Basic Performance CSS */
       html, body {
         margin: 0 !important;
         padding: 0 !important;
@@ -182,13 +93,6 @@
         will-change: scroll-position;
       }
       
-      body.loading {
-        overflow: hidden !important;
-        height: 100% !important;
-        position: fixed !important;
-      }
-      
-      /* Root is visible immediately but blurred */
       #root {
         opacity: 1;
         visibility: visible;
@@ -196,44 +100,9 @@
         height: 100%;
         min-height: 100vh;
       }
-      
-      /* Body loading state - disable interactions while showing content */
-      body.loading {
-        overflow: hidden !important;
-        height: 100vh !important;
-        position: fixed !important;
-        width: 100% !important;
-      }
-      
-      body.loading *:not(#loading-overlay):not(.loading-container):not(.loading-spinner):not(.loading-text) {
-        pointer-events: none !important;
-        user-select: none !important;
-        -webkit-user-select: none !important;
-        -moz-user-select: none !important;
-        -ms-user-select: none !important;
-      }
-      
-      body.loaded * {
-        pointer-events: auto !important;
-        user-select: auto !important;
-      }
-      
-      /* Prevent scrolling during load on mobile */
-      body.loading {
-        touch-action: none !important;
-        -webkit-overflow-scrolling: auto !important;
-      }
     </style>
   </head>
   <body>
-    <!-- Loading Overlay with Blur Effect -->
-    <div id="loading-overlay">
-      <div class="loading-container">
-        <div class="loading-spinner"></div>
-        <div class="loading-text">ZENTHRA</div>
-      </div>
-    </div>
-    
     <!-- Main App Container -->
     <div id="root"></div>
     

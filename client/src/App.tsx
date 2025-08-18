@@ -9,7 +9,7 @@ import Footer from "@/components/footer";
 
 import { ScrollToTop } from "@/components/scroll-to-top";
 import { CookieConsent } from "@/components/cookie-consent";
-import { Preloader } from "@/components/preloader";
+
 import { PerformanceWrapper } from "@/components/performance-wrapper";
 import Home from "@/pages/home";
 import Products from "@/pages/products";
@@ -149,7 +149,6 @@ function App() {
       <ThemeProvider defaultTheme="light" storageKey="morethanfashion-ui-theme">
         <TooltipProvider>
           <PerformanceWrapper>
-            <Preloader />
             <CartUpdater />
             <Toaster />
             <Router />
