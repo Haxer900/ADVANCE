@@ -170,7 +170,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const { username, password, email } = req.body;
       
       // Check for development fallback credentials first
-      if (username === "admin" && password === "admin123") {
+      if ((username === "admin" || email === "admin@morethanfashion.com") && password === "admin123") {
         const token = "admin-token-" + Date.now();
         return res.json({ 
           success: true, 
@@ -212,7 +212,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Try MongoDB auth as last resort (if configured)
       try {
-        const user = await credentialStorage.authenticateUser(username, password);
+        const user = await credentialStorage.authenticateUser(username || email, password);
         
         if (!['admin', 'moderator', 'staff'].includes(user.role)) {
           return res.status(403).json({ message: "Insufficient privileges" });
