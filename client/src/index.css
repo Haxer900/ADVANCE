@@ -63,13 +63,13 @@ button, a, input, textarea, select {
   transform: translateZ(0);
 }
 
-/* Remove laggy transitions on mobile */
+/* Optimize transitions on mobile */
 @media (max-width: 768px) {
   * {
-    -webkit-transition: none !important;
-    -moz-transition: none !important;
-    -o-transition: none !important;
-    transition: none !important;
+    -webkit-transition: transform 0.1s ease-out;
+    -moz-transition: transform 0.1s ease-out;
+    -o-transition: transform 0.1s ease-out;
+    transition: transform 0.1s ease-out;
   }
   
   .video-container video {

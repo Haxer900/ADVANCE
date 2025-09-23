@@ -46,15 +46,14 @@ img, video, iframe {
   contain-intrinsic-size: 300px 200px;
 }
 
-/* Ultra mobile performance - disable ALL animations and transitions */
+/* Mobile performance - optimize transitions and animations */
 @media (max-width: 768px) {
   * {
-    -webkit-transition: none !important;
-    -moz-transition: none !important;
-    -o-transition: none !important;
-    transition: none !important;
-    animation: none !important;
-    transform: none !important;
+    -webkit-transition: transform 0.1s ease-out !important;
+    -moz-transition: transform 0.1s ease-out !important;
+    -o-transition: transform 0.1s ease-out !important;
+    transition: transform 0.1s ease-out !important;
+    animation-duration: 0.2s !important;
   }
   
   .video-container video {
@@ -69,7 +68,7 @@ img, video, iframe {
   }
   
   html {
-    scroll-behavior: auto !important;
+    scroll-behavior: smooth !important;
   }
 }
 
