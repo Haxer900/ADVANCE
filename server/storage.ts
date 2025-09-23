@@ -691,5 +691,111 @@ export class DatabaseStorage implements IStorage {
   async updateEmailCampaign(id: string, campaign: Partial<InsertEmailCampaign>): Promise<EmailCampaign | undefined> { return undefined; }
 }
 
-// Create storage instance based on database availability
-export const storage: IStorage = db ? new DatabaseStorage() : new MemStorage();
+// Simple implementation for immediate development needs
+class SimpleStorage implements IStorage {
+  private products = [
+    {
+      id: "1",
+      name: "Designer Handbag",
+      description: "Premium leather craftsmanship with elegant design",
+      price: "899.00",
+      imageUrl: "https://images.unsplash.com/photo-1584917865442-de89df76afd3",
+      category: "Vestments",
+      inStock: true,
+      featured: true,
+      createdAt: new Date(),
+    },
+    {
+      id: "2",
+      name: "Premium Timepiece",
+      description: "Swiss movement precision with sophisticated design",
+      price: "1299.00",
+      imageUrl: "https://images.unsplash.com/photo-1523275335684-37898b6baf30",
+      category: "Breeches",
+      inStock: true,
+      featured: true,
+      createdAt: new Date(),
+    }
+  ];
+  
+  private categories = [
+    { id: "1", name: "Vestments", description: "Elegance Draped", imageUrl: "https://images.unsplash.com/photo-1594633312681-425c7b97ccd1" },
+    { id: "2", name: "Breeches", description: "Tailored Grace", imageUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d" },
+    { id: "3", name: "Raiment", description: "Complete Poise", imageUrl: "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136" }
+  ];
+  
+  private cartItems: any[] = [];
+  private users: any[] = [];
+  private orders: any[] = [];
+  private newsletters: any[] = [];
+
+  async getProducts() { return this.products; }
+  async getProduct(id: string) { return this.products.find(p => p.id === id); }
+  async getFeaturedProducts() { return this.products.filter(p => p.featured); }
+  async getProductsByCategory(category: string) { return this.products.filter(p => p.category === category); }
+  async createProduct(product: any) { const newProduct = { ...product, id: Date.now().toString() }; this.products.push(newProduct); return newProduct; }
+  async updateProduct(id: string, updates: any) { const index = this.products.findIndex(p => p.id === id); if (index >= 0) { this.products[index] = { ...this.products[index], ...updates }; return this.products[index]; } return undefined; }
+  async deleteProduct(id: string) { const index = this.products.findIndex(p => p.id === id); if (index >= 0) { this.products.splice(index, 1); return true; } return false; }
+
+  async getCategories() { return this.categories; }
+  async getCategory(id: string) { return this.categories.find(c => c.id === id); }
+  async createCategory(category: any) { const newCategory = { ...category, id: Date.now().toString() }; this.categories.push(newCategory); return newCategory; }
+  async updateCategory(id: string, updates: any) { const index = this.categories.findIndex(c => c.id === id); if (index >= 0) { this.categories[index] = { ...this.categories[index], ...updates }; return this.categories[index]; } return undefined; }
+  async deleteCategory(id: string) { const index = this.categories.findIndex(c => c.id === id); if (index >= 0) { this.categories.splice(index, 1); return true; } return false; }
+
+  async getCartItems(sessionId: string) { return this.cartItems.filter(item => item.sessionId === sessionId); }
+  async addToCart(item: any) { const newItem = { ...item, id: Date.now().toString() }; this.cartItems.push(newItem); return newItem; }
+  async updateCartItem(id: string, quantity: number) { const item = this.cartItems.find(i => i.id === id); if (item) { item.quantity = quantity; return item; } return undefined; }
+  async removeFromCart(id: string) { const index = this.cartItems.findIndex(i => i.id === id); if (index >= 0) { this.cartItems.splice(index, 1); return true; } return false; }
+  async clearCart(sessionId: string) { this.cartItems = this.cartItems.filter(item => item.sessionId !== sessionId); return true; }
+
+  async subscribeNewsletter(newsletter: any) { const newNewsletter = { ...newsletter, id: Date.now().toString(), subscribedAt: new Date() }; this.newsletters.push(newNewsletter); return newNewsletter; }
+  async getNewsletters() { return this.newsletters; }
+
+  async getUsers() { return this.users; }
+  async getUser(id: string) { return this.users.find(u => u.id === id); }
+  async getUserByEmail(email: string) { return this.users.find(u => u.email === email); }
+  async createUser(user: any) { const newUser = { ...user, id: Date.now().toString(), createdAt: new Date(), updatedAt: new Date() }; this.users.push(newUser); return newUser; }
+  async updateUser(id: string, updates: any) { const index = this.users.findIndex(u => u.id === id); if (index >= 0) { this.users[index] = { ...this.users[index], ...updates, updatedAt: new Date() }; return this.users[index]; } return undefined; }
+  async deleteUser(id: string) { const index = this.users.findIndex(u => u.id === id); if (index >= 0) { this.users.splice(index, 1); return true; } return false; }
+
+  async getOrders() { return this.orders; }
+  async getOrder(id: string) { return this.orders.find(o => o.id === id); }
+  async getOrdersByUser(userId: string) { return this.orders.filter(o => o.userId === userId); }
+  async createOrder(order: any) { const newOrder = { ...order, id: Date.now().toString(), createdAt: new Date() }; this.orders.push(newOrder); return newOrder; }
+  async updateOrder(id: string, updates: any) { const index = this.orders.findIndex(o => o.id === id); if (index >= 0) { this.orders[index] = { ...this.orders[index], ...updates }; return this.orders[index]; } return undefined; }
+  async deleteOrder(id: string) { const index = this.orders.findIndex(o => o.id === id); if (index >= 0) { this.orders.splice(index, 1); return true; } return false; }
+
+  // Stubs for other methods
+  async getAdminNotifications() { return []; }
+  async createAdminNotification(notification: any) { return { id: Date.now().toString(), ...notification }; }
+  async markNotificationRead(id: string) { return true; }
+  async getInventoryAlerts() { return []; }
+  async createInventoryAlert(alert: any) { return { id: Date.now().toString(), ...alert }; }
+  async acknowledgeAlert(id: string) { return true; }
+  async getRefunds() { return []; }
+  async getRefund(id: string) { return undefined; }
+  async createRefund(refund: any) { return { id: Date.now().toString(), ...refund }; }
+  async updateRefund(id: string, updates: any) { return undefined; }
+  async getAnalyticsData() { return []; }
+  async createAnalyticsData(data: any) { return { id: Date.now().toString(), ...data }; }
+  async getIntegrations() { return []; }
+  async getIntegration(name: string) { return undefined; }
+  async createIntegration(integration: any) { return { id: Date.now().toString(), ...integration }; }
+  async updateIntegration(name: string, updates: any) { return undefined; }
+  async getTags() { return []; }
+  async createTag(tag: any) { return { id: Date.now().toString(), ...tag }; }
+  async deleteTag(id: string) { return true; }
+  async getCurrencies() { return []; }
+  async createCurrency(currency: any) { return { id: Date.now().toString(), ...currency }; }
+  async updateCurrency(id: string, updates: any) { return undefined; }
+  async getAffiliates() { return []; }
+  async createAffiliate(affiliate: any) { return { id: Date.now().toString(), ...affiliate }; }
+  async updateAffiliate(id: string, updates: any) { return undefined; }
+  async getEmailCampaigns() { return []; }
+  async createEmailCampaign(campaign: any) { return { id: Date.now().toString(), ...campaign }; }
+  async updateEmailCampaign(id: string, updates: any) { return undefined; }
+}
+
+// Create storage instance
+export const storage: IStorage = new SimpleStorage();

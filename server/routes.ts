@@ -19,7 +19,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const products = await storage.getProducts();
       res.json(products);
     } catch (error) {
-      res.status(500).json({ message: "Failed to fetch products" });
+      console.error('Products API error:', error);
+      res.status(500).json({ message: "Failed to fetch products", error: (error as any).message });
     }
   });
 
@@ -28,7 +29,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const products = await storage.getFeaturedProducts();
       res.json(products);
     } catch (error) {
-      res.status(500).json({ message: "Failed to fetch featured products" });
+      console.error('Featured products API error:', error);
+      res.status(500).json({ message: "Failed to fetch featured products", error: (error as any).message });
     }
   });
 
@@ -59,7 +61,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const categories = await storage.getCategories();
       res.json(categories);
     } catch (error) {
-      res.status(500).json({ message: "Failed to fetch categories" });
+      console.error('Categories API error:', error);
+      res.status(500).json({ message: "Failed to fetch categories", error: (error as any).message });
     }
   });
 
@@ -69,7 +72,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const cartItems = await storage.getCartItems(req.params.sessionId);
       res.json(cartItems);
     } catch (error) {
-      res.status(500).json({ message: "Failed to fetch cart items" });
+      console.error('Cart API error:', error);
+      res.status(500).json({ message: "Failed to fetch cart items", error: (error as any).message });
     }
   });
 
