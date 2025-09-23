@@ -150,16 +150,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(401).json({ message: "Unauthorized - No token provided" });
       }
 
-      const decoded = jwt.verify(token, process.env.JWT_SECRET || 'zenthra-admin-secret');
-      const user = await storage.getUser((decoded as any).userId);
+      const decoded = jwt.verify(token, process.env.JWT_SECRET || 'zenthra-admin-secret') as any;
       
-      if (!user || user.role !== 'admin') {
+      // For development admin user, don't require storage lookup
+      if (decoded.userId === "admin-1" && decoded.role === "admin") {
+        req.user = {
+          id: "admin-1",
+          email: "admin@zenthra.com",
+          role: "admin"
+        };
+        return next();
+      }
+      
+      // For real users, look them up in storage
+      const user = await storage.getUser(decoded.userId);
+      if (!user || !['admin', 'moderator', 'staff'].includes(user.role)) {
         return res.status(403).json({ message: "Forbidden - Admin access required" });
       }
 
       req.user = user;
       next();
     } catch (error) {
+      console.error('Auth error:', error);
       return res.status(401).json({ message: "Unauthorized - Invalid token" });
     }
   };
@@ -171,7 +183,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Check for development fallback credentials first
       if ((username === "admin" || email === "admin@morethanfashion.com") && password === "admin123") {
-        const token = "admin-token-" + Date.now();
+        const token = jwt.sign(
+          { userId: "admin-1", email: "admin@zenthra.com", role: "admin" },
+          process.env.JWT_SECRET || 'zenthra-admin-secret',
+          { expiresIn: '24h' }
+        );
         return res.json({ 
           success: true, 
           token,
