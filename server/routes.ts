@@ -164,12 +164,53 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   };
 
-  // Admin Authentication with MongoDB backup
+  // Admin Authentication with development fallback
   app.post("/api/admin/login", async (req, res) => {
     try {
-      const { username, password } = req.body;
+      const { username, password, email } = req.body;
       
-      // Try MongoDB first for secure auth
+      // Check for development fallback credentials first
+      if (username === "admin" && password === "admin123") {
+        const token = "admin-token-" + Date.now();
+        return res.json({ 
+          success: true, 
+          token,
+          user: { 
+            id: "admin-1",
+            username: "admin", 
+            email: "admin@zenthra.com",
+            role: "admin" 
+          }
+        });
+      }
+      
+      // Check stored admin user (from MemStorage)
+      if (email === "yashparmar77077@gmail.com") {
+        const user = await storage.getUserByEmail(email);
+        if (user) {
+          const isPasswordValid = await bcrypt.compare(password, user.password);
+          if (isPasswordValid && user.role === 'admin') {
+            const token = jwt.sign(
+              { userId: user.id, email: user.email, role: user.role },
+              process.env.JWT_SECRET || 'zenthra-admin-secret',
+              { expiresIn: '24h' }
+            );
+            return res.json({ 
+              success: true, 
+              token,
+              user: { 
+                id: user.id, 
+                email: user.email, 
+                role: user.role,
+                firstName: user.firstName,
+                lastName: user.lastName
+              }
+            });
+          }
+        }
+      }
+      
+      // Try MongoDB auth as last resort (if configured)
       try {
         const user = await credentialStorage.authenticateUser(username, password);
         
@@ -190,18 +231,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
           }
         });
       } catch (mongoError) {
-        // Fallback for initial setup
-        if (username === "admin" && password === "admin123") {
-          const token = "admin-token-" + Date.now();
-          return res.json({ 
-            success: true, 
-            token,
-            user: { username: "admin", role: "admin" }
-          });
-        }
-        return res.status(401).json({ message: "Invalid credentials" });
+        // MongoDB not available - already handled above
       }
+      
+      return res.status(401).json({ message: "Invalid credentials" });
     } catch (error: any) {
+      console.error('Login error:', error);
       res.status(500).json({ message: "Login failed" });
     }
   });
