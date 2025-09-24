@@ -93,6 +93,17 @@ export interface IStorage {
   getEmailCampaigns(): Promise<EmailCampaign[]>;
   createEmailCampaign(campaign: InsertEmailCampaign): Promise<EmailCampaign>;
   updateEmailCampaign(id: string, campaign: Partial<InsertEmailCampaign>): Promise<EmailCampaign | undefined>;
+  
+  // SMS and Communication
+  createSMS(sms: any): Promise<void>;
+  getSMSHistory(): any[];
+  createOTP(otp: any): Promise<void>;
+  getOTPByPhone(phoneNumber: string): Promise<any | null>;
+  markOTPAsUsed(id: string): Promise<void>;
+  
+  // Notifications
+  createNotification(notification: any): Promise<void>;
+  getNotificationsByRecipient(recipient: string): any[];
 }
 
 export class MemStorage implements IStorage {
@@ -101,6 +112,19 @@ export class MemStorage implements IStorage {
   private cartItems: Map<string, CartItem>;
   private newsletters: Map<string, Newsletter>;
   private users: Map<string, User>;
+  private orders: Map<string, Order>;
+  private adminNotifications: Map<string, AdminNotification>;
+  private inventoryAlerts: Map<string, InventoryAlert>;
+  private refunds: Map<string, Refund>;
+  private analyticsData: Map<string, AnalyticsData>;
+  private integrations: Map<string, Integration>;
+  private tags: Map<string, Tag>;
+  private currencies: Map<string, Currency>;
+  private affiliates: Map<string, Affiliate>;
+  private emailCampaigns: Map<string, EmailCampaign>;
+  private smsHistory: Map<string, any>;
+  private otpRecords: Map<string, any>;
+  private notifications: Map<string, any>;
 
   constructor() {
     this.products = new Map();
@@ -108,6 +132,19 @@ export class MemStorage implements IStorage {
     this.cartItems = new Map();
     this.newsletters = new Map();
     this.users = new Map();
+    this.orders = new Map();
+    this.adminNotifications = new Map();
+    this.inventoryAlerts = new Map();
+    this.refunds = new Map();
+    this.analyticsData = new Map();
+    this.integrations = new Map();
+    this.tags = new Map();
+    this.currencies = new Map();
+    this.affiliates = new Map();
+    this.emailCampaigns = new Map();
+    this.smsHistory = new Map();
+    this.otpRecords = new Map();
+    this.notifications = new Map();
     this.initializeData();
   }
 
@@ -427,49 +464,278 @@ export class MemStorage implements IStorage {
     return this.users.delete(id);
   }
   
-  async getOrders(): Promise<Order[]> { return []; }
-  async getOrder(id: string): Promise<Order | undefined> { return undefined; }
-  async getOrdersByUser(userId: string): Promise<Order[]> { return []; }
-  async createOrder(order: InsertOrder): Promise<Order> { throw new Error("Database required for order management"); }
-  async updateOrder(id: string, order: Partial<InsertOrder>): Promise<Order | undefined> { return undefined; }
-  async deleteOrder(id: string): Promise<boolean> { return false; }
+  async getOrders(): Promise<Order[]> { 
+    return Array.from(this.orders.values()); 
+  }
+  async getOrder(id: string): Promise<Order | undefined> { 
+    return this.orders.get(id); 
+  }
+  async getOrdersByUser(userId: string): Promise<Order[]> { 
+    return Array.from(this.orders.values()).filter(order => order.userId === userId);
+  }
+  async createOrder(insertOrder: InsertOrder): Promise<Order> { 
+    const id = randomUUID();
+    const order: Order = {
+      ...insertOrder,
+      id,
+      userId: insertOrder.userId ?? null,
+      sessionId: insertOrder.sessionId ?? null,
+      status: insertOrder.status ?? "pending",
+      shippingAddress: insertOrder.shippingAddress ?? null,
+      billingAddress: insertOrder.billingAddress ?? null,
+      paymentMethod: insertOrder.paymentMethod ?? null,
+      paymentStatus: insertOrder.paymentStatus ?? "pending",
+      trackingNumber: insertOrder.trackingNumber ?? null,
+      notes: insertOrder.notes ?? null,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+    this.orders.set(id, order);
+    return order;
+  }
+  async updateOrder(id: string, orderUpdate: Partial<InsertOrder>): Promise<Order | undefined> { 
+    const order = this.orders.get(id);
+    if (order) {
+      const updatedOrder = { ...order, ...orderUpdate, updatedAt: new Date() };
+      this.orders.set(id, updatedOrder);
+      return updatedOrder;
+    }
+    return undefined;
+  }
+  async deleteOrder(id: string): Promise<boolean> { 
+    return this.orders.delete(id);
+  }
   
-  async getAdminNotifications(): Promise<AdminNotification[]> { return []; }
-  async createAdminNotification(notification: InsertAdminNotification): Promise<AdminNotification> { throw new Error("Database required"); }
-  async markNotificationRead(id: string): Promise<boolean> { return false; }
+  async getAdminNotifications(): Promise<AdminNotification[]> { 
+    return Array.from(this.adminNotifications.values()); 
+  }
+  async createAdminNotification(insertNotification: InsertAdminNotification): Promise<AdminNotification> { 
+    const id = randomUUID();
+    const notification: AdminNotification = {
+      ...insertNotification,
+      id,
+      isRead: insertNotification.isRead ?? false,
+      priority: insertNotification.priority ?? "normal",
+      relatedId: insertNotification.relatedId ?? null,
+      createdAt: new Date(),
+    };
+    this.adminNotifications.set(id, notification);
+    return notification;
+  }
+  async markNotificationRead(id: string): Promise<boolean> { 
+    const notification = this.adminNotifications.get(id);
+    if (notification) {
+      notification.isRead = true;
+      this.adminNotifications.set(id, notification);
+      return true;
+    }
+    return false;
+  }
   
-  async getInventoryAlerts(): Promise<InventoryAlert[]> { return []; }
-  async createInventoryAlert(alert: InsertInventoryAlert): Promise<InventoryAlert> { throw new Error("Database required"); }
-  async acknowledgeAlert(id: string): Promise<boolean> { return false; }
+  async getInventoryAlerts(): Promise<InventoryAlert[]> { 
+    return Array.from(this.inventoryAlerts.values()); 
+  }
+  async createInventoryAlert(insertAlert: InsertInventoryAlert): Promise<InventoryAlert> { 
+    const id = randomUUID();
+    const alert: InventoryAlert = {
+      ...insertAlert,
+      id,
+      acknowledged: insertAlert.acknowledged ?? false,
+      createdAt: new Date(),
+    };
+    this.inventoryAlerts.set(id, alert);
+    return alert;
+  }
+  async acknowledgeAlert(id: string): Promise<boolean> { 
+    const alert = this.inventoryAlerts.get(id);
+    if (alert) {
+      alert.acknowledged = true;
+      this.inventoryAlerts.set(id, alert);
+      return true;
+    }
+    return false;
+  }
   
-  async getRefunds(): Promise<Refund[]> { return []; }
-  async getRefund(id: string): Promise<Refund | undefined> { return undefined; }
-  async createRefund(refund: InsertRefund): Promise<Refund> { throw new Error("Database required"); }
-  async updateRefund(id: string, refund: Partial<InsertRefund>): Promise<Refund | undefined> { return undefined; }
+  async getRefunds(): Promise<Refund[]> { 
+    return Array.from(this.refunds.values()); 
+  }
+  async getRefund(id: string): Promise<Refund | undefined> { 
+    return this.refunds.get(id); 
+  }
+  async createRefund(insertRefund: InsertRefund): Promise<Refund> { 
+    const id = randomUUID();
+    const refund: Refund = {
+      ...insertRefund,
+      id,
+      userId: insertRefund.userId ?? null,
+      status: insertRefund.status ?? "pending",
+      adminNotes: insertRefund.adminNotes ?? null,
+      processedBy: insertRefund.processedBy ?? null,
+      processedAt: insertRefund.processedAt ?? null,
+      createdAt: new Date(),
+    };
+    this.refunds.set(id, refund);
+    return refund;
+  }
+  async updateRefund(id: string, refundUpdate: Partial<InsertRefund>): Promise<Refund | undefined> { 
+    const refund = this.refunds.get(id);
+    if (refund) {
+      const updatedRefund = { ...refund, ...refundUpdate };
+      this.refunds.set(id, updatedRefund);
+      return updatedRefund;
+    }
+    return undefined;
+  }
   
-  async getAnalyticsData(): Promise<AnalyticsData[]> { return []; }
-  async createAnalyticsData(data: InsertAnalyticsData): Promise<AnalyticsData> { throw new Error("Database required"); }
+  async getAnalyticsData(): Promise<AnalyticsData[]> { 
+    return Array.from(this.analyticsData.values()); 
+  }
+  async createAnalyticsData(insertData: InsertAnalyticsData): Promise<AnalyticsData> { 
+    const id = randomUUID();
+    const data: AnalyticsData = {
+      ...insertData,
+      id,
+      totalSales: insertData.totalSales ?? "0",
+      totalOrders: insertData.totalOrders ?? 0,
+      newUsers: insertData.newUsers ?? 0,
+      pageViews: insertData.pageViews ?? 0,
+      conversionRate: insertData.conversionRate ?? "0",
+      avgOrderValue: insertData.avgOrderValue ?? "0",
+      topProducts: insertData.topProducts ?? null,
+      metadata: insertData.metadata ?? null,
+    };
+    this.analyticsData.set(id, data);
+    return data;
+  }
   
-  async getIntegrations(): Promise<Integration[]> { return []; }
-  async getIntegration(name: string): Promise<Integration | undefined> { return undefined; }
-  async createIntegration(integration: InsertIntegration): Promise<Integration> { throw new Error("Database required"); }
-  async updateIntegration(name: string, integration: Partial<InsertIntegration>): Promise<Integration | undefined> { return undefined; }
+  async getIntegrations(): Promise<Integration[]> { 
+    return Array.from(this.integrations.values()); 
+  }
+  async getIntegration(name: string): Promise<Integration | undefined> { 
+    return Array.from(this.integrations.values()).find(integration => integration.name === name);
+  }
+  async createIntegration(insertIntegration: InsertIntegration): Promise<Integration> { 
+    const id = randomUUID();
+    const integration: Integration = {
+      ...insertIntegration,
+      id,
+      isActive: insertIntegration.isActive ?? false,
+      config: insertIntegration.config ?? null,
+      lastSync: insertIntegration.lastSync ?? null,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+    this.integrations.set(id, integration);
+    return integration;
+  }
+  async updateIntegration(name: string, integrationUpdate: Partial<InsertIntegration>): Promise<Integration | undefined> { 
+    const integration = Array.from(this.integrations.values()).find(i => i.name === name);
+    if (integration) {
+      const updatedIntegration = { ...integration, ...integrationUpdate, updatedAt: new Date() };
+      this.integrations.set(integration.id, updatedIntegration);
+      return updatedIntegration;
+    }
+    return undefined;
+  }
   
-  async getTags(): Promise<Tag[]> { return []; }
-  async createTag(tag: InsertTag): Promise<Tag> { throw new Error("Database required"); }
-  async deleteTag(id: string): Promise<boolean> { return false; }
+  async getTags(): Promise<Tag[]> { 
+    return Array.from(this.tags.values()); 
+  }
+  async createTag(insertTag: InsertTag): Promise<Tag> { 
+    const id = randomUUID();
+    const tag: Tag = {
+      ...insertTag,
+      id,
+      color: insertTag.color ?? "#6B7280",
+      description: insertTag.description ?? null,
+      createdAt: new Date(),
+    };
+    this.tags.set(id, tag);
+    return tag;
+  }
+  async deleteTag(id: string): Promise<boolean> { 
+    return this.tags.delete(id);
+  }
   
-  async getCurrencies(): Promise<Currency[]> { return []; }
-  async createCurrency(currency: InsertCurrency): Promise<Currency> { throw new Error("Database required"); }
-  async updateCurrency(id: string, currency: Partial<InsertCurrency>): Promise<Currency | undefined> { return undefined; }
+  async getCurrencies(): Promise<Currency[]> { 
+    return Array.from(this.currencies.values()); 
+  }
+  async createCurrency(insertCurrency: InsertCurrency): Promise<Currency> { 
+    const id = randomUUID();
+    const currency: Currency = {
+      ...insertCurrency,
+      id,
+      exchangeRate: insertCurrency.exchangeRate ?? "1",
+      isActive: insertCurrency.isActive ?? true,
+      lastUpdated: new Date(),
+    };
+    this.currencies.set(id, currency);
+    return currency;
+  }
+  async updateCurrency(id: string, currencyUpdate: Partial<InsertCurrency>): Promise<Currency | undefined> { 
+    const currency = this.currencies.get(id);
+    if (currency) {
+      const updatedCurrency = { ...currency, ...currencyUpdate, lastUpdated: new Date() };
+      this.currencies.set(id, updatedCurrency);
+      return updatedCurrency;
+    }
+    return undefined;
+  }
   
-  async getAffiliates(): Promise<Affiliate[]> { return []; }
-  async createAffiliate(affiliate: InsertAffiliate): Promise<Affiliate> { throw new Error("Database required"); }
-  async updateAffiliate(id: string, affiliate: Partial<InsertAffiliate>): Promise<Affiliate | undefined> { return undefined; }
+  async getAffiliates(): Promise<Affiliate[]> { 
+    return Array.from(this.affiliates.values()); 
+  }
+  async createAffiliate(insertAffiliate: InsertAffiliate): Promise<Affiliate> { 
+    const id = randomUUID();
+    const affiliate: Affiliate = {
+      ...insertAffiliate,
+      id,
+      commissionRate: insertAffiliate.commissionRate ?? "0.05",
+      totalEarnings: insertAffiliate.totalEarnings ?? "0",
+      totalReferrals: insertAffiliate.totalReferrals ?? 0,
+      isActive: insertAffiliate.isActive ?? true,
+      createdAt: new Date(),
+    };
+    this.affiliates.set(id, affiliate);
+    return affiliate;
+  }
+  async updateAffiliate(id: string, affiliateUpdate: Partial<InsertAffiliate>): Promise<Affiliate | undefined> { 
+    const affiliate = this.affiliates.get(id);
+    if (affiliate) {
+      const updatedAffiliate = { ...affiliate, ...affiliateUpdate };
+      this.affiliates.set(id, updatedAffiliate);
+      return updatedAffiliate;
+    }
+    return undefined;
+  }
   
-  async getEmailCampaigns(): Promise<EmailCampaign[]> { return []; }
-  async createEmailCampaign(campaign: InsertEmailCampaign): Promise<EmailCampaign> { throw new Error("Database required"); }
-  async updateEmailCampaign(id: string, campaign: Partial<InsertEmailCampaign>): Promise<EmailCampaign | undefined> { return undefined; }
+  async getEmailCampaigns(): Promise<EmailCampaign[]> { 
+    return Array.from(this.emailCampaigns.values()); 
+  }
+  async createEmailCampaign(insertCampaign: InsertEmailCampaign): Promise<EmailCampaign> { 
+    const id = randomUUID();
+    const campaign: EmailCampaign = {
+      ...insertCampaign,
+      id,
+      recipients: insertCampaign.recipients ?? null,
+      status: insertCampaign.status ?? "draft",
+      sentAt: insertCampaign.sentAt ?? null,
+      openRate: insertCampaign.openRate ?? null,
+      clickRate: insertCampaign.clickRate ?? null,
+      createdAt: new Date(),
+    };
+    this.emailCampaigns.set(id, campaign);
+    return campaign;
+  }
+  async updateEmailCampaign(id: string, campaignUpdate: Partial<InsertEmailCampaign>): Promise<EmailCampaign | undefined> { 
+    const campaign = this.emailCampaigns.get(id);
+    if (campaign) {
+      const updatedCampaign = { ...campaign, ...campaignUpdate };
+      this.emailCampaigns.set(id, updatedCampaign);
+      return updatedCampaign;
+    }
+    return undefined;
+  }
 }
 
 // Database Storage Implementation
@@ -795,6 +1061,37 @@ class SimpleStorage implements IStorage {
   async getEmailCampaigns() { return []; }
   async createEmailCampaign(campaign: any) { return { id: Date.now().toString(), ...campaign }; }
   async updateEmailCampaign(id: string, updates: any) { return undefined; }
+  
+  // SMS and Communication methods
+  private smsHistory: any[] = [];
+  private otpRecords: any[] = [];
+  private notifications: any[] = [];
+  
+  async createSMS(sms: any) { 
+    const newSMS = { ...sms, id: Date.now().toString(), createdAt: new Date() }; 
+    this.smsHistory.push(newSMS); 
+  }
+  getSMSHistory() { return this.smsHistory; }
+  
+  async createOTP(otp: any) { 
+    const newOTP = { ...otp, id: Date.now().toString(), createdAt: new Date() }; 
+    this.otpRecords.push(newOTP); 
+  }
+  async getOTPByPhone(phoneNumber: string) { 
+    return this.otpRecords.find(otp => otp.phoneNumber === phoneNumber && !otp.used) || null; 
+  }
+  async markOTPAsUsed(id: string) { 
+    const otp = this.otpRecords.find(o => o.id === id); 
+    if (otp) otp.used = true; 
+  }
+  
+  async createNotification(notification: any) { 
+    const newNotification = { ...notification, id: Date.now().toString(), createdAt: new Date() }; 
+    this.notifications.push(newNotification); 
+  }
+  getNotificationsByRecipient(recipient: string) { 
+    return this.notifications.filter(n => n.recipient === recipient); 
+  }
 }
 
 // Create storage instance

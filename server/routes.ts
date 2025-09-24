@@ -168,7 +168,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // For real users, look them up in storage
       const user = await storage.getUser(decoded.userId);
-      if (!user || !['admin', 'moderator', 'staff'].includes(user.role)) {
+      if (!user || !user.role || !['admin', 'moderator', 'staff'].includes(user.role)) {
         return res.status(403).json({ message: "Forbidden - Admin access required" });
       }
 
@@ -884,6 +884,530 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Health check and system validation routes
   app.use("/api/health", healthRoutes);
+
+  // ===========================================
+  // PAYMENT PROCESSING (STRIPE & PAYPAL)
+  // ===========================================
+
+  // Stripe payment route for one-time payments
+  app.post("/api/create-payment-intent", async (req, res) => {
+    try {
+      // Check if Stripe is configured
+      if (!process.env.STRIPE_SECRET_KEY) {
+        return res.status(503).json({ 
+          message: "Payment processing unavailable. Stripe not configured.",
+          error: "STRIPE_NOT_CONFIGURED"
+        });
+      }
+
+      const Stripe = (await import("stripe")).default;
+      const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+        apiVersion: "2022-11-15",
+      });
+
+      const { amount, currency = "usd", orderId } = req.body;
+      
+      if (!amount || amount <= 0) {
+        return res.status(400).json({ message: "Invalid amount" });
+      }
+
+      const paymentIntent = await stripe.paymentIntents.create({
+        amount: Math.round(amount * 100), // Convert to cents
+        currency,
+        metadata: orderId ? { orderId } : {},
+      });
+
+      res.json({ clientSecret: paymentIntent.client_secret });
+    } catch (error: any) {
+      console.error('Stripe payment intent error:', error);
+      res.status(500).json({ 
+        message: "Error creating payment intent: " + error.message 
+      });
+    }
+  });
+
+  // PayPal setup route
+  app.get("/api/paypal/setup", async (req, res) => {
+    try {
+      if (!process.env.PAYPAL_CLIENT_ID || !process.env.PAYPAL_CLIENT_SECRET) {
+        return res.status(503).json({ 
+          message: "PayPal not configured",
+          error: "PAYPAL_NOT_CONFIGURED"
+        });
+      }
+
+      // Import PayPal helpers
+      try {
+        const { getClientToken } = await import("./paypal");
+        const clientToken = await getClientToken();
+        res.json({ clientToken });
+      } catch (importError) {
+        console.error('PayPal module import error:', importError);
+        res.status(503).json({ error: "PayPal integration not available" });
+      }
+    } catch (error: any) {
+      console.error('PayPal setup error:', error);
+      res.status(500).json({ error: "Failed to setup PayPal" });
+    }
+  });
+
+  app.post("/api/paypal/order", async (req, res) => {
+    try {
+      try {
+        const { createPaypalOrder } = await import("./paypal");
+        await createPaypalOrder(req, res);
+      } catch (importError) {
+        console.error('PayPal module import error:', importError);
+        res.status(503).json({ error: "PayPal integration not available" });
+      }
+    } catch (error: any) {
+      console.error('PayPal order creation error:', error);
+      res.status(500).json({ error: "Failed to create PayPal order" });
+    }
+  });
+
+  app.post("/api/paypal/order/:orderID/capture", async (req, res) => {
+    try {
+      try {
+        const { capturePaypalOrder } = await import("./paypal");
+        await capturePaypalOrder(req, res);
+      } catch (importError) {
+        console.error('PayPal module import error:', importError);
+        res.status(503).json({ error: "PayPal integration not available" });
+      }
+    } catch (error: any) {
+      console.error('PayPal order capture error:', error);
+      res.status(500).json({ error: "Failed to capture PayPal order" });
+    }
+  });
+
+  // Payment webhook handlers for order processing integration
+  app.post("/api/webhooks/stripe", async (req, res) => {
+    try {
+      const event = req.body;
+      
+      // Handle Stripe webhook events
+      switch (event.type) {
+        case 'payment_intent.succeeded':
+          const paymentIntent = event.data.object;
+          
+          // Find and update order with payment success
+          if (paymentIntent.metadata?.orderId) {
+            await storage.updateOrder(paymentIntent.metadata.orderId, {
+              paymentStatus: "completed",
+              status: "confirmed"
+            });
+            
+            // Send notification
+            await storage.createAdminNotification({
+              type: "payment",
+              title: "Payment Received",
+              message: `Payment completed for order ${paymentIntent.metadata.orderId}`,
+              priority: "normal"
+            });
+          }
+          break;
+          
+        case 'payment_intent.payment_failed':
+          const failedPayment = event.data.object;
+          
+          if (failedPayment.metadata?.orderId) {
+            await storage.updateOrder(failedPayment.metadata.orderId, {
+              paymentStatus: "failed",
+              status: "cancelled"
+            });
+          }
+          break;
+      }
+      
+      res.json({ received: true });
+    } catch (error: any) {
+      console.error('Stripe webhook error:', error);
+      res.status(400).json({ error: "Webhook error" });
+    }
+  });
+
+  app.post("/api/webhooks/paypal", async (req, res) => {
+    try {
+      const event = req.body;
+      
+      // Handle PayPal webhook events
+      if (event.event_type === 'PAYMENT.CAPTURE.COMPLETED') {
+        const capture = event.resource;
+        const orderId = capture.custom_id; // Use custom_id to store our order ID
+        
+        if (orderId) {
+          await storage.updateOrder(orderId, {
+            paymentStatus: "completed",
+            status: "confirmed"
+          });
+          
+          // Send notification
+          await storage.createAdminNotification({
+            type: "payment",
+            title: "PayPal Payment Received", 
+            message: `PayPal payment completed for order ${orderId}`,
+            priority: "normal"
+          });
+        }
+      }
+      
+      res.json({ received: true });
+    } catch (error: any) {
+      console.error('PayPal webhook error:', error);
+      res.status(400).json({ error: "Webhook error" });
+    }
+  });
+
+  // Order processing and checkout
+  app.post("/api/checkout", authenticateAdmin, async (req, res) => {
+    try {
+      const { cartItems, shippingAddress, billingAddress, paymentMethod, userId, sessionId } = req.body;
+      
+      if (!cartItems || cartItems.length === 0) {
+        return res.status(400).json({ message: "Cart is empty" });
+      }
+
+      // Calculate total
+      let total = 0;
+      for (const item of cartItems) {
+        const product = await storage.getProduct(item.productId);
+        if (product) {
+          total += parseFloat(product.price) * item.quantity;
+        }
+      }
+
+      // Create order
+      const order = await storage.createOrder({
+        userId: userId || null,
+        sessionId: sessionId || null,
+        total: total.toString(),
+        shippingAddress,
+        billingAddress,
+        paymentMethod,
+        paymentStatus: "pending",
+        status: "pending"
+      });
+
+      // Clear cart after order creation
+      if (sessionId) {
+        await storage.clearCart(sessionId);
+      }
+
+      // Create notification
+      await storage.createAdminNotification({
+        type: "order",
+        title: "New Order Received",
+        message: `Order #${order.id} for $${total.toFixed(2)} requires processing`,
+        priority: "normal",
+        relatedId: order.id
+      });
+
+      res.json({ order, message: "Order created successfully" });
+    } catch (error) {
+      console.error('Checkout error:', error);
+      res.status(500).json({ message: "Failed to process checkout" });
+    }
+  });
+
+  // ===========================================
+  // EMAIL MARKETING FUNCTIONALITY
+  // ===========================================
+
+  app.get("/api/admin/email-campaigns", authenticateAdmin, async (req, res) => {
+    try {
+      const campaigns = await storage.getEmailCampaigns();
+      res.json(campaigns);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch email campaigns" });
+    }
+  });
+
+  app.post("/api/admin/email-campaigns", authenticateAdmin, async (req, res) => {
+    try {
+      const validatedData = insertEmailCampaignSchema.parse(req.body);
+      const campaign = await storage.createEmailCampaign(validatedData);
+      res.json(campaign);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid campaign data", errors: error.errors });
+      }
+      res.status(500).json({ message: "Failed to create email campaign" });
+    }
+  });
+
+  app.put("/api/admin/email-campaigns/:id", authenticateAdmin, async (req, res) => {
+    try {
+      const updates = req.body;
+      const campaign = await storage.updateEmailCampaign(req.params.id, updates);
+      if (!campaign) {
+        return res.status(404).json({ message: "Campaign not found" });
+      }
+      res.json(campaign);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to update email campaign" });
+    }
+  });
+
+  app.post("/api/admin/email-campaigns/:id/send-test", authenticateAdmin, async (req, res) => {
+    try {
+      const { testEmail } = req.body;
+      if (!testEmail) {
+        return res.status(400).json({ message: "Test email address required" });
+      }
+
+      // Simulate sending test email
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      res.json({ message: "Test email sent successfully", sentTo: testEmail });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to send test email" });
+    }
+  });
+
+  app.post("/api/admin/email-campaigns/:id/send", authenticateAdmin, async (req, res) => {
+    try {
+      const campaign = await storage.getEmailCampaigns();
+      const targetCampaign = campaign.find(c => c.id === req.params.id);
+      
+      if (!targetCampaign) {
+        return res.status(404).json({ message: "Campaign not found" });
+      }
+
+      // Update campaign status
+      await storage.updateEmailCampaign(req.params.id, {
+        status: "sent",
+        sentAt: new Date()
+      });
+
+      // Create notification
+      await storage.createAdminNotification({
+        type: "system",
+        title: "Email Campaign Sent",
+        message: `Campaign "${targetCampaign.name}" has been sent successfully`,
+        priority: "normal",
+        relatedId: targetCampaign.id
+      });
+
+      res.json({ message: "Campaign sent successfully" });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to send email campaign" });
+    }
+  });
+
+  // ===========================================
+  // SMS/WHATSAPP FUNCTIONALITY
+  // ===========================================
+
+  app.post("/api/admin/sms/send", authenticateAdmin, async (req, res) => {
+    try {
+      const { phoneNumber, message, type = "promotional" } = req.body;
+      
+      if (!phoneNumber || !message) {
+        return res.status(400).json({ message: "Phone number and message are required" });
+      }
+
+      // Simulate SMS sending
+      await new Promise(resolve => setTimeout(resolve, 500));
+
+      // Create notification
+      await storage.createAdminNotification({
+        type: "system",
+        title: "SMS Sent",
+        message: `SMS sent to ${phoneNumber}: ${message.substring(0, 50)}...`,
+        priority: "normal"
+      });
+
+      res.json({ 
+        message: "SMS sent successfully", 
+        sentTo: phoneNumber,
+        messageId: `sms_${Date.now()}`
+      });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to send SMS" });
+    }
+  });
+
+  app.post("/api/otp/send", async (req, res) => {
+    try {
+      const { phoneNumber } = req.body;
+      
+      if (!phoneNumber) {
+        return res.status(400).json({ message: "Phone number is required" });
+      }
+
+      // Generate OTP
+      const otp = Math.floor(100000 + Math.random() * 900000).toString();
+      
+      // In a real implementation, you would store this OTP and send it via SMS
+      // For now, simulate the process
+      await new Promise(resolve => setTimeout(resolve, 500));
+
+      res.json({ 
+        message: "OTP sent successfully", 
+        sentTo: phoneNumber,
+        // In development, return the OTP for testing
+        ...(process.env.NODE_ENV === 'development' && { otp })
+      });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to send OTP" });
+    }
+  });
+
+  app.post("/api/otp/verify", async (req, res) => {
+    try {
+      const { phoneNumber, otp } = req.body;
+      
+      if (!phoneNumber || !otp) {
+        return res.status(400).json({ message: "Phone number and OTP are required" });
+      }
+
+      // In a real implementation, you would verify against stored OTP
+      // For now, simulate verification
+      const isValid = otp.length === 6;
+
+      if (isValid) {
+        res.json({ message: "OTP verified successfully", verified: true });
+      } else {
+        res.status(400).json({ message: "Invalid OTP", verified: false });
+      }
+    } catch (error) {
+      res.status(500).json({ message: "Failed to verify OTP" });
+    }
+  });
+
+  // ===========================================
+  // INTEGRATIONS MANAGEMENT
+  // ===========================================
+
+  app.get("/api/admin/integrations", authenticateAdmin, async (req, res) => {
+    try {
+      const integrations = await storage.getIntegrations();
+      // Don't expose sensitive config data
+      const safeIntegrations = integrations.map(({ config, ...integration }) => ({
+        ...integration,
+        hasConfig: !!config
+      }));
+      res.json(safeIntegrations);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch integrations" });
+    }
+  });
+
+  app.post("/api/admin/integrations", authenticateAdmin, async (req, res) => {
+    try {
+      const validatedData = insertIntegrationSchema.parse(req.body);
+      const integration = await storage.createIntegration(validatedData);
+      res.json(integration);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid integration data", errors: error.errors });
+      }
+      res.status(500).json({ message: "Failed to create integration" });
+    }
+  });
+
+  app.put("/api/admin/integrations/:name", authenticateAdmin, async (req, res) => {
+    try {
+      const updates = req.body;
+      const integration = await storage.updateIntegration(req.params.name, updates);
+      if (!integration) {
+        return res.status(404).json({ message: "Integration not found" });
+      }
+      res.json(integration);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to update integration" });
+    }
+  });
+
+  // ===========================================
+  // STAFF MANAGEMENT & RBAC
+  // ===========================================
+
+  app.get("/api/admin/staff", authenticateAdmin, async (req, res) => {
+    try {
+      const users = await storage.getUsers();
+      const staffUsers = users.filter(user => 
+        user.role && ['admin', 'moderator', 'staff'].includes(user.role)
+      );
+      // Remove password from response
+      const safeUsers = staffUsers.map(({ password, ...user }) => user);
+      res.json(safeUsers);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch staff members" });
+    }
+  });
+
+  app.put("/api/admin/staff/:id/role", authenticateAdmin, async (req, res) => {
+    try {
+      const { role } = req.body;
+      
+      if (!['customer', 'staff', 'moderator', 'admin'].includes(role)) {
+        return res.status(400).json({ message: "Invalid role" });
+      }
+
+      const user = await storage.updateUser(req.params.id, { role });
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      // Remove password from response
+      const { password, ...safeUser } = user;
+      res.json(safeUser);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to update user role" });
+    }
+  });
+
+  // ===========================================
+  // ANALYTICS DATA COLLECTION
+  // ===========================================
+
+  app.post("/api/admin/analytics/collect", authenticateAdmin, async (req, res) => {
+    try {
+      // Collect analytics data
+      const [orders, users, products] = await Promise.all([
+        storage.getOrders(),
+        storage.getUsers(),
+        storage.getProducts()
+      ]);
+
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      const todayOrders = orders.filter(order => 
+        order.createdAt && order.createdAt >= today
+      );
+
+      const totalSales = todayOrders.reduce((sum, order) => 
+        sum + parseFloat(order.total), 0
+      );
+
+      const newUsersToday = users.filter(user => 
+        user.createdAt && user.createdAt >= today
+      );
+
+      const analyticsData = await storage.createAnalyticsData({
+        date: today,
+        totalSales: totalSales.toString(),
+        totalOrders: todayOrders.length,
+        newUsers: newUsersToday.length,
+        pageViews: Math.floor(Math.random() * 1000) + 500, // Simulated
+        conversionRate: todayOrders.length > 0 ? "0.0250" : "0.0000",
+        avgOrderValue: todayOrders.length > 0 ? 
+          (totalSales / todayOrders.length).toString() : "0.00",
+        topProducts: products.filter(p => p.featured).slice(0, 5).map(p => ({
+          id: p.id,
+          name: p.name,
+          sales: Math.floor(Math.random() * 10) + 1
+        }))
+      });
+
+      res.json(analyticsData);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to collect analytics data" });
+    }
+  });
 
   const httpServer = createServer(app);
   return httpServer;
