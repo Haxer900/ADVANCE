@@ -28,53 +28,34 @@ body {
   perspective: 1000px;
 }
 
-/* Force hardware acceleration and smooth rendering globally */
-* {
+/* Selective hardware acceleration - only for animated elements */
+.animated-element,
+.video-container,
+.scroll-reveal,
+.performance-optimized {
   -webkit-transform: translateZ(0);
-  -moz-transform: translateZ(0);
-  -ms-transform: translateZ(0);
-  -o-transform: translateZ(0);
   transform: translateZ(0);
   -webkit-backface-visibility: hidden;
-  -moz-backface-visibility: hidden;
-  -ms-backface-visibility: hidden;
   backface-visibility: hidden;
 }
 
-/* Critical performance fixes for scrolling lag */
-body * {
-  will-change: auto;
-}
-
-/* Aggressive scroll optimization */
-html {
-  scroll-snap-type: none;
-}
-
-body {
-  contain: layout style;
-  isolation: isolate;
-}
-
-/* Optimize all interactive elements */
-button, a, input, textarea, select {
-  will-change: transform;
-  backface-visibility: hidden;
+/* Optimize only interactive elements that need it */
+button:active, 
+a:active {
   transform: translateZ(0);
+  backface-visibility: hidden;
 }
 
-/* Optimize transitions on mobile */
+/* Optimize transitions on mobile - only for necessary elements */
 @media (max-width: 768px) {
-  * {
-    -webkit-transition: transform 0.1s ease-out;
-    -moz-transition: transform 0.1s ease-out;
-    -o-transition: transform 0.1s ease-out;
-    transition: transform 0.1s ease-out;
-  }
-  
   .video-container video {
     transform: none;
     backface-visibility: visible;
+  }
+  
+  /* Smooth scrolling on mobile */
+  html {
+    -webkit-overflow-scrolling: touch;
   }
 }
 
