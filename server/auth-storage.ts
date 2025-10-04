@@ -23,9 +23,7 @@ const userCredentialSchema = new mongoose.Schema({
   timestamps: true
 });
 
-// Add indexes for performance
-userCredentialSchema.index({ username: 1 });
-userCredentialSchema.index({ email: 1 });
+// Add indexes for performance (username and email already indexed via unique: true)
 userCredentialSchema.index({ role: 1 });
 
 // Hash password before saving
