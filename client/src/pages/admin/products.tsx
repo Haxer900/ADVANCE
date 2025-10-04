@@ -21,8 +21,7 @@ const productSchema = z.object({
   name: z.string().min(1, "Name is required"),
   description: z.string().min(1, "Description is required"),
   price: z.string().refine((val) => !isNaN(parseFloat(val)), "Price must be a number"),
-  imageUrl: z.string().url("Must be a valid URL").optional(),
-  images: z.array(z.string().url()).min(1, "At least one image is required"),
+  imageUrl: z.string().url("Must be a valid URL").min(1, "At least one image is required"),
   category: z.string().min(1, "Category is required"),
   inStock: z.boolean().optional(),
   featured: z.boolean().optional(),
@@ -43,7 +42,6 @@ export default function ProductsAdmin() {
       description: "",
       price: "",
       imageUrl: "",
-      images: [],
       category: "",
       inStock: true,
       featured: false,
@@ -147,7 +145,6 @@ export default function ProductsAdmin() {
       description: product.description,
       price: product.price.toString(),
       imageUrl: product.imageUrl,
-      images: product.images || [product.imageUrl].filter(Boolean),
       category: product.category,
       inStock: product.inStock,
       featured: product.featured,
@@ -253,40 +250,56 @@ export default function ProductsAdmin() {
                     </FormItem>
                   )}
                 />
-                <div className="grid grid-cols-2 gap-4">
-                  <FormField
-                    control={form.control}
-                    name="category"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-neutral-200">Category</FormLabel>
-                        <FormControl>
+                <FormField
+                  control={form.control}
+                  name="category"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-neutral-200">Category</FormLabel>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          className="bg-neutral-700 border-neutral-600 text-white"
+                          placeholder="e.g., Dresses, Accessories, Shoes"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="imageUrl"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-neutral-200">Product Image URL</FormLabel>
+                      <FormControl>
+                        <div className="space-y-2">
                           <Input
                             {...field}
+                            type="url"
+                            placeholder="https://images.unsplash.com/photo-..."
                             className="bg-neutral-700 border-neutral-600 text-white"
                           />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="images"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormControl>
-                          <ImageUpload
-                            images={field.value || []}
-                            onImagesChange={field.onChange}
-                            maxImages={10}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
+                          {field.value && (
+                            <div className="rounded-lg overflow-hidden bg-neutral-700 max-w-xs">
+                              <img 
+                                src={field.value} 
+                                alt="Preview" 
+                                className="w-full h-40 object-cover"
+                                onError={(e) => {
+                                  const target = e.target as HTMLImageElement;
+                                  target.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Crect fill='%23374151' width='100' height='100'/%3E%3Ctext x='50' y='50' text-anchor='middle' fill='%239CA3AF'%3EInvalid%3C/text%3E%3C/svg%3E";
+                                }}
+                              />
+                            </div>
+                          )}
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
                 <div className="flex space-x-6">
                   <FormField
                     control={form.control}
