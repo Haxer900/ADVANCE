@@ -16,13 +16,9 @@ p, h1, h2, h3, h4, h5, h6, span, div {
 
 /* Remove expensive operations on scroll */
 body {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
+  -ms-overflow-style: auto;
+  scrollbar-width: thin;
   overscroll-behavior: none;
-}
-
-body::-webkit-scrollbar {
-  display: none;
 }
 
 /* Optimize animations */
