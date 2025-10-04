@@ -50,6 +50,8 @@ interface IUserCredential extends mongoose.Document {
   lastLogin?: Date;
   loginAttempts: number;
   lockUntil?: Date;
+  createdAt: Date;
+  updatedAt: Date;
   comparePassword(candidatePassword: string): Promise<boolean>;
   incLoginAttempts(): Promise<any>;
   resetLoginAttempts(): Promise<any>;

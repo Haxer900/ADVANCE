@@ -24,6 +24,9 @@ export interface MediaMetadata {
   isPrimary: boolean;
   isActive: boolean;
   uploadedBy?: string;
+  productId?: string;
+  variantId?: string;
+  collectionId?: string;
   createdAt: Date;
   updatedAt: Date;
 }
