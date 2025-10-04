@@ -1,9 +1,9 @@
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { Upload, X, Plus, Image as ImageIcon } from "lucide-react";
+import { X, Plus, Image as ImageIcon, Link as LinkIcon } from "lucide-react";
 
 interface ImageUploadProps {
   images: string[];
@@ -13,69 +13,8 @@ interface ImageUploadProps {
 }
 
 export function ImageUpload({ images, onImagesChange, maxImages = 10, className }: ImageUploadProps) {
-  const [uploading, setUploading] = useState(false);
   const [urlInput, setUrlInput] = useState("");
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
-
-  const uploadToCloudinary = async (file: File): Promise<string> => {
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('upload_preset', 'zenthra_products'); // You'll need to create this preset in Cloudinary
-    
-    try {
-      const response = await fetch('https://api.cloudinary.com/v1_1/dfittnogt/image/upload', {
-        method: 'POST',
-        body: formData
-      });
-      
-      if (!response.ok) {
-        throw new Error('Upload failed');
-      }
-      
-      const data = await response.json();
-      return data.secure_url;
-    } catch (error) {
-      throw new Error('Failed to upload to Cloudinary');
-    }
-  };
-
-  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = event.target.files;
-    if (!files || files.length === 0) return;
-
-    if (images.length + files.length > maxImages) {
-      toast({
-        title: "Too many images",
-        description: `Maximum ${maxImages} images allowed`,
-        variant: "destructive",
-      });
-      return;
-    }
-
-    setUploading(true);
-    const uploadPromises = Array.from(files).map(uploadToCloudinary);
-
-    try {
-      const uploadedUrls = await Promise.all(uploadPromises);
-      onImagesChange([...images, ...uploadedUrls]);
-      toast({
-        title: "Success",
-        description: `${uploadedUrls.length} image(s) uploaded successfully`,
-      });
-    } catch (error) {
-      toast({
-        title: "Upload failed",
-        description: "Failed to upload images. Please try again.",
-        variant: "destructive",
-      });
-    } finally {
-      setUploading(false);
-      if (fileInputRef.current) {
-        fileInputRef.current.value = '';
-      }
-    }
-  };
 
   const handleUrlAdd = () => {
     if (!urlInput.trim()) return;
@@ -116,7 +55,10 @@ export function ImageUpload({ images, onImagesChange, maxImages = 10, className 
       <div className="space-y-2">
         <Label className="text-neutral-200">Product Images</Label>
         <p className="text-sm text-neutral-400">
-          Upload images or add URLs. Maximum {maxImages} images allowed.
+          Add image URLs from any source (Unsplash, Imgur, direct links). Maximum {maxImages} images.
+        </p>
+        <p className="text-xs text-neutral-500">
+          💡 Tip: Right-click any image online → "Copy image address" to get the URL
         </p>
       </div>
 
@@ -142,6 +84,7 @@ export function ImageUpload({ images, onImagesChange, maxImages = 10, className 
                 size="sm"
                 className="absolute -top-2 -right-2 h-6 w-6 rounded-full p-0 opacity-0 group-hover:opacity-100 transition-opacity"
                 onClick={() => removeImage(index)}
+                data-testid={`button-remove-image-${index}`}
               >
                 <X className="h-3 w-3" />
               </Button>
@@ -153,61 +96,35 @@ export function ImageUpload({ images, onImagesChange, maxImages = 10, className 
         </div>
       )}
 
-      {/* Upload Controls */}
+      {/* URL Input */}
       <div className="space-y-3">
-        {/* File Upload */}
         <div className="flex gap-2">
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept="image/*"
-            multiple
-            onChange={handleFileUpload}
-            className="hidden"
-          />
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() => fileInputRef.current?.click()}
-            disabled={uploading || images.length >= maxImages}
-            className="flex-1 border-neutral-600 text-neutral-300 hover:bg-neutral-700"
-          >
-            {uploading ? (
-              <>
-                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gold mr-2" />
-                Uploading...
-              </>
-            ) : (
-              <>
-                <Upload className="h-4 w-4 mr-2" />
-                Upload Images
-              </>
-            )}
-          </Button>
-        </div>
-
-        {/* URL Input */}
-        <div className="flex gap-2">
-          <Input
-            type="url"
-            placeholder="Or paste image URL..."
-            value={urlInput}
-            onChange={(e) => setUrlInput(e.target.value)}
-            className="flex-1 bg-neutral-700 border-neutral-600 text-white"
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') {
-                e.preventDefault();
-                handleUrlAdd();
-              }
-            }}
-          />
+          <div className="flex-1 relative">
+            <LinkIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-400" />
+            <Input
+              type="url"
+              placeholder="Paste image URL here (e.g., https://images.unsplash.com/...)"
+              value={urlInput}
+              onChange={(e) => setUrlInput(e.target.value)}
+              className="pl-10 bg-neutral-700 border-neutral-600 text-white placeholder:text-neutral-500"
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault();
+                  handleUrlAdd();
+                }
+              }}
+              data-testid="input-image-url"
+            />
+          </div>
           <Button
             type="button"
             onClick={handleUrlAdd}
             disabled={!urlInput.trim() || images.length >= maxImages}
-            className="bg-gold hover:bg-gold/90 text-black"
+            className="bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white"
+            data-testid="button-add-image"
           >
-            <Plus className="h-4 w-4" />
+            <Plus className="h-4 w-4 mr-1" />
+            Add
           </Button>
         </div>
       </div>
@@ -217,7 +134,7 @@ export function ImageUpload({ images, onImagesChange, maxImages = 10, className 
         <div className="border-2 border-dashed border-neutral-600 rounded-lg p-8 text-center">
           <ImageIcon className="h-12 w-12 text-neutral-500 mx-auto mb-4" />
           <p className="text-neutral-400 mb-2">No images added yet</p>
-          <p className="text-neutral-500 text-sm">Upload files or add image URLs to get started</p>
+          <p className="text-neutral-500 text-sm">Paste image URLs above to add product images</p>
         </div>
       )}
     </div>
