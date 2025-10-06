@@ -209,9 +209,11 @@ export default function Cart() {
             </div>
             
             <div className="space-y-4">
-              <Button className="w-full btn-secondary h-14 text-lg font-semibold">
-                Proceed to Checkout
-              </Button>
+              <Link href="/checkout">
+                <Button className="w-full btn-secondary h-14 text-lg font-semibold" data-testid="button-checkout">
+                  Proceed to Checkout
+                </Button>
+              </Link>
               <Link href="/products">
                 <Button variant="outline" className="w-full h-12 btn-rounded">
                   Continue Shopping
