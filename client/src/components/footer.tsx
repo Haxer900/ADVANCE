@@ -1,6 +1,6 @@
 import { Link } from "wouter";
 import { Facebook, Instagram, Twitter, Mail } from "lucide-react";
-import brandLogo from "@assets/zenthra_1754316486050.png";
+import { Logo } from "./logo";
 
 export default function Footer() {
   return (
@@ -9,7 +9,9 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Company Info */}
           <div className="col-span-1 md:col-span-2">
-            <img src={brandLogo} alt="MORE THAN FASHION Logo" className="h-8 w-auto mb-6" />
+            <div className="mb-6">
+              <Logo size="md" />
+            </div>
             <p className="text-zenthra-gray mb-6 max-w-md">
               MORE THAN FASHION represents the pinnacle of premium lifestyle products, crafting experiences that enrich your daily life with timeless elegance and contemporary sophistication.
             </p>
