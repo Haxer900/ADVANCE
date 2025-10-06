@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { ArrowLeft, CreditCard, Lock, Package, Truck, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -17,6 +17,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Link, useLocation } from "wouter";
 import { useCartStore } from "@/components/cart-store";
 import { CouponInput } from "@/components/coupon-input";
+import type { CartItem, Product } from "@shared/schema";
 
 const checkoutSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
@@ -45,8 +46,12 @@ export default function Checkout() {
   const { sessionId, cartCount } = useCartStore();
   const { toast } = useToast();
 
-  const { data: cartItems = [], isLoading } = useQuery({
+  const { data: cartItems = [], isLoading: cartLoading } = useQuery({
     queryKey: ["/api/cart", sessionId],
+  });
+
+  const { data: products } = useQuery({
+    queryKey: ["/api/products"],
   });
 
   const form = useForm<CheckoutForm>({
@@ -79,10 +84,21 @@ export default function Checkout() {
     },
   });
 
-  const cartArray = Array.isArray(cartItems) ? cartItems : [];
+  const cartItemsWithProducts = useMemo(() => {
+    if (!cartItems || !products) return [];
+    
+    return (cartItems as CartItem[]).map((cartItem: CartItem) => {
+      const product = (products as Product[]).find((p: Product) => p.id === cartItem.productId);
+      return { ...cartItem, product };
+    }).filter(item => item.product);
+  }, [cartItems, products]);
+
+  const cartArray = cartItemsWithProducts;
   const subtotal = cartArray.reduce((sum: number, item: any) => 
     sum + (parseFloat(item.product.price) * item.quantity), 0
   );
+  
+  const isLoading = cartLoading || !products;
   
   const shipping = subtotal > 100 ? 0 : 15;
   const tax = subtotal * 0.08; // 8% tax
