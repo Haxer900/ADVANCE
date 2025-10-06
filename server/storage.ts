@@ -454,6 +454,21 @@ export class MemStorage implements IStorage {
       updatedAt: new Date(),
     };
     this.users.set(adminUser.id, adminUser);
+
+    // Initialize test customer user
+    const testCustomer: User = {
+      id: randomUUID(),
+      email: "customer@test.com",
+      password: "$2a$10$rZ7l5Y.qFvZpZz8KYhY5Ke3Jl5X6K5Z8Z8Z8Z8Z8Z8Z8Z8Z8Z8Z8u", // Test@123
+      firstName: "Test",
+      lastName: "Customer",
+      phone: "+91 (555) 123-4567",
+      role: "customer",
+      isVerified: true,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+    this.users.set(testCustomer.id, testCustomer);
   }
 
   async getProducts(): Promise<Product[]> {

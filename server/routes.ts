@@ -143,6 +143,348 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // ===========================================
+  // CUSTOMER AUTHENTICATION
+  // ===========================================
+
+  // Customer Authentication Middleware
+  const authenticateCustomer = async (req: any, res: any, next: any) => {
+    try {
+      const token = req.headers.authorization?.replace('Bearer ', '');
+      if (!token) {
+        return res.status(401).json({ message: "Unauthorized - No token provided" });
+      }
+
+      if (!process.env.JWT_SECRET) {
+        console.error('CRITICAL: JWT_SECRET is not configured');
+        return res.status(500).json({ message: "Server configuration error" });
+      }
+
+      const decoded = jwt.verify(token, process.env.JWT_SECRET) as any;
+      const user = await storage.getUser(decoded.userId);
+      
+      if (!user) {
+        return res.status(401).json({ message: "Unauthorized - User not found" });
+      }
+
+      req.user = user;
+      next();
+    } catch (error) {
+      console.error('Customer auth error:', error);
+      return res.status(401).json({ message: "Unauthorized - Invalid token" });
+    }
+  };
+
+  // Customer Signup
+  app.post("/api/auth/signup", async (req, res) => {
+    try {
+      const { email, password, firstName, lastName, phone } = req.body;
+      
+      if (!email || !password) {
+        return res.status(400).json({ message: "Email and password are required" });
+      }
+
+      // Check if user exists
+      const existingUser = await storage.getUserByEmail(email);
+      if (existingUser) {
+        return res.status(400).json({ message: "Email already registered" });
+      }
+
+      // Hash password
+      const hashedPassword = await bcrypt.hash(password, 10);
+      
+      // Create user
+      const user = await storage.createUser({
+        email,
+        password: hashedPassword,
+        firstName: firstName || null,
+        lastName: lastName || null,
+        phone: phone || null,
+        role: "customer",
+        isVerified: false
+      });
+
+      // Generate JWT
+      if (!process.env.JWT_SECRET) {
+        throw new Error('JWT_SECRET not configured');
+      }
+      const token = jwt.sign(
+        { userId: user.id, email: user.email, role: "customer" },
+        process.env.JWT_SECRET,
+        { expiresIn: '7d' }
+      );
+
+      res.json({
+        success: true,
+        token,
+        user: {
+          id: user.id,
+          email: user.email,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          phone: user.phone
+        }
+      });
+    } catch (error: any) {
+      console.error('Signup error:', error);
+      res.status(500).json({ message: "Signup failed: " + error.message });
+    }
+  });
+
+  // Customer Login
+  app.post("/api/auth/login", async (req, res) => {
+    try {
+      const { email, password } = req.body;
+      
+      if (!email || !password) {
+        return res.status(400).json({ message: "Email and password are required" });
+      }
+
+      const user = await storage.getUserByEmail(email);
+      if (!user) {
+        return res.status(401).json({ message: "Invalid email or password" });
+      }
+
+      // Verify password
+      const isValidPassword = await bcrypt.compare(password, user.password);
+      if (!isValidPassword) {
+        return res.status(401).json({ message: "Invalid email or password" });
+      }
+
+      // Generate JWT
+      if (!process.env.JWT_SECRET) {
+        throw new Error('JWT_SECRET not configured');
+      }
+      const token = jwt.sign(
+        { userId: user.id, email: user.email, role: user.role || "customer" },
+        process.env.JWT_SECRET,
+        { expiresIn: '7d' }
+      );
+
+      res.json({
+        success: true,
+        token,
+        user: {
+          id: user.id,
+          email: user.email,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          phone: user.phone,
+          role: user.role
+        }
+      });
+    } catch (error: any) {
+      console.error('Login error:', error);
+      res.status(500).json({ message: "Login failed" });
+    }
+  });
+
+  // Get Current User
+  app.get("/api/auth/me", authenticateCustomer, async (req, res) => {
+    try {
+      const user = req.user;
+      res.json({
+        id: user.id,
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        phone: user.phone,
+        role: user.role
+      });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to get user info" });
+    }
+  });
+
+  // Get Customer Orders
+  app.get("/api/my-orders", authenticateCustomer, async (req, res) => {
+    try {
+      const orders = await storage.getOrdersByUser(req.user.id);
+      res.json(orders);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch orders" });
+    }
+  });
+
+  // Get Single Order Details
+  app.get("/api/orders/:id", authenticateCustomer, async (req, res) => {
+    try {
+      const order = await storage.getOrder(req.params.id);
+      if (!order) {
+        return res.status(404).json({ message: "Order not found" });
+      }
+      
+      // Verify order belongs to user
+      if (order.userId !== req.user.id) {
+        return res.status(403).json({ message: "Access denied" });
+      }
+      
+      res.json(order);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch order" });
+    }
+  });
+
+  // ===========================================
+  // RAZORPAY PAYMENT INTEGRATION
+  // ===========================================
+
+  // Create Razorpay Order
+  app.post("/api/razorpay/create-order", async (req, res) => {
+    try {
+      if (!process.env.RZP_KEY_ID || !process.env.RZP_KEY_SECRET) {
+        return res.status(503).json({ 
+          message: "Razorpay not configured. Please add RZP_KEY_ID and RZP_KEY_SECRET to environment variables.",
+          error: "RAZORPAY_NOT_CONFIGURED"
+        });
+      }
+
+      const Razorpay = (await import("razorpay")).default;
+      const razorpay = new Razorpay({
+        key_id: process.env.RZP_KEY_ID,
+        key_secret: process.env.RZP_KEY_SECRET,
+      });
+
+      const { amount, currency = "INR", orderId, receipt } = req.body;
+      
+      if (!amount || amount <= 0) {
+        return res.status(400).json({ message: "Invalid amount" });
+      }
+
+      const options = {
+        amount: Math.round(amount * 100), // amount in smallest currency unit (paise)
+        currency,
+        receipt: receipt || `receipt_${orderId || Date.now()}`,
+        notes: orderId ? { orderId } : {}
+      };
+
+      const razorpayOrder = await razorpay.orders.create(options);
+      res.json({ 
+        success: true,
+        orderId: razorpayOrder.id,
+        amount: razorpayOrder.amount,
+        currency: razorpayOrder.currency,
+        keyId: process.env.RZP_KEY_ID
+      });
+    } catch (error: any) {
+      console.error('Razorpay order creation error:', error);
+      res.status(500).json({ 
+        message: "Error creating Razorpay order: " + error.message 
+      });
+    }
+  });
+
+  // Verify Razorpay Payment
+  app.post("/api/razorpay/verify-payment", async (req, res) => {
+    try {
+      const crypto = await import("crypto");
+      const { razorpay_order_id, razorpay_payment_id, razorpay_signature, orderId } = req.body;
+
+      if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
+        return res.status(400).json({ message: "Missing payment verification data" });
+      }
+
+      const body = razorpay_order_id + "|" + razorpay_payment_id;
+      const expectedSignature = crypto
+        .createHmac("sha256", process.env.RZP_KEY_SECRET || "")
+        .update(body.toString())
+        .digest("hex");
+
+      const isAuthentic = expectedSignature === razorpay_signature;
+
+      if (isAuthentic) {
+        // Update order status if orderId provided
+        if (orderId) {
+          await storage.updateOrder(orderId, {
+            paymentStatus: "completed",
+            status: "confirmed",
+            paymentMethod: "razorpay",
+            razorpayOrderId: razorpay_order_id,
+            razorpayPaymentId: razorpay_payment_id
+          });
+        }
+
+        res.json({ 
+          success: true, 
+          message: "Payment verified successfully",
+          paymentId: razorpay_payment_id,
+          orderId: razorpay_order_id
+        });
+      } else {
+        res.status(400).json({ 
+          success: false, 
+          message: "Payment verification failed" 
+        });
+      }
+    } catch (error: any) {
+      console.error('Razorpay payment verification error:', error);
+      res.status(500).json({ message: "Payment verification failed: " + error.message });
+    }
+  });
+
+  // Request Refund via Razorpay
+  app.post("/api/razorpay/refund", authenticateCustomer, async (req, res) => {
+    try {
+      if (!process.env.RZP_KEY_ID || !process.env.RZP_KEY_SECRET) {
+        return res.status(503).json({ message: "Razorpay not configured" });
+      }
+
+      const Razorpay = (await import("razorpay")).default;
+      const razorpay = new Razorpay({
+        key_id: process.env.RZP_KEY_ID,
+        key_secret: process.env.RZP_KEY_SECRET,
+      });
+
+      const { paymentId, amount, orderId, reason } = req.body;
+
+      if (!paymentId) {
+        return res.status(400).json({ message: "Payment ID is required" });
+      }
+
+      // Verify order belongs to user
+      if (orderId) {
+        const order = await storage.getOrder(orderId);
+        if (!order || order.userId !== req.user.id) {
+          return res.status(403).json({ message: "Access denied" });
+        }
+      }
+
+      // Create refund via Razorpay
+      const refundData: any = { payment_id: paymentId };
+      if (amount) {
+        refundData.amount = Math.round(amount * 100); // amount in paise
+      }
+
+      const refund = await razorpay.payments.refund(paymentId, refundData);
+
+      // Store refund in database
+      if (orderId) {
+        await storage.createRefund({
+          orderId,
+          userId: req.user.id,
+          amount: amount ? amount.toString() : "0",
+          reason: reason || "Customer requested refund",
+          status: "pending",
+          adminNotes: `Razorpay Refund ID: ${refund.id}`,
+          processedBy: null,
+          processedAt: null
+        });
+      }
+
+      res.json({ 
+        success: true, 
+        refund: {
+          id: refund.id,
+          amount: refund.amount / 100,
+          status: refund.status
+        }
+      });
+    } catch (error: any) {
+      console.error('Razorpay refund error:', error);
+      res.status(500).json({ message: "Refund request failed: " + error.message });
+    }
+  });
+
+  // ===========================================
   // ADMIN DASHBOARD API ROUTES
   // ===========================================
 

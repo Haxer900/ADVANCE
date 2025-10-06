@@ -18,11 +18,21 @@ export async function apiRequest(
     ...(options?.headers || {}),
   };
 
-  // Add admin token if available for admin routes
-  if (url.includes('/admin/') && !headers.Authorization) {
-    const token = localStorage.getItem("admin-token");
-    if (token) {
-      headers.Authorization = `Bearer ${token}`;
+  // Add authentication token if not already set
+  if (!headers.Authorization) {
+    // Add admin token for admin routes
+    if (url.includes('/admin/')) {
+      const token = localStorage.getItem("admin-token");
+      if (token) {
+        headers.Authorization = `Bearer ${token}`;
+      }
+    } 
+    // Add customer token for customer routes
+    else if (url.includes('/api/my-orders') || url.includes('/api/orders') || url.includes('/api/auth/me') || url.includes('/api/razorpay/refund')) {
+      const token = localStorage.getItem("user-token");
+      if (token) {
+        headers.Authorization = `Bearer ${token}`;
+      }
     }
   }
 
@@ -46,9 +56,14 @@ export const getQueryFn: <T>(options: {
     const url = queryKey.join("/") as string;
     const headers: Record<string, string> = {};
 
-    // Add admin token if available for admin routes
+    // Add authentication token based on route
     if (url.includes('/admin/')) {
       const token = localStorage.getItem("admin-token");
+      if (token) {
+        headers.Authorization = `Bearer ${token}`;
+      }
+    } else if (url.includes('/api/my-orders') || url.includes('/api/orders') || url.includes('/api/auth/me')) {
+      const token = localStorage.getItem("user-token");
       if (token) {
         headers.Authorization = `Bearer ${token}`;
       }

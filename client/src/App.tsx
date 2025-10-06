@@ -27,6 +27,14 @@ import FAQ from "@/pages/faq";
 import Support from "@/pages/support";
 import Contact from "@/pages/contact";
 import NotFound from "@/pages/not-found";
+// Customer auth imports
+import Login from "@/pages/login";
+import Signup from "@/pages/signup";
+import OrderConfirmation from "@/pages/order-confirmation";
+import MyOrders from "@/pages/my-orders";
+import PrivacyPolicy from "@/pages/privacy-policy";
+import TermsAndConditions from "@/pages/terms-and-conditions";
+import RefundPolicy from "@/pages/refund-policy";
 // Admin imports
 import AdminLogin from "@/pages/admin/login";
 import AdminLayout from "@/pages/admin/layout";
@@ -115,6 +123,10 @@ function Router() {
                 <Route path="/cart" component={Cart} />
                 <Route path="/wishlist" component={Wishlist} />
                 <Route path="/checkout" component={Checkout} />
+                <Route path="/login" component={Login} />
+                <Route path="/signup" component={Signup} />
+                <Route path="/order-confirmation/:id" component={OrderConfirmation} />
+                <Route path="/my-orders" component={MyOrders} />
                 <Route path="/blog" component={Blog} />
                 <Route path="/track-order" component={TrackOrder} />
                 <Route path="/about" component={About} />
@@ -125,6 +137,9 @@ function Router() {
                 <Route path="/size-guide" component={SizeGuide} />
                 <Route path="/shipping-info" component={ShippingInfo} />
                 <Route path="/returns" component={Returns} />
+                <Route path="/privacy-policy" component={PrivacyPolicy} />
+                <Route path="/terms-and-conditions" component={TermsAndConditions} />
+                <Route path="/refund-policy" component={RefundPolicy} />
                 <Route path="/faq" component={FAQ} />
                 <Route path="/support" component={Support} />
                 <Route path="/contact" component={Contact} />

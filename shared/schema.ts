@@ -81,6 +81,8 @@ export const orders = pgTable("orders", {
   billingAddress: jsonb("billing_address"),
   paymentMethod: text("payment_method"),
   paymentStatus: text("payment_status").default("pending"),
+  razorpayOrderId: text("razorpay_order_id"), // Razorpay order ID
+  razorpayPaymentId: text("razorpay_payment_id"), // Razorpay payment ID for refunds
   trackingNumber: text("tracking_number"),
   notes: text("notes"),
   createdAt: timestamp("created_at").defaultNow(),
