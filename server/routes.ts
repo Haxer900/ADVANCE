@@ -851,9 +851,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         paymentMethod: paymentMethod || "card",
         paymentStatus: "pending",
         status: "pending",
-        customerEmail: email,
-        customerPhone: phone,
-        notes: notes || null
+        notes: notes ? `Email: ${email}, Phone: ${phone}, Notes: ${notes}` : `Email: ${email}, Phone: ${phone}`
       });
 
       // Clear cart after order creation
