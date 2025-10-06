@@ -376,6 +376,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Verify Razorpay Payment
   app.post("/api/razorpay/verify-payment", async (req, res) => {
     try {
+      if (!process.env.RZP_KEY_SECRET) {
+        return res.status(503).json({ 
+          message: "Razorpay not configured. Please configure RZP_KEY_SECRET environment variable.",
+          error: "RAZORPAY_NOT_CONFIGURED"
+        });
+      }
+
       const crypto = await import("crypto");
       const { razorpay_order_id, razorpay_payment_id, razorpay_signature, orderId } = req.body;
 
@@ -385,7 +392,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const body = razorpay_order_id + "|" + razorpay_payment_id;
       const expectedSignature = crypto
-        .createHmac("sha256", process.env.RZP_KEY_SECRET || "")
+        .createHmac("sha256", process.env.RZP_KEY_SECRET)
         .update(body.toString())
         .digest("hex");
 
@@ -496,19 +503,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(401).json({ message: "Unauthorized - No token provided" });
       }
 
-      const decoded = jwt.verify(token, process.env.JWT_SECRET || 'zenthra-admin-secret') as any;
-      
-      // For development admin user, don't require storage lookup
-      if (decoded.userId === "admin-1" && decoded.role === "admin") {
-        req.user = {
-          id: "admin-1",
-          email: "admin@zenthra.com",
-          role: "admin"
-        };
-        return next();
+      const adminSecret = process.env.JWT_SECRET_ADMIN || process.env.JWT_SECRET;
+      if (!adminSecret) {
+        console.error('CRITICAL: JWT_SECRET_ADMIN is not configured');
+        return res.status(500).json({ message: "Server configuration error" });
       }
+
+      const decoded = jwt.verify(token, adminSecret) as any;
       
-      // For real users, look them up in storage
+      // Always look up user in storage to get fresh role data
       const user = await storage.getUser(decoded.userId);
       if (!user || !user.role || !['admin', 'moderator', 'staff'].includes(user.role)) {
         return res.status(403).json({ message: "Forbidden - Admin access required" });
@@ -522,78 +525,83 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   };
 
-  // Admin Authentication with development fallback
+  // Admin Authentication
   app.post("/api/admin/login", async (req, res) => {
     try {
       const { username, password, email } = req.body;
       
-      // Check for development fallback credentials first
-      if ((username === "admin" || email === "admin@morethanfashion.com") && password === "admin123") {
+      if (!email && !username) {
+        return res.status(400).json({ message: "Email or username is required" });
+      }
+
+      if (!password) {
+        return res.status(400).json({ message: "Password is required" });
+      }
+
+      const adminSecret = process.env.JWT_SECRET_ADMIN || process.env.JWT_SECRET;
+      if (!adminSecret) {
+        console.error('CRITICAL: JWT_SECRET_ADMIN is not configured');
+        return res.status(500).json({ message: "Server configuration error" });
+      }
+
+      // Try to authenticate with storage first
+      let user = null;
+      if (email) {
+        user = await storage.getUserByEmail(email);
+      } else if (username) {
+        // If username provided, try to find by email assuming username might be email
+        user = await storage.getUserByEmail(username);
+      }
+
+      if (user && user.role && ['admin', 'moderator', 'staff'].includes(user.role)) {
+        const isPasswordValid = await bcrypt.compare(password, user.password);
+        if (isPasswordValid) {
+          const token = jwt.sign(
+            { userId: user.id, email: user.email, role: user.role },
+            adminSecret,
+            { expiresIn: '8h' } // Shorter expiry for admin tokens
+          );
+          return res.json({ 
+            success: true, 
+            token,
+            user: { 
+              id: user.id, 
+              email: user.email, 
+              role: user.role,
+              firstName: user.firstName,
+              lastName: user.lastName
+            }
+          });
+        }
+      }
+      
+      // Try MongoDB credential storage as fallback (if configured)
+      try {
+        const mongoUser = await credentialStorage.authenticateUser(username || email, password);
+        
+        if (!['admin', 'moderator', 'staff'].includes(mongoUser.role)) {
+          return res.status(403).json({ message: "Insufficient privileges" });
+        }
+
         const token = jwt.sign(
-          { userId: "admin-1", email: "admin@zenthra.com", role: "admin" },
-          process.env.JWT_SECRET || 'zenthra-admin-secret',
-          { expiresIn: '24h' }
+          { userId: mongoUser.id, email: mongoUser.email, role: mongoUser.role },
+          adminSecret,
+          { expiresIn: '8h' } // Shorter expiry for admin tokens
         );
         return res.json({ 
           success: true, 
           token,
-          user: { 
-            id: "admin-1",
-            username: "admin", 
-            email: "admin@zenthra.com",
-            role: "admin" 
-          }
-        });
-      }
-      
-      // Check stored admin user (from MemStorage)
-      if (email === "yashparmar77077@gmail.com") {
-        const user = await storage.getUserByEmail(email);
-        if (user) {
-          const isPasswordValid = await bcrypt.compare(password, user.password);
-          if (isPasswordValid && user.role === 'admin') {
-            const token = jwt.sign(
-              { userId: user.id, email: user.email, role: user.role },
-              process.env.JWT_SECRET || 'zenthra-admin-secret',
-              { expiresIn: '24h' }
-            );
-            return res.json({ 
-              success: true, 
-              token,
-              user: { 
-                id: user.id, 
-                email: user.email, 
-                role: user.role,
-                firstName: user.firstName,
-                lastName: user.lastName
-              }
-            });
-          }
-        }
-      }
-      
-      // Try MongoDB auth as last resort (if configured)
-      try {
-        const user = await credentialStorage.authenticateUser(username || email, password);
-        
-        if (!['admin', 'moderator', 'staff'].includes(user.role)) {
-          return res.status(403).json({ message: "Insufficient privileges" });
-        }
-
-        const token = `admin-token-${user.id}-${Date.now()}`;
-        return res.json({ 
-          success: true, 
-          token,
           user: {
-            id: user.id,
-            username: user.username,
-            email: user.email,
-            role: user.role,
-            permissions: user.permissions
+            id: mongoUser.id,
+            username: mongoUser.username,
+            email: mongoUser.email,
+            role: mongoUser.role,
+            permissions: mongoUser.permissions
           }
         });
       } catch (mongoError) {
-        // MongoDB not available - already handled above
+        // MongoDB not available or authentication failed
+        console.log('MongoDB authentication not available or failed');
       }
       
       return res.status(401).json({ message: "Invalid credentials" });

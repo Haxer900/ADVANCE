@@ -2,9 +2,11 @@ import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
 
 // Configure MongoDB connection
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://your-connection-string';
+const MONGODB_URI = process.env.MONGODB_URI;
 
-// Cloudinary config will be added when environment variables are set
+if (!MONGODB_URI) {
+  console.warn('WARNING: MONGODB_URI not configured. MongoDB credential storage will not be available.');
+}
 
 // User credential schema for MongoDB
 const userCredentialSchema = new mongoose.Schema({
@@ -104,6 +106,10 @@ export class SecureCredentialStorage {
 
   async connect(): Promise<void> {
     if (this.isConnected) return;
+
+    if (!MONGODB_URI) {
+      throw new Error('MONGODB_URI not configured - secure credential storage unavailable');
+    }
 
     try {
       await mongoose.connect(MONGODB_URI);

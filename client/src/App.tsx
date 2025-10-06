@@ -54,6 +54,7 @@ import StaffAdmin from "@/pages/admin/staff";
 import { useCartStore } from "@/components/cart-store";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
+import { ProtectedAdminRoute } from "@/components/protected-admin-route";
 
 function CartUpdater() {
   const { sessionId, setCartCount } = useCartStore();
@@ -79,15 +80,8 @@ function Router() {
       {/* Admin Routes */}
       <Route path="/admin/login" component={AdminLogin} />
       <Route path="/admin/*">
-        {() => {
-          // Check if user is authenticated
-          const token = localStorage.getItem("admin-token");
-          if (!token) {
-            window.location.href = "/admin/login";
-            return null;
-          }
-
-          return (
+        {() => (
+          <ProtectedAdminRoute>
             <AdminLayout>
               <Switch>
                 <Route path="/admin/dashboard" component={AdminDashboard} />
@@ -106,8 +100,8 @@ function Router() {
                 <Route component={() => <div className="p-6"><h1 className="text-white text-2xl">Admin Page Coming Soon</h1></div>} />
               </Switch>
             </AdminLayout>
-          );
-        }}
+          </ProtectedAdminRoute>
+        )}
       </Route>
       
       {/* Public Routes */}
