@@ -816,6 +816,72 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Customer Order Creation (Public - no auth required for guest checkout)
+  app.post("/api/orders", async (req, res) => {
+    try {
+      const { 
+        email, firstName, lastName, address, city, state, zipCode, phone,
+        paymentMethod, sessionId, items, subtotal, shipping, tax, 
+        couponDiscount, total, couponCode, notes 
+      } = req.body;
+      
+      if (!items || items.length === 0) {
+        return res.status(400).json({ message: "Cart is empty" });
+      }
+
+      // Get user ID if logged in (from token)
+      let userId = null;
+      try {
+        const token = req.headers.authorization?.replace('Bearer ', '');
+        if (token && process.env.JWT_SECRET) {
+          const decoded = jwt.verify(token, process.env.JWT_SECRET) as any;
+          userId = decoded.userId;
+        }
+      } catch {
+        // Not logged in - proceed as guest
+      }
+
+      // Create order
+      const order = await storage.createOrder({
+        userId: userId || null,
+        sessionId: sessionId || null,
+        total: total.toString(),
+        shippingAddress: `${firstName} ${lastName}, ${address}, ${city}, ${state} ${zipCode}`,
+        billingAddress: `${firstName} ${lastName}, ${address}, ${city}, ${state} ${zipCode}`,
+        paymentMethod: paymentMethod || "card",
+        paymentStatus: "pending",
+        status: "pending",
+        customerEmail: email,
+        customerPhone: phone,
+        notes: notes || null
+      });
+
+      // Clear cart after order creation
+      if (sessionId) {
+        await storage.clearCart(sessionId);
+      }
+
+      // Create admin notification
+      await storage.createAdminNotification({
+        type: "order",
+        title: "New Order Received",
+        message: `Order #${order.id} for $${parseFloat(total).toFixed(2)} from ${email}`,
+        priority: "normal",
+        relatedId: order.id
+      });
+
+      res.json({ 
+        success: true,
+        id: order.id,
+        order, 
+        message: "Order created successfully" 
+      });
+    } catch (error) {
+      console.error('Order creation error:', error);
+      res.status(500).json({ message: "Failed to create order" });
+    }
+  });
+
   // ===========================================
   // NOTIFICATIONS & ALERTS (ADMIN)
   // ===========================================
