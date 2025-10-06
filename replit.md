@@ -6,17 +6,24 @@ MORE THAN FASHION is a premium e-commerce platform showcasing luxury lifestyle p
 ## User Preferences
 Preferred communication style: Simple, everyday language.
 
-## Recent Changes - October 4, 2025
-- **GitHub Import Setup Complete**: Successfully configured ZENTHRA e-commerce platform for Replit
-- **Environment Configuration**: 
-  - Server running on port 5000 with 0.0.0.0 host binding
-  - Vite dev server configured with `allowedHosts: true` for Replit proxy compatibility
-  - Express + Vite fullstack setup verified and working
-- **Workflow Configuration**: Development workflow configured with webview output on port 5000
-- **Deployment Ready**: Autoscale deployment configured with build (`npm run build`) and start (`npm run start`) commands
-- **Dependencies**: All npm packages installed and working (647 packages)
-- **Database**: Optional PostgreSQL support with in-memory fallback for development
-- **Application Status**: Frontend and backend fully functional, homepage loading successfully
+## Recent Changes - October 6, 2025
+- **Production Security Audit Complete**: Comprehensive security hardening for soft launch
+- **Critical Security Fixes**:
+  - Removed all hardcoded admin credentials and JWT secret fallbacks
+  - Implemented separate JWT secrets (JWT_SECRET for customers, JWT_SECRET_ADMIN for admins)
+  - Admin tokens now expire in 8 hours vs 7 days for customers
+  - MongoDB connection now requires MONGODB_URI (no silent fallbacks)
+  - Razorpay payment verification enforces RZP_KEY_SECRET requirement
+- **Admin Panel Hardening**:
+  - Created ProtectedAdminRoute component with server-side token validation
+  - Admin middleware always fetches fresh user role data (prevents stale token exploitation)
+  - Frontend routes protected with loading states during auth verification
+- **Security Middlewares Added**:
+  - Helmet with CSP configuration for security headers
+  - CORS with configurable ALLOWED_ORIGINS (development allows all, production validates)
+  - Express rate limiting: 100 req/15min general API, 5 req/15min auth endpoints
+- **Documentation**: Created comprehensive SOFT_LAUNCH_CHECKLIST.md with env vars, test procedures, and deployment steps
+- **Status**: Architect-approved and ready for controlled soft launch
 
 ## Previous Changes - August 18, 2025
 - **Favicon Visibility Fixed**: Created proper binary ICO favicon with multi-format support and web manifest
