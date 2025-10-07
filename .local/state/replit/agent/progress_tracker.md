@@ -5,4 +5,5 @@
 [x] 5. Verify the video is loading properly
 [x] 6. Fix user button functionality
 [x] 7. Fix account creation by configuring JWT_SECRET
-[x] 8. Migration completed successfully
+[x] 8. Verify application is running successfully after migration
+[x] 9. Migration completed successfully
