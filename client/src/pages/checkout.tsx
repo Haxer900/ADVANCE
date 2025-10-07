@@ -523,7 +523,7 @@ export default function Checkout() {
                       className="flex-1"
                     >
                       <Lock className="h-4 w-4 mr-2" />
-                      {placeOrder.isPending ? "Processing..." : `Place Order - $${total.toFixed(2)}`}
+                      {placeOrder.isPending ? "Processing..." : `Place Order - ₹${total.toFixed(2)}`}
                     </Button>
                   </div>
                 </CardContent>

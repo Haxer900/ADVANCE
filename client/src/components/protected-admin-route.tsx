@@ -38,7 +38,6 @@ export function ProtectedAdminRoute({ children }: ProtectedAdminRouteProps) {
           setLocation("/admin/login");
         }
       } catch (error) {
-        console.error("Auth verification error:", error);
         localStorage.removeItem("admin-token");
         localStorage.removeItem("admin-user");
         setLocation("/admin/login");

@@ -28,7 +28,7 @@ export default function MyOrders() {
     }
   }, [setLocation, toast]);
 
-  const { data: orders = [], isLoading, error } = useQuery({
+  const { data: orders = [], isLoading, error } = useQuery<any[]>({
     queryKey: ["/api/my-orders"],
   });
 

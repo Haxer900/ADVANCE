@@ -11,7 +11,7 @@ export default function OrderConfirmation() {
   const [, setLocation] = useLocation();
   const orderId = params?.id;
 
-  const { data: order, isLoading } = useQuery({
+  const { data: order, isLoading } = useQuery<any>({
     queryKey: ["/api/orders", orderId],
     enabled: !!orderId,
   });

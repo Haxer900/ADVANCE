@@ -7,6 +7,9 @@ import { setupVite, serveStatic, log } from "./vite";
 
 const app = express();
 
+// Configure trust proxy for rate limiting to work correctly behind proxies
+app.set('trust proxy', 1);
+
 // Security middleware - Helmet
 app.use(helmet({
   contentSecurityPolicy: {

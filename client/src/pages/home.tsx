@@ -98,8 +98,7 @@ export default function Home() {
             }}
             onLoadedData={() => setVideoLoaded(true)}
             onCanPlayThrough={() => setVideoLoaded(true)}
-            onError={(e) => {
-              console.error('Video error:', e);
+            onError={() => {
               setVideoLoaded(false);
             }}
           >

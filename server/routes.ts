@@ -11,6 +11,8 @@ import path from "path";
 import mediaRoutes from "./routes/media";
 import productsMediaRoutes from "./routes/products-media";
 import healthRoutes from "./routes/health";
+import logger from "./utils/logger";
+import { sanitizeString, sanitizeEmail, sanitizePhone, validatePasswordStrength } from "./utils/sanitize";
 
 declare global {
   namespace Express {
@@ -38,8 +40,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const products = await storage.getProducts();
       res.json(products);
     } catch (error) {
-      console.error('Products API error:', error);
-      res.status(500).json({ message: "Failed to fetch products", error: (error as any).message });
+      logger.error('Products API error:', error);
+      res.status(500).json({ message: "Failed to fetch products" });
     }
   });
 
@@ -48,8 +50,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const products = await storage.getFeaturedProducts();
       res.json(products);
     } catch (error) {
-      console.error('Featured products API error:', error);
-      res.status(500).json({ message: "Failed to fetch featured products", error: (error as any).message });
+      logger.error('Featured products API error:', error);
+      res.status(500).json({ message: "Failed to fetch featured products" });
     }
   });
 
@@ -80,8 +82,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const categories = await storage.getCategories();
       res.json(categories);
     } catch (error) {
-      console.error('Categories API error:', error);
-      res.status(500).json({ message: "Failed to fetch categories", error: (error as any).message });
+      logger.error('Categories API error:', error);
+      res.status(500).json({ message: "Failed to fetch categories" });
     }
   });
 
@@ -91,8 +93,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const cartItems = await storage.getCartItems(req.params.sessionId);
       res.json(cartItems);
     } catch (error) {
-      console.error('Cart API error:', error);
-      res.status(500).json({ message: "Failed to fetch cart items", error: (error as any).message });
+      logger.error('Cart API error:', error);
+      res.status(500).json({ message: "Failed to fetch cart items" });
     }
   });
 
@@ -174,7 +176,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       if (!process.env.JWT_SECRET) {
-        console.error('CRITICAL: JWT_SECRET is not configured');
+        logger.error('CRITICAL: JWT_SECRET is not configured');
         return res.status(500).json({ message: "Server configuration error" });
       }
 
@@ -188,7 +190,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       req.user = user;
       next();
     } catch (error) {
-      console.error('Customer auth error:', error);
+      logger.error('Customer auth error:', error);
       return res.status(401).json({ message: "Unauthorized - Invalid token" });
     }
   };
@@ -196,10 +198,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Customer Signup
   app.post("/api/auth/signup", async (req, res) => {
     try {
-      const { email, password, firstName, lastName, phone } = req.body;
+      let { email, password, firstName, lastName, phone } = req.body;
       
       if (!email || !password) {
         return res.status(400).json({ message: "Email and password are required" });
+      }
+
+      // Sanitize inputs
+      email = sanitizeEmail(email);
+      if (!email) {
+        return res.status(400).json({ message: "Invalid email format" });
+      }
+
+      // Validate password strength
+      const passwordValidation = validatePasswordStrength(password);
+      if (!passwordValidation.valid) {
+        return res.status(400).json({ message: passwordValidation.message });
       }
 
       // Check if user exists
@@ -211,13 +225,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Hash password
       const hashedPassword = await bcrypt.hash(password, 10);
       
+      // Sanitize optional fields
+      const sanitizedFirstName = firstName ? sanitizeString(firstName) : null;
+      const sanitizedLastName = lastName ? sanitizeString(lastName) : null;
+      const sanitizedPhone = phone ? sanitizePhone(phone) : null;
+      
       // Create user
       const user = await storage.createUser({
         email,
         password: hashedPassword,
-        firstName: firstName || null,
-        lastName: lastName || null,
-        phone: phone || null,
+        firstName: sanitizedFirstName,
+        lastName: sanitizedLastName,
+        phone: sanitizedPhone,
         role: "customer",
         isVerified: false
       });
@@ -244,18 +263,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       });
     } catch (error: any) {
-      console.error('Signup error:', error);
-      res.status(500).json({ message: "Signup failed: " + error.message });
+      logger.error('Signup error:', error);
+      res.status(500).json({ message: "Signup failed" });
     }
   });
 
   // Customer Login
   app.post("/api/auth/login", async (req, res) => {
     try {
-      const { email, password } = req.body;
+      let { email, password } = req.body;
       
       if (!email || !password) {
         return res.status(400).json({ message: "Email and password are required" });
+      }
+
+      // Sanitize email
+      email = sanitizeEmail(email);
+      if (!email) {
+        return res.status(400).json({ message: "Invalid email format" });
       }
 
       const user = await storage.getUserByEmail(email);
@@ -292,7 +317,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       });
     } catch (error: any) {
-      console.error('Login error:', error);
+      logger.error('Login error:', error);
       res.status(500).json({ message: "Login failed" });
     }
   });
@@ -385,9 +410,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         keyId: process.env.RZP_KEY_ID
       });
     } catch (error: any) {
-      console.error('Razorpay order creation error:', error);
+      logger.error('Razorpay order creation error:', error);
       res.status(500).json({ 
-        message: "Error creating Razorpay order: " + error.message 
+        message: "Error creating Razorpay order" 
       });
     }
   });
@@ -442,8 +467,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
     } catch (error: any) {
-      console.error('Razorpay payment verification error:', error);
-      res.status(500).json({ message: "Payment verification failed: " + error.message });
+      logger.error('Razorpay payment verification error:', error);
+      res.status(500).json({ message: "Payment verification failed" });
     }
   });
 
@@ -505,8 +530,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       });
     } catch (error: any) {
-      console.error('Razorpay refund error:', error);
-      res.status(500).json({ message: "Refund request failed: " + error.message });
+      logger.error('Razorpay refund error:', error);
+      res.status(500).json({ message: "Refund request failed" });
     }
   });
 
@@ -524,7 +549,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const adminSecret = process.env.JWT_SECRET_ADMIN || process.env.JWT_SECRET;
       if (!adminSecret) {
-        console.error('CRITICAL: JWT_SECRET_ADMIN is not configured');
+        logger.error('CRITICAL: JWT_SECRET_ADMIN is not configured');
         return res.status(500).json({ message: "Server configuration error" });
       }
 
@@ -539,7 +564,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       req.user = user;
       next();
     } catch (error) {
-      console.error('Auth error:', error);
+      logger.error('Auth error:', error);
       return res.status(401).json({ message: "Unauthorized - Invalid token" });
     }
   };
@@ -559,7 +584,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const adminSecret = process.env.JWT_SECRET_ADMIN || process.env.JWT_SECRET;
       if (!adminSecret) {
-        console.error('CRITICAL: JWT_SECRET_ADMIN is not configured');
+        logger.error('CRITICAL: JWT_SECRET_ADMIN is not configured');
         return res.status(500).json({ message: "Server configuration error" });
       }
 
@@ -620,12 +645,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       } catch (mongoError) {
         // MongoDB not available or authentication failed
-        console.log('MongoDB authentication not available or failed');
+        logger.warn('MongoDB authentication not available or failed');
       }
       
       return res.status(401).json({ message: "Invalid credentials" });
     } catch (error: any) {
-      console.error('Login error:', error);
+      logger.error('Login error:', error);
       res.status(500).json({ message: "Login failed" });
     }
   });
@@ -902,7 +927,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         message: "Order created successfully" 
       });
     } catch (error) {
-      console.error('Order creation error:', error);
+      logger.error('Order creation error:', error);
       res.status(500).json({ message: "Failed to create order" });
     }
   });
@@ -1352,9 +1377,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       res.json({ clientSecret: paymentIntent.client_secret });
     } catch (error: any) {
-      console.error('Stripe payment intent error:', error);
+      logger.error('Stripe payment intent error:', error);
       res.status(500).json({ 
-        message: "Error creating payment intent: " + error.message 
+        message: "Error creating payment intent" 
       });
     }
   });
@@ -1375,11 +1400,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const clientToken = await getClientToken();
         res.json({ clientToken });
       } catch (importError) {
-        console.error('PayPal module import error:', importError);
+        logger.error('PayPal module import error:', importError);
         res.status(503).json({ error: "PayPal integration not available" });
       }
     } catch (error: any) {
-      console.error('PayPal setup error:', error);
+      logger.error('PayPal setup error:', error);
       res.status(500).json({ error: "Failed to setup PayPal" });
     }
   });
@@ -1390,11 +1415,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const { createPaypalOrder } = await import("./paypal");
         await createPaypalOrder(req, res);
       } catch (importError) {
-        console.error('PayPal module import error:', importError);
+        logger.error('PayPal module import error:', importError);
         res.status(503).json({ error: "PayPal integration not available" });
       }
     } catch (error: any) {
-      console.error('PayPal order creation error:', error);
+      logger.error('PayPal order creation error:', error);
       res.status(500).json({ error: "Failed to create PayPal order" });
     }
   });
@@ -1405,11 +1430,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const { capturePaypalOrder } = await import("./paypal");
         await capturePaypalOrder(req, res);
       } catch (importError) {
-        console.error('PayPal module import error:', importError);
+        logger.error('PayPal module import error:', importError);
         res.status(503).json({ error: "PayPal integration not available" });
       }
     } catch (error: any) {
-      console.error('PayPal order capture error:', error);
+      logger.error('PayPal order capture error:', error);
       res.status(500).json({ error: "Failed to capture PayPal order" });
     }
   });
@@ -1455,7 +1480,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       res.json({ received: true });
     } catch (error: any) {
-      console.error('Stripe webhook error:', error);
+      logger.error('Stripe webhook error:', error);
       res.status(400).json({ error: "Webhook error" });
     }
   });
@@ -1487,7 +1512,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       res.json({ received: true });
     } catch (error: any) {
-      console.error('PayPal webhook error:', error);
+      logger.error('PayPal webhook error:', error);
       res.status(400).json({ error: "Webhook error" });
     }
   });
@@ -1538,7 +1563,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       res.json({ order, message: "Order created successfully" });
     } catch (error) {
-      console.error('Checkout error:', error);
+      logger.error('Checkout error:', error);
       res.status(500).json({ message: "Failed to process checkout" });
     }
   });
