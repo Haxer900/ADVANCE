@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
-import { Search, User, ShoppingBag, Menu, X, Heart } from "lucide-react";
+import { Search, User, ShoppingBag, Menu, X, Heart, Package, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -9,13 +9,47 @@ import { ThemeToggle } from "@/components/theme-toggle";
 import { useCartStore } from "./cart-store";
 import { Logo } from "./logo";
 import { useQuery } from "@tanstack/react-query";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export default function Header() {
-  const [location] = useLocation();
+  const [location, setLocation] = useLocation();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userName, setUserName] = useState("");
   const { cartCount } = useCartStore();
+
+  // Check if user is logged in
+  useEffect(() => {
+    const token = localStorage.getItem("user-token");
+    const user = localStorage.getItem("user");
+    if (token && user) {
+      setIsLoggedIn(true);
+      try {
+        const userData = JSON.parse(user);
+        setUserName(userData.firstName || userData.email || "User");
+      } catch {
+        setUserName("User");
+      }
+    } else {
+      setIsLoggedIn(false);
+    }
+  }, [location]);
+
+  const handleLogout = () => {
+    localStorage.removeItem("user-token");
+    localStorage.removeItem("user");
+    setIsLoggedIn(false);
+    setLocation("/");
+  };
 
   // Get wishlist count
   const sessionId = localStorage.getItem("morethanfashion-session-id");
@@ -101,9 +135,40 @@ export default function Header() {
             </Link>
 
             {/* User Menu */}
-            <Button variant="ghost" size="icon">
-              <User className="h-4 w-4" />
-            </Button>
+            {isLoggedIn ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon" data-testid="button-user-menu">
+                    <User className="h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-48">
+                  <DropdownMenuLabel>Hi, {userName}</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <Link href="/my-orders">
+                    <DropdownMenuItem className="cursor-pointer" data-testid="link-my-orders">
+                      <Package className="h-4 w-4 mr-2" />
+                      My Orders
+                    </DropdownMenuItem>
+                  </Link>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem 
+                    onClick={handleLogout}
+                    className="cursor-pointer text-destructive focus:text-destructive"
+                    data-testid="button-logout"
+                  >
+                    <LogOut className="h-4 w-4 mr-2" />
+                    Logout
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <Link href="/login">
+                <Button variant="ghost" size="icon" data-testid="button-login">
+                  <User className="h-4 w-4" />
+                </Button>
+              </Link>
+            )}
             
             {/* Mobile menu button */}
             <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
