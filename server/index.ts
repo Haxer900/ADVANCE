@@ -14,6 +14,7 @@ app.use(helmet({
       styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
       fontSrc: ["'self'", "https://fonts.gstatic.com"],
       imgSrc: ["'self'", "data:", "https:", "http:"],
+      mediaSrc: ["'self'", "https://res.cloudinary.com", "blob:"], // Allow Cloudinary videos
       scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"], // Required for Vite dev
       connectSrc: ["'self'", "ws:", "wss:"], // Allow WebSocket for HMR
     },
