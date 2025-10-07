@@ -1,4 +1,4 @@
-import type { Express } from "express";
+import type { Express, Request } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { credentialStorage } from "./auth-storage";
@@ -11,6 +11,25 @@ import path from "path";
 import mediaRoutes from "./routes/media";
 import productsMediaRoutes from "./routes/products-media";
 import healthRoutes from "./routes/health";
+
+declare global {
+  namespace Express {
+    interface Request {
+      user?: {
+        id: string;
+        email: string;
+        firstName: string | null;
+        lastName: string | null;
+        phone: string | null;
+        password: string;
+        role: string | null;
+        isVerified: boolean | null;
+        createdAt: Date | null;
+        updatedAt: Date | null;
+      };
+    }
+  }
+}
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Products
@@ -281,7 +300,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Get Current User
   app.get("/api/auth/me", authenticateCustomer, async (req, res) => {
     try {
-      const user = req.user;
+      const user = req.user!;
       res.json({
         id: user.id,
         email: user.email,
@@ -298,7 +317,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Get Customer Orders
   app.get("/api/my-orders", authenticateCustomer, async (req, res) => {
     try {
-      const orders = await storage.getOrdersByUser(req.user.id);
+      const orders = await storage.getOrdersByUser(req.user!.id);
       res.json(orders);
     } catch (error) {
       res.status(500).json({ message: "Failed to fetch orders" });
@@ -314,7 +333,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       // Verify order belongs to user
-      if (order.userId !== req.user.id) {
+      if (order.userId !== req.user!.id) {
         return res.status(403).json({ message: "Access denied" });
       }
       
@@ -350,7 +369,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Invalid amount" });
       }
 
-      const options = {
+      const options: any = {
         amount: Math.round(amount * 100), // amount in smallest currency unit (paise)
         currency,
         receipt: receipt || `receipt_${orderId || Date.now()}`,
@@ -450,7 +469,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Verify order belongs to user
       if (orderId) {
         const order = await storage.getOrder(orderId);
-        if (!order || order.userId !== req.user.id) {
+        if (!order || order.userId !== req.user!.id) {
           return res.status(403).json({ message: "Access denied" });
         }
       }
@@ -467,7 +486,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (orderId) {
         await storage.createRefund({
           orderId,
-          userId: req.user.id,
+          userId: req.user!.id,
           amount: amount ? amount.toString() : "0",
           reason: reason || "Customer requested refund",
           status: "pending",
@@ -481,7 +500,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         success: true, 
         refund: {
           id: refund.id,
-          amount: refund.amount / 100,
+          amount: refund.amount ? refund.amount / 100 : 0,
           status: refund.status
         }
       });
@@ -1316,7 +1335,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const Stripe = (await import("stripe")).default;
       const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-        apiVersion: "2022-11-15",
+        apiVersion: "2025-07-30.basil",
       });
 
       const { amount, currency = "usd", orderId } = req.body;
@@ -1414,7 +1433,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             
             // Send notification
             await storage.createAdminNotification({
-              type: "payment",
+              type: "order",
               title: "Payment Received",
               message: `Payment completed for order ${paymentIntent.metadata.orderId}`,
               priority: "normal"
@@ -1458,7 +1477,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           
           // Send notification
           await storage.createAdminNotification({
-            type: "payment",
+            type: "order",
             title: "PayPal Payment Received", 
             message: `PayPal payment completed for order ${orderId}`,
             priority: "normal"
