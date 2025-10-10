@@ -1,7 +1,7 @@
-import { type Product, type InsertProduct, type Category, type InsertCategory, type CartItem, type InsertCartItem, type Newsletter, type InsertNewsletter, type User, type InsertUser, type Order, type InsertOrder, type AdminNotification, type InsertAdminNotification, type InventoryAlert, type InsertInventoryAlert, type Refund, type InsertRefund, type AnalyticsData, type InsertAnalyticsData, type Integration, type InsertIntegration, type Tag, type InsertTag, type Currency, type InsertCurrency, type Affiliate, type InsertAffiliate, type EmailCampaign, type InsertEmailCampaign } from "@shared/schema";
+import { type Product, type InsertProduct, type Category, type InsertCategory, type CartItem, type InsertCartItem, type Newsletter, type InsertNewsletter, type User, type InsertUser, type Order, type InsertOrder, type AdminNotification, type InsertAdminNotification, type InventoryAlert, type InsertInventoryAlert, type Refund, type InsertRefund, type AnalyticsData, type InsertAnalyticsData, type Integration, type InsertIntegration, type Tag, type InsertTag, type Currency, type InsertCurrency, type Affiliate, type InsertAffiliate, type EmailCampaign, type InsertEmailCampaign, type AuditLog, type InsertAuditLog } from "@shared/schema";
 import { db } from "./db";
 import { eq } from "drizzle-orm";
-import { products, categories, cartItems, newsletters, users, orders, adminNotifications, inventoryAlerts, refunds, analyticsData, integrations, tags, currencies, affiliates, emailCampaigns } from "@shared/schema";
+import { products, categories, cartItems, newsletters, users, orders, adminNotifications, inventoryAlerts, refunds, analyticsData, integrations, tags, currencies, affiliates, emailCampaigns, auditLogs } from "@shared/schema";
 import { randomUUID } from "crypto";
 
 export interface IStorage {
@@ -104,6 +104,10 @@ export interface IStorage {
   // Notifications
   createNotification(notification: any): Promise<void>;
   getNotificationsByRecipient(recipient: string): any[];
+  
+  // Audit Logs
+  createAuditLog(log: InsertAuditLog): Promise<AuditLog>;
+  getAuditLogs(filters?: { userId?: string; entity?: string; action?: string; limit?: number }): Promise<AuditLog[]>;
 }
 
 export class MemStorage implements IStorage {
@@ -125,6 +129,7 @@ export class MemStorage implements IStorage {
   private smsHistory: Map<string, any>;
   private otpRecords: Map<string, any>;
   private notifications: Map<string, any>;
+  private auditLogs: Map<string, AuditLog>;
 
   constructor() {
     this.products = new Map();
@@ -145,6 +150,7 @@ export class MemStorage implements IStorage {
     this.smsHistory = new Map();
     this.otpRecords = new Map();
     this.notifications = new Map();
+    this.auditLogs = new Map();
     this.initializeData();
   }
 
@@ -1139,6 +1145,14 @@ export class DatabaseStorage implements IStorage {
   async getEmailCampaigns(): Promise<EmailCampaign[]> { return []; }
   async createEmailCampaign(campaign: InsertEmailCampaign): Promise<EmailCampaign> { throw new Error("Feature not implemented"); }
   async updateEmailCampaign(id: string, campaign: Partial<InsertEmailCampaign>): Promise<EmailCampaign | undefined> { return undefined; }
+  
+  // Audit Logs
+  async createAuditLog(log: InsertAuditLog): Promise<AuditLog> { 
+    throw new Error("Audit logging not implemented for database storage"); 
+  }
+  async getAuditLogs(filters?: { userId?: string; entity?: string; action?: string; limit?: number }): Promise<AuditLog[]> { 
+    return []; 
+  }
 }
 
 // Simple implementation for immediate development needs
@@ -1275,6 +1289,14 @@ class SimpleStorage implements IStorage {
   }
   getNotificationsByRecipient(recipient: string) { 
     return this.notifications.filter(n => n.recipient === recipient); 
+  }
+  
+  // Audit Logs (stub implementation)
+  async createAuditLog(log: InsertAuditLog): Promise<AuditLog> { 
+    return { id: Date.now().toString(), ...log, timestamp: new Date(), status: log.status ?? "success", errorMessage: log.errorMessage ?? null }; 
+  }
+  async getAuditLogs(filters?: any): Promise<AuditLog[]> { 
+    return []; 
   }
 }
 

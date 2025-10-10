@@ -301,6 +301,23 @@ export const emailCampaigns = pgTable("email_campaigns", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
+// Audit Logs for Admin Actions
+export const auditLogs = pgTable("audit_logs", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull(),
+  userEmail: text("user_email").notNull(),
+  userRole: text("user_role").notNull(),
+  action: text("action").notNull(), // CREATE, UPDATE, DELETE, VIEW
+  entity: text("entity").notNull(), // product, user, order, etc.
+  entityId: varchar("entity_id"),
+  changes: jsonb("changes"), // Before/after for updates
+  ipAddress: text("ip_address"),
+  userAgent: text("user_agent"),
+  timestamp: timestamp("timestamp").defaultNow(),
+  status: text("status").default("success"), // success, failure
+  errorMessage: text("error_message"),
+});
+
 // Relations
 export const productsRelations = relations(products, ({ many }) => ({
   reviews: many(reviews),
@@ -446,6 +463,11 @@ export const insertReferralSchema = createInsertSchema(referrals).omit({
 export const insertEmailCampaignSchema = createInsertSchema(emailCampaigns).omit({
   id: true,
   createdAt: true,
+});
+
+export const insertAuditLogSchema = createInsertSchema(auditLogs).omit({
+  id: true,
+  timestamp: true,
 });
 
 // Media Storage Tables for Cloudinary Integration
@@ -622,3 +644,5 @@ export type Referral = typeof referrals.$inferSelect;
 export type InsertReferral = z.infer<typeof insertReferralSchema>;
 export type EmailCampaign = typeof emailCampaigns.$inferSelect;
 export type InsertEmailCampaign = z.infer<typeof insertEmailCampaignSchema>;
+export type AuditLog = typeof auditLogs.$inferSelect;
+export type InsertAuditLog = z.infer<typeof insertAuditLogSchema>;
