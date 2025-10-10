@@ -571,25 +571,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
   };
 
   // Audit Log Helper Function
-  const createAuditLog = async (req: any, action: string, entity: string, entityId?: string, changes?: any) => {
-    if (req.user) {
-      try {
-        await storage.createAuditLog({
-          userId: req.user.id,
-          userEmail: req.user.email,
-          userRole: req.user.role,
-          action,
-          entity,
-          entityId: entityId ?? null,
-          changes: changes ?? null,
-          ipAddress: req.ip ?? null,
-          userAgent: req.headers['user-agent'] ?? null,
-          status: 'success',
-          errorMessage: null,
-        });
-      } catch (error) {
-        logger.error('Failed to create audit log:', error);
-      }
+  const createAuditLog = async (req: any, action: string, entity: string, entityId?: string, changes?: any, status: 'success' | 'failure' = 'success', errorMessage?: string) => {
+    try {
+      await storage.createAuditLog({
+        userId: req.user?.id ?? null,
+        userEmail: req.user?.email ?? null,
+        userRole: req.user?.role ?? null,
+        action,
+        entity,
+        entityId: entityId ?? null,
+        changes: changes ?? null,
+        ipAddress: req.ip ?? null,
+        userAgent: req.headers['user-agent'] ?? null,
+        status,
+        errorMessage: errorMessage ?? null,
+      });
+    } catch (error) {
+      logger.error('Failed to create audit log:', error);
     }
   };
 
@@ -711,6 +709,45 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // PRODUCT MANAGEMENT (ADMIN)
   // ===========================================
 
+  app.get("/api/admin/products", authenticateAdmin, async (req, res) => {
+    try {
+      const page = parseInt(req.query.page as string) || 1;
+      const limit = parseInt(req.query.limit as string) || 20;
+      const category = req.query.category as string;
+      const inStock = req.query.inStock as string;
+      
+      let products = await storage.getProducts();
+      
+      // Filter by category if specified
+      if (category) {
+        products = products.filter(p => p.category === category);
+      }
+      
+      // Filter by stock status if specified
+      if (inStock !== undefined) {
+        products = products.filter(p => p.inStock === (inStock === 'true'));
+      }
+      
+      // Pagination
+      const total = products.length;
+      const startIndex = (page - 1) * limit;
+      const endIndex = startIndex + limit;
+      const paginatedProducts = products.slice(startIndex, endIndex);
+      
+      res.json({
+        products: paginatedProducts,
+        pagination: {
+          page,
+          limit,
+          total,
+          totalPages: Math.ceil(total / limit)
+        }
+      });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch products" });
+    }
+  });
+
   app.post("/api/admin/products", authenticateAdmin, async (req, res) => {
     try {
       const validatedData = insertProductSchema.parse(req.body);
@@ -755,6 +792,33 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // ===========================================
   // CATEGORY MANAGEMENT (ADMIN)
   // ===========================================
+
+  app.get("/api/admin/categories", authenticateAdmin, async (req, res) => {
+    try {
+      const page = parseInt(req.query.page as string) || 1;
+      const limit = parseInt(req.query.limit as string) || 20;
+      
+      let categories = await storage.getCategories();
+      
+      // Pagination
+      const total = categories.length;
+      const startIndex = (page - 1) * limit;
+      const endIndex = startIndex + limit;
+      const paginatedCategories = categories.slice(startIndex, endIndex);
+      
+      res.json({
+        categories: paginatedCategories,
+        pagination: {
+          page,
+          limit,
+          total,
+          totalPages: Math.ceil(total / limit)
+        }
+      });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch categories" });
+    }
+  });
 
   app.post("/api/admin/categories", authenticateAdmin, async (req, res) => {
     try {
@@ -895,8 +959,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get("/api/admin/orders", authenticateAdmin, async (req, res) => {
     try {
-      const orders = await storage.getOrders();
-      res.json(orders);
+      const page = parseInt(req.query.page as string) || 1;
+      const limit = parseInt(req.query.limit as string) || 20;
+      const status = req.query.status as string;
+      
+      let orders = await storage.getOrders();
+      
+      // Filter by status if specified
+      if (status) {
+        orders = orders.filter(o => o.status === status);
+      }
+      
+      // Pagination
+      const total = orders.length;
+      const startIndex = (page - 1) * limit;
+      const endIndex = startIndex + limit;
+      const paginatedOrders = orders.slice(startIndex, endIndex);
+      
+      res.json({
+        orders: paginatedOrders,
+        pagination: {
+          page,
+          limit,
+          total,
+          totalPages: Math.ceil(total / limit)
+        }
+      });
     } catch (error) {
       res.status(500).json({ message: "Failed to fetch orders" });
     }
