@@ -73,6 +73,19 @@ const authLimiter = rateLimit({
 app.use('/api/auth/login', authLimiter);
 app.use('/api/admin/login', authLimiter);
 
+// Strict rate limiting for payment processing endpoints
+const paymentLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 20, // limit each IP to 20 payment requests per 15 minutes
+  message: 'Too many payment requests from this IP, please try again later.',
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+app.use('/api/razorpay/', paymentLimiter);
+app.use('/api/create-payment-intent', paymentLimiter);
+app.use('/api/paypal/', paymentLimiter);
+
 // Body parsing middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));

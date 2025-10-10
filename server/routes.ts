@@ -1435,53 +1435,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Staff management routes
-  app.get("/api/admin/staff", async (req, res) => {
-    try {
-      const token = req.headers.authorization?.replace('Bearer ', '');
-      if (!token) {
-        return res.status(401).json({ message: "Unauthorized" });
-      }
-
-      try {
-        const staff = await credentialStorage.getStaffMembers();
-        res.json(staff);
-      } catch (error) {
-        // Fallback for development
-        res.json([]);
-      }
-    } catch (error) {
-      res.status(500).json({ message: "Failed to fetch staff members" });
-    }
-  });
-
-  app.post("/api/admin/staff", async (req, res) => {
-    try {
-      const token = req.headers.authorization?.replace('Bearer ', '');
-      if (!token) {
-        return res.status(401).json({ message: "Unauthorized" });
-      }
-
-      const { username, email, password, role, permissions } = req.body;
-      
-      try {
-        const newStaff = await credentialStorage.createUser({
-          username,
-          email,
-          password,
-          role: role || 'staff',
-          permissions: permissions || []
-        });
-        
-        res.json(newStaff);
-      } catch (error) {
-        res.status(400).json({ message: (error as any).message || "Failed to create staff member" });
-      }
-    } catch (error) {
-      res.status(500).json({ message: "Failed to create staff member" });
-    }
-  });
-
   // Media management routes
   app.use("/api/media", mediaRoutes);
   
@@ -1666,7 +1619,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Order processing and checkout
-  app.post("/api/checkout", authenticateAdmin, async (req, res) => {
+  app.post("/api/checkout", async (req, res) => {
     try {
       const { cartItems, shippingAddress, billingAddress, paymentMethod, userId, sessionId } = req.body;
       
