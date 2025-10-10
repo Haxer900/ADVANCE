@@ -41,9 +41,11 @@ export default function AdminUsers() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  const { data: users = [], isLoading } = useQuery({
+  const { data: usersData, isLoading} = useQuery<{ users: User[] }>({
     queryKey: ["/api/admin/users"],
   });
+
+  const users = usersData?.users || [];
 
   const createUserMutation = useMutation({
     mutationFn: async (userData: {
@@ -256,7 +258,7 @@ export default function AdminUsers() {
                     </Badge>
                   </TableCell>
                   <TableCell>
-                    {new Date(user.createdAt).toLocaleDateString()}
+                    {user.createdAt ? new Date(user.createdAt).toLocaleDateString() : "N/A"}
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2">
@@ -342,7 +344,7 @@ export default function AdminUsers() {
                               <div>
                                 <Label>Role</Label>
                                 <Select
-                                  value={selectedUser.role}
+                                  value={selectedUser.role || undefined}
                                   onValueChange={(role) =>
                                     updateUserMutation.mutate({
                                       userId: selectedUser.id,

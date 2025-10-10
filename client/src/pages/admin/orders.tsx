@@ -39,9 +39,11 @@ export default function AdminOrders() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  const { data: orders = [], isLoading } = useQuery({
+  const { data: ordersData, isLoading } = useQuery<{ orders: Order[] }>({
     queryKey: ["/api/admin/orders"],
   });
+
+  const orders = ordersData?.orders || [];
 
   const updateOrderMutation = useMutation({
     mutationFn: async ({
@@ -163,8 +165,8 @@ export default function AdminOrders() {
                     {formatCurrency(order.total)}
                   </TableCell>
                   <TableCell>
-                    <Badge className={getStatusColor(order.status)}>
-                      {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
+                    <Badge className={getStatusColor(order.status || "pending")}>
+                      {(order.status || "pending").charAt(0).toUpperCase() + (order.status || "pending").slice(1)}
                     </Badge>
                   </TableCell>
                   <TableCell>
@@ -224,7 +226,7 @@ export default function AdminOrders() {
                                   <h4 className="font-semibold mb-2">Shipping Address</h4>
                                   <div className="bg-gray-50 p-3 rounded">
                                     <pre className="text-sm whitespace-pre-wrap">
-                                      {JSON.stringify(selectedOrder.shippingAddress, null, 2)}
+                                      {JSON.stringify(selectedOrder.shippingAddress, null, 2) as string}
                                     </pre>
                                   </div>
                                 </div>

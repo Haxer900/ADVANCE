@@ -48,13 +48,11 @@ export default function ProductsAdmin() {
     },
   });
 
-  const { data: products, isLoading } = useQuery({
-    queryKey: ["/api/products"],
-    queryFn: async () => {
-      const response = await apiRequest("GET", "/api/products");
-      return response.json();
-    },
+  const { data: productsData, isLoading } = useQuery<{ products: any[] }>({
+    queryKey: ["/api/admin/products"],
   });
+
+  const products = productsData?.products || [];
 
   const createProductMutation = useMutation({
     mutationFn: async (data: ProductFormData) => {
@@ -65,7 +63,7 @@ export default function ProductsAdmin() {
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/products"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/products"] });
       setIsCreateDialogOpen(false);
       form.reset();
       toast({
@@ -91,7 +89,7 @@ export default function ProductsAdmin() {
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/products"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/products"] });
       setEditingProduct(null);
       toast({
         title: "Success",
@@ -115,7 +113,7 @@ export default function ProductsAdmin() {
       });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/products"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/products"] });
       toast({
         title: "Success",
         description: "Product deleted successfully",

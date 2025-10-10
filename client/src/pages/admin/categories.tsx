@@ -34,9 +34,11 @@ export default function AdminCategories() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  const { data: categories = [], isLoading } = useQuery({
-    queryKey: ["/api/categories"],
+  const { data: categoriesData, isLoading } = useQuery<{ categories: Category[] }>({
+    queryKey: ["/api/admin/categories"],
   });
+
+  const categories = categoriesData?.categories || [];
 
   const createCategoryMutation = useMutation({
     mutationFn: async (categoryData: {
@@ -47,7 +49,7 @@ export default function AdminCategories() {
       return apiRequest("POST", "/api/admin/categories", categoryData);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/categories"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/categories"] });
       setIsCreateDialogOpen(false);
       toast({
         title: "Category Created",
@@ -67,7 +69,7 @@ export default function AdminCategories() {
       return apiRequest("PUT", `/api/admin/categories/${categoryId}`, updates);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/categories"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/categories"] });
       setIsEditDialogOpen(false);
       toast({
         title: "Category Updated",
@@ -81,7 +83,7 @@ export default function AdminCategories() {
       return apiRequest("DELETE", `/api/admin/categories/${categoryId}`);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/categories"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/categories"] });
       toast({
         title: "Category Deleted",
         description: "Category has been deleted successfully.",
