@@ -26,7 +26,7 @@ export const OptimizedProductCard = memo(function OptimizedProductCard({
         </Link>
         
         {/* Subtle gradient overlay on hover */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
 
         {/* Premium Featured badge */}
         {product.featured && (
