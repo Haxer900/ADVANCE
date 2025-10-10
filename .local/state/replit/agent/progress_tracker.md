@@ -58,3 +58,4 @@
 [x] 58. Removed shopping bag and heart buttons from product cards (October 10, 2025)
 [x] 59. Implemented premium product card design with elegant styling and animations (October 10, 2025)
 [x] 60. Fixed product image click functionality - now properly redirects to product detail page (October 10, 2025)
+[x] 61. Fixed product page scroll position - now automatically scrolls to top when loading (October 10, 2025)

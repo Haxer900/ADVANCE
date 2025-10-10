@@ -23,6 +23,11 @@ export default function ProductDetail() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
+  // Scroll to top when product changes
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [params?.id]);
+
   // Track recently viewed
   useEffect(() => {
     if (params?.id && sessionId) {
