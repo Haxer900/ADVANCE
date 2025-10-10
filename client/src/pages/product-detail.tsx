@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Minus, Plus, ShoppingBag, Heart, Share2, ArrowLeft, Truck, Shield, RotateCcw, Star } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useLayoutEffect } from "react";
 import { apiRequest } from "@/lib/queryClient";
 import { useCartStore } from "@/components/cart-store";
 import { useToast } from "@/hooks/use-toast";
@@ -23,8 +23,8 @@ export default function ProductDetail() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  // Scroll to top when product changes
-  useEffect(() => {
+  // Instant scroll to top when product changes - runs before paint
+  useLayoutEffect(() => {
     window.scrollTo(0, 0);
   }, [params?.id]);
 
