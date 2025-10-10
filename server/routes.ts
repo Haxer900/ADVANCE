@@ -547,9 +547,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(401).json({ message: "Unauthorized - No token provided" });
       }
 
-      const adminSecret = process.env.JWT_SECRET_ADMIN || process.env.JWT_SECRET;
+      // SECURITY: Use dedicated admin secret - no fallback to customer secret
+      const adminSecret = process.env.JWT_SECRET_ADMIN;
       if (!adminSecret) {
-        logger.error('CRITICAL: JWT_SECRET_ADMIN is not configured');
+        logger.error('CRITICAL: JWT_SECRET_ADMIN is not configured - admin authentication disabled');
         return res.status(500).json({ message: "Server configuration error" });
       }
 
@@ -569,6 +570,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   };
 
+  // Audit Log Helper Function
+  const createAuditLog = async (req: any, action: string, entity: string, entityId?: string, changes?: any) => {
+    if (req.user) {
+      try {
+        await storage.createAuditLog({
+          userId: req.user.id,
+          userEmail: req.user.email,
+          userRole: req.user.role,
+          action,
+          entity,
+          entityId: entityId ?? null,
+          changes: changes ?? null,
+          ipAddress: req.ip ?? null,
+          userAgent: req.headers['user-agent'] ?? null,
+          status: 'success',
+          errorMessage: null,
+        });
+      } catch (error) {
+        logger.error('Failed to create audit log:', error);
+      }
+    }
+  };
+
   // Admin Authentication
   app.post("/api/admin/login", async (req, res) => {
     try {
@@ -582,9 +606,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Password is required" });
       }
 
-      const adminSecret = process.env.JWT_SECRET_ADMIN || process.env.JWT_SECRET;
+      // SECURITY: Use dedicated admin secret - no fallback to customer secret
+      const adminSecret = process.env.JWT_SECRET_ADMIN;
       if (!adminSecret) {
-        logger.error('CRITICAL: JWT_SECRET_ADMIN is not configured');
+        logger.error('CRITICAL: JWT_SECRET_ADMIN is not configured - admin authentication disabled');
         return res.status(500).json({ message: "Server configuration error" });
       }
 
@@ -690,6 +715,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const validatedData = insertProductSchema.parse(req.body);
       const product = await storage.createProduct(validatedData);
+      await createAuditLog(req, 'CREATE', 'product', product.id, { product: validatedData });
       res.json(product);
     } catch (error) {
       if (error instanceof z.ZodError) {
@@ -706,6 +732,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (!product) {
         return res.status(404).json({ message: "Product not found" });
       }
+      await createAuditLog(req, 'UPDATE', 'product', req.params.id, { updates });
       res.json(product);
     } catch (error) {
       res.status(500).json({ message: "Failed to update product" });
@@ -718,6 +745,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (!success) {
         return res.status(404).json({ message: "Product not found" });
       }
+      await createAuditLog(req, 'DELETE', 'product', req.params.id);
       res.json({ message: "Product deleted successfully" });
     } catch (error) {
       res.status(500).json({ message: "Failed to delete product" });
@@ -772,10 +800,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get("/api/admin/users", authenticateAdmin, async (req, res) => {
     try {
-      const users = await storage.getUsers();
+      const page = parseInt(req.query.page as string) || 1;
+      const limit = parseInt(req.query.limit as string) || 20;
+      const role = req.query.role as string;
+      
+      let users = await storage.getUsers();
+      
+      // Filter by role if specified
+      if (role) {
+        users = users.filter(u => u.role === role);
+      }
+      
+      // Pagination
+      const total = users.length;
+      const startIndex = (page - 1) * limit;
+      const endIndex = startIndex + limit;
+      const paginatedUsers = users.slice(startIndex, endIndex);
+      
       // Remove password from response
-      const safeUsers = users.map(({ password, ...user }) => user);
-      res.json(safeUsers);
+      const safeUsers = paginatedUsers.map(({ password, ...user }) => user);
+      
+      res.json({
+        users: safeUsers,
+        pagination: {
+          page,
+          limit,
+          total,
+          totalPages: Math.ceil(total / limit)
+        }
+      });
     } catch (error) {
       res.status(500).json({ message: "Failed to fetch users" });
     }
@@ -786,6 +839,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const userData = insertUserSchema.parse(req.body);
       const hashedPassword = await bcrypt.hash(userData.password, 10);
       const user = await storage.createUser({ ...userData, password: hashedPassword });
+      
+      await createAuditLog(req, 'CREATE', 'user', user.id, { email: user.email, role: user.role });
       
       // Remove password from response
       const { password, ...safeUser } = user;
@@ -801,14 +856,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.put("/api/admin/users/:id", authenticateAdmin, async (req, res) => {
     try {
       const updates = req.body;
+      const sanitizedUpdates = { ...updates };
       if (updates.password) {
-        updates.password = await bcrypt.hash(updates.password, 10);
+        sanitizedUpdates.password = await bcrypt.hash(updates.password, 10);
       }
       
-      const user = await storage.updateUser(req.params.id, updates);
+      const user = await storage.updateUser(req.params.id, sanitizedUpdates);
       if (!user) {
         return res.status(404).json({ message: "User not found" });
       }
+      
+      await createAuditLog(req, 'UPDATE', 'user', req.params.id, { updates: { ...updates, password: updates.password ? '[REDACTED]' : undefined } });
       
       // Remove password from response
       const { password, ...safeUser } = user;
@@ -824,6 +882,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (!success) {
         return res.status(404).json({ message: "User not found" });
       }
+      await createAuditLog(req, 'DELETE', 'user', req.params.id);
       res.json({ message: "User deleted successfully" });
     } catch (error) {
       res.status(500).json({ message: "Failed to delete user" });
@@ -862,6 +921,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (!order) {
         return res.status(404).json({ message: "Order not found" });
       }
+      await createAuditLog(req, 'UPDATE', 'order', req.params.id, { updates });
       res.json(order);
     } catch (error) {
       res.status(500).json({ message: "Failed to update order" });
