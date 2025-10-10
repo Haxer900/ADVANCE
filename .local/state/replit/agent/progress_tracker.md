@@ -60,3 +60,5 @@
 [x] 60. Fixed product image click functionality - now properly redirects to product detail page (October 10, 2025)
 [x] 61. Fixed product page scroll position - now automatically scrolls to top when loading (October 10, 2025)
 [x] 62. Enhanced scroll fix with useLayoutEffect for instant top position - no visible scroll movement (October 10, 2025)
+[x] 63. Configured JWT_SECRET_ADMIN for secure admin authentication (October 10, 2025)
+[x] 64. Admin panel login now functional with credentials: yashparmar77077@gmail.com / Yash@23072005 (October 10, 2025)
