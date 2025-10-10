@@ -49,18 +49,7 @@ app.use((req, res, next) => {
   next();
 });
 
-// Rate Limiting
-const apiLimiter = rateLimit({
-  windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS || '900000'), // 15 minutes
-  max: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS || '100'), // limit each IP to 100 requests per windowMs
-  message: 'Too many requests from this IP, please try again later.',
-  standardHeaders: true,
-  legacyHeaders: false,
-});
-
-// Apply rate limiting to API routes
-app.use('/api/', apiLimiter);
-
+// Rate Limiting - Order matters! Most specific routes first
 // Strict rate limiting for auth routes
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
@@ -85,6 +74,19 @@ const paymentLimiter = rateLimit({
 app.use('/api/razorpay/', paymentLimiter);
 app.use('/api/create-payment-intent', paymentLimiter);
 app.use('/api/paypal/', paymentLimiter);
+app.use('/api/checkout', paymentLimiter);
+
+// General API rate limiting (applied last, catches all other /api/* routes)
+const apiLimiter = rateLimit({
+  windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS || '900000'), // 15 minutes
+  max: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS || '100'), // limit each IP to 100 requests per windowMs
+  message: 'Too many requests from this IP, please try again later.',
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+// Apply general rate limiting to all other API routes
+app.use('/api/', apiLimiter);
 
 // Body parsing middleware
 app.use(express.json());
